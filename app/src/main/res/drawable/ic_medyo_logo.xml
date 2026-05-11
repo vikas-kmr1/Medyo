@@ -1,0 +1,57 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+
+    <!-- Clock face group, scales and rotates in -->
+    <group android:name="clock_face_group" android:pivotX="60" android:pivotY="60" android:scaleX="0" android:scaleY="0">
+        <path android:name="clock_ring_glow" android:pathData="M 60 15 A 45 45 0 1 1 59.9 15" android:strokeColor="#4000E5FF" android:strokeWidth="3" android:strokeAlpha="0"/>
+        <path android:name="clock_ring" android:pathData="M 60 15 A 45 45 0 1 1 59.9 15" android:strokeColor="#00E5FF" android:strokeWidth="1" android:strokeAlpha="0"/>
+        
+        <group android:rotation="30" android:pivotX="60" android:pivotY="60"><path android:name="tick_1" android:pathData="M 60 18 L 60 21" android:strokeColor="#FF9800" android:strokeWidth="2" android:strokeLineCap="round" android:strokeAlpha="0"/></group>
+        <group android:rotation="60" android:pivotX="60" android:pivotY="60"><path android:name="tick_2" android:pathData="M 60 18 L 60 21" android:strokeColor="#FF9800" android:strokeWidth="2" android:strokeLineCap="round" android:strokeAlpha="0"/></group>
+        <group android:rotation="120" android:pivotX="60" android:pivotY="60"><path android:name="tick_3" android:pathData="M 60 18 L 60 21" android:strokeColor="#FF9800" android:strokeWidth="2" android:strokeLineCap="round" android:strokeAlpha="0"/></group>
+        <group android:rotation="150" android:pivotX="60" android:pivotY="60"><path android:name="tick_4" android:pathData="M 60 18 L 60 21" android:strokeColor="#FF9800" android:strokeWidth="2" android:strokeLineCap="round" android:strokeAlpha="0"/></group>
+        <group android:rotation="210" android:pivotX="60" android:pivotY="60"><path android:name="tick_5" android:pathData="M 60 18 L 60 21" android:strokeColor="#FF9800" android:strokeWidth="2" android:strokeLineCap="round" android:strokeAlpha="0"/></group>
+        <group android:rotation="240" android:pivotX="60" android:pivotY="60"><path android:name="tick_6" android:pathData="M 60 18 L 60 21" android:strokeColor="#FF9800" android:strokeWidth="2" android:strokeLineCap="round" android:strokeAlpha="0"/></group>
+        <group android:rotation="300" android:pivotX="60" android:pivotY="60"><path android:name="tick_7" android:pathData="M 60 18 L 60 21" android:strokeColor="#FF9800" android:strokeWidth="2" android:strokeLineCap="round" android:strokeAlpha="0"/></group>
+        <group android:rotation="330" android:pivotX="60" android:pivotY="60"><path android:name="tick_8" android:pathData="M 60 18 L 60 21" android:strokeColor="#FF9800" android:strokeWidth="2" android:strokeLineCap="round" android:strokeAlpha="0"/></group>
+    </group>
+
+    <!-- The 'M' with glow layers. Trim path end 0 to hide it initially -->
+    <group android:name="m_group">
+        <path android:name="m_glow_1" android:pathData="M 32 75 L 32 40 L 55 52 A 6 6 0 1 0 65 52 L 88 40 L 88 75" android:strokeColor="#2000E5FF" android:strokeWidth="14" android:strokeLineCap="round" android:strokeLineJoin="round" android:trimPathEnd="0"/>
+        <path android:name="m_glow_2" android:pathData="M 32 75 L 32 40 L 55 52 A 6 6 0 1 0 65 52 L 88 40 L 88 75" android:strokeColor="#6000E5FF" android:strokeWidth="8" android:strokeLineCap="round" android:strokeLineJoin="round" android:trimPathEnd="0"/>
+        <path android:name="m_path" android:pathData="M 32 75 L 32 40 L 55 52 A 6 6 0 1 0 65 52 L 88 40 L 88 75" android:strokeColor="#FFFFFF" android:strokeWidth="4" android:strokeLineCap="round" android:strokeLineJoin="round" android:trimPathEnd="0"/>
+    </group>
+
+    <group android:name="capsule_group" android:pivotX="60" android:pivotY="78" android:rotation="-45" android:scaleX="0" android:scaleY="0">
+        <path android:name="capsule_cyan" android:pathData="M 57 73 A 3 3 0 0 1 63 73 L 63 78 L 57 78 Z" android:fillColor="#00E5FF" />
+        <path android:name="capsule_orange" android:pathData="M 57 78 L 63 78 L 63 83 A 3 3 0 0 1 57 83 Z" android:fillColor="#FF9800" />
+        <path android:name="capsule_accent" android:pathData="M 60 74 L 60 76 M 59 75 L 61 75" android:strokeColor="#FFFFFF" android:strokeWidth="0.5"/>
+    </group>
+
+    <!-- Scan Light Group -->
+    <group android:name="scan_light_group" android:translateX="-150">
+        <path
+            android:name="scan_light"
+            android:pathData="M 40 0 L 60 0 L 20 120 L 0 120 Z"
+            android:fillColor="#33E2E8F0" />
+    </group>
+
+    <!-- Numerals -->
+    <group android:name="numeral_group">
+        <path android:name="num_12_glow" android:pathData="M 55 12 L 55 20 M 60 13 Q 63 13 63 15 Q 63 17 60 20 L 63 20" android:strokeColor="#40FF9800" android:strokeWidth="5" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="0"/>
+        <path android:name="num_12" android:pathData="M 55 12 L 55 20 M 60 13 Q 63 13 63 15 Q 63 17 60 20 L 63 20" android:strokeColor="#FFCC80" android:strokeWidth="2" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="0"/>
+        
+        <path android:name="num_3_glow" android:pathData="M 91 56 Q 95 56 95 58 Q 95 60 92 60 Q 95 60 95 62 Q 95 64 91 64" android:strokeColor="#40FF9800" android:strokeWidth="5" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="0"/>
+        <path android:name="num_3" android:pathData="M 91 56 Q 95 56 95 58 Q 95 60 92 60 Q 95 60 95 62 Q 95 64 91 64" android:strokeColor="#FFCC80" android:strokeWidth="2" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="0"/>
+
+        <path android:name="num_6_glow" android:pathData="M 63 96 Q 59 96 59 100 Q 59 104 61.5 104 Q 64 104 64 102 Q 64 100 61.5 100 Q 59 100 59 102" android:strokeColor="#40FF9800" android:strokeWidth="5" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="0"/>
+        <path android:name="num_6" android:pathData="M 63 96 Q 59 96 59 100 Q 59 104 61.5 104 Q 64 104 64 102 Q 64 100 61.5 100 Q 59 100 59 102" android:strokeColor="#FFCC80" android:strokeWidth="2" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="0"/>
+
+        <path android:name="num_9_glow" android:pathData="M 26 64 Q 30 64 30 60 Q 30 56 27.5 56 Q 25 56 25 58 Q 25 60 27.5 60 Q 30 60 30 58" android:strokeColor="#40FF9800" android:strokeWidth="5" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="0"/>
+        <path android:name="num_9" android:pathData="M 26 64 Q 30 64 30 60 Q 30 56 27.5 56 Q 25 56 25 58 Q 25 60 27.5 60 Q 30 60 30 58" android:strokeColor="#FFCC80" android:strokeWidth="2" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="0"/>
+    </group>
+</vector>
