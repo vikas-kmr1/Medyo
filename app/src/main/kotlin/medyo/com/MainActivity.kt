@@ -9,23 +9,34 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForwardIos
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Devices.PIXEL_7_PRO
+import androidx.compose.ui.tooling.preview.Devices.PIXEL_9_PRO_XL
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.animation.doOnEnd
@@ -39,6 +50,7 @@ import medyo.com.ui.theme.NavyMedium
 
 class MainActivity : ComponentActivity() {
 
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreenInstance = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             installSplashScreen()
@@ -54,7 +66,7 @@ class MainActivity : ComponentActivity() {
             // Keep the splash screen on-screen for 3 seconds
             splashScreenInstance.setKeepOnScreenCondition { keepSplashScreen }
             lifecycleScope.launch {
-                delay(3000L)
+                delay(1000L)
                 keepSplashScreen = false
             }
 
@@ -73,21 +85,30 @@ class MainActivity : ComponentActivity() {
                     Scaffold(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(Color.Black)
-                    ) { innerPadding ->
-                        GlassCard(modifier = Modifier.padding(innerPadding)) {
-                            Box(
-                                modifier = Modifier
-                                    .padding(10.dp)
-                            ) {
-                                Text(
-                                    modifier = Modifier.fillMaxWidth()
-                                        .padding(15.dp), text = "Hello World", color = Color.White,
-                                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                                    style = MaterialTheme.typography.displayLarge
+                            .background(Color.Black),
+                        topBar = {
+                            TopAppBar(
+                                title = {
+                                    Text(
+                                        text = "Medyo",
+                                        style = MaterialTheme.typography.displayLarge
+                                    )
+                                },
+                                colors = TopAppBarDefaults.topAppBarColors(
+                                    containerColor = Color.Transparent,
                                 )
+                            )
+                        }
+                    ) { innerPadding ->
+                        LazyColumn(modifier = Modifier.padding(innerPadding)) {
+                            items(1) {
+                                PrimaryCardItem()
+                            }
+                            items(10) {
+                                CardItem()
                             }
                         }
+
                     }
                 }
             }
@@ -102,7 +123,36 @@ fun GlassCard(
 ) {
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(60.dp))
+            .clip(RoundedCornerShape(20.dp))
+            .background(
+                Brush.linearGradient(
+                    colors = listOf(
+                        GlassWhite.copy(alpha = 0.2f),
+                        Color.Transparent,
+                    ),
+                )
+            ) // Translucent base
+            .border(
+                width = 1.5.dp,
+                color = GlassWhite.copy(alpha = 0.8f),
+                shape = RoundedCornerShape(20.dp)
+            )
+            .blur(0.dp) // Frosted glass effect
+    ) {
+        Box(contentAlignment = androidx.compose.ui.Alignment.Center) {
+            content()
+        }
+    }
+}
+
+@Composable
+fun PrimaryGlassCard(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(20.dp))
             .background(
                 Brush.linearGradient(
                     colors = listOf(
@@ -119,7 +169,7 @@ fun GlassCard(
                 brush = Brush.linearGradient(
                     colors = listOf(Color.White, Color.Transparent, Color.White)
                 ),
-                shape = RoundedCornerShape(60.dp)
+                shape = RoundedCornerShape(20.dp)
             )
             .blur(0.dp) // Frosted glass effect
     ) {
@@ -129,23 +179,91 @@ fun GlassCard(
     }
 }
 
-@Preview(showBackground = true, device = PIXEL_7_PRO)
+@Preview(showBackground = true, device = PIXEL_9_PRO_XL)
 @Composable
 private fun GlassCardPreview() {
-    MedyoTheme(darkTheme = true) {
-        Box(
-            modifier = Modifier
-                .background(Color.Black)
-                .size(200.dp)
-                .padding(10.dp)
-        ) {
-            GlassCard {
-                Text(
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(15.dp), text = "Hello World", color = Color.White,
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                )
+    MedyoTheme() {
+        Column() {
+            CardItem()
+            PrimaryCardItem()
+        }
+    }
+}
+
+@Composable
+fun CardItem() {
+    Box(
+        modifier = Modifier
+            .background(Color.Black)
+            .padding(10.dp)
+    ) {
+        GlassCard {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(15.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column() {
+                    Text(
+                        text = "Amoxicillin 500mg", color = Color.White,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Text(
+                        text = "morning",
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+
+                IconButton(onClick = {}) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowForwardIos,
+                        contentDescription = "see more",
+                        tint = Color.White
+                    )
+                }
             }
         }
     }
 }
+
+@Composable
+fun PrimaryCardItem() {
+    Box(
+        modifier = Modifier
+            .background(Color.Black)
+            .padding(10.dp)
+    ) {
+        PrimaryGlassCard {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(15.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column() {
+                    Text(
+                        text = "Amoxicillin 500mg", color = Color.White,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+
+                    Text(
+                        text = "morning",
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+
+                IconButton(onClick = {}) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowForwardIos,
+                        contentDescription = "see more",
+                        tint = Color.White
+                    )
+                }
+            }
+        }
+    }
+}
+

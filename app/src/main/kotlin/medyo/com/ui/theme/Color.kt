@@ -2,9 +2,39 @@ package medyo.com.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+// ==========================================
+// Light Theme Tokens (Classic Clean White)
+// ==========================================
+val LightBackground = Color(0xFFF8FAFC)       // Crisp, clinical canvas background
+val LightSurface = Color(0xFFFFFFFF)          // Pure white for high-priority cards
+val LightSurfaceVariant = Color(0xFFF1F5F9)   // Soft grey for First Aid/Stock section background
+val LightBorder = Color(0xFFE2E8F0)           // Muted border lines for clean partitioning
+
+// Active Schedule Gradients (Parsed from the UI timeline)
+val TrackCyanLight = Color(0xFF0284C7)        // Core action blue/cyan
+val TrackCyanVariant = Color(0xFF22D3EE)      // Highlighting scheduled intervals
+val TrackAmberLight = Color(0xFFD97706)       // Impending dose/alert accent
+
+// ==========================================
+// Dark Theme Tokens (Deep Medical Navy)
+// ==========================================
+val DarkBackground = Color(0xFF0F172A)        // Deep navy blue base canvas
+val DarkSurface = Color(0xFF1E293B)           // Slate blue for active container surfaces
+val DarkSurfaceVariant = Color(0xFF334155)    // Muted grey-blue for stock inventory cards
+val DarkBorder = Color(0xFF475569)            // Subtle dark hairline dividers
+
+// Active Schedule Gradients (Dark Mode optimized)
+val TrackCyanDark = Color(0xFF38BDF8)         // High-contrast neon cyan for dark backgrounds
+val TrackAmberDark = Color(0xFFFB923C)        // Vivid orange/amber for nighttime warnings
+
+// Common Utilities
+val TextPrimaryLight = Color(0xFF0F172A)
+val TextPrimaryDark = Color(0xFFF8FAFC)
+val TextMuted = Color(0xFF64748B)
+
+
+
+
 
 val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)

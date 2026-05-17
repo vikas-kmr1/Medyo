@@ -20,7 +20,8 @@ val PlusJakartaSans = FontFamily(
 val Inter = FontFamily(
     Font(R.font.inter_regular, FontWeight.Normal),
     Font(R.font.inter_medium, FontWeight.Medium),
-    Font(R.font.inter_semibold, FontWeight.SemiBold)
+    Font(R.font.inter_semibold, FontWeight.SemiBold),
+    Font(R.font.inter_light, FontWeight.Light)
 )
 
 // Technical Font: JetBrains Mono
@@ -45,6 +46,14 @@ val Typography  = Typography(
         fontFamily = Inter,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
+        lineHeight = 24.sp,
+        color = Color.White
+    ),
+    // Standard Labels (Inter)
+    bodySmall = TextStyle(
+        fontFamily = Inter,
+        fontWeight = FontWeight.Light,
+        fontSize = 12.sp,
         lineHeight = 24.sp,
         color = Color.White.copy(alpha = 0.8f)
     ),

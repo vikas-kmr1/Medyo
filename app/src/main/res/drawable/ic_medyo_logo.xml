@@ -1,10 +1,11 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="120dp"
     android:height="120dp"
-    android:viewportWidth="120"
-    android:viewportHeight="120">
+    android:viewportWidth="160"
+    android:viewportHeight="160">
 
-    <!-- Clock face group, scales and rotates in -->
+    <group android:translateX="20" android:translateY="20">
+        <!-- Clock face group, scales and rotates in -->
     <group android:name="clock_face_group" android:pivotX="60" android:pivotY="60" android:scaleX="0" android:scaleY="0">
         <path android:name="clock_ring_glow" android:pathData="M 60 15 A 45 45 0 1 1 59.9 15" android:strokeColor="#4000E5FF" android:strokeWidth="3" android:strokeAlpha="0"/>
         <path android:name="clock_ring" android:pathData="M 60 15 A 45 45 0 1 1 59.9 15" android:strokeColor="#00E5FF" android:strokeWidth="1" android:strokeAlpha="0"/>
@@ -53,5 +54,6 @@
 
         <path android:name="num_9_glow" android:pathData="M 26 64 Q 30 64 30 60 Q 30 56 27.5 56 Q 25 56 25 58 Q 25 60 27.5 60 Q 30 60 30 58" android:strokeColor="#40FF9800" android:strokeWidth="5" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="0"/>
         <path android:name="num_9" android:pathData="M 26 64 Q 30 64 30 60 Q 30 56 27.5 56 Q 25 56 25 58 Q 25 60 27.5 60 Q 30 60 30 58" android:strokeColor="#FFCC80" android:strokeWidth="2" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="0"/>
+    </group>
     </group>
 </vector>

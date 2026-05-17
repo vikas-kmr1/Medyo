@@ -1,4 +1,5 @@
 pluginManagement {
+   // includeBuild("build-logic")
     repositories {
         google {
             content {
@@ -24,4 +25,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "Medyo"
 include(":app")
- 
+include(":core:ui")
+include(":core:design-system")
+//include(":build-logic:convention")
