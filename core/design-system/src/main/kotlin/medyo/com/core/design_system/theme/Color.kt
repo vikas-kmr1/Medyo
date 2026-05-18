@@ -1,4 +1,4 @@
-package medyo.com.ui.theme
+package medyo.com.core.design_system.theme
 
 import androidx.compose.ui.graphics.Color
 

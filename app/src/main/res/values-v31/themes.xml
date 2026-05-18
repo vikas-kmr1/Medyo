@@ -5,8 +5,13 @@
         <item name="windowSplashScreenAnimatedIcon">@drawable/avd_medyo_splash</item>
         <item name="windowSplashScreenAnimationDuration">1000</item>
         <item name="postSplashScreenTheme">@style/Theme.Medyo</item>
+        <item name="android:windowTranslucentNavigation">true</item>
     </style>
 
-    <style  name="Theme.Medyo"  parent="android:Theme.Material.NoActionBar"/>
+    <style  name="Theme.Medyo"  parent="android:Theme.Material.NoActionBar">
+        <!-- Allow the navigation bar to be transparent/translucent -->
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
 
 </resources>

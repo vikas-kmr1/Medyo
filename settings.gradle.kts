@@ -23,6 +23,7 @@ dependencyResolutionManagement {
     }
 }
 
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 rootProject.name = "Medyo"
 include(":app")
 include(":core:ui")

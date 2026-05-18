@@ -1,4 +1,4 @@
-package medyo.com.ui.theme
+package medyo.com.core.design_system.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.graphics.Color
@@ -7,7 +7,8 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import medyo.com.R
+import medyo.com.core.design_system.R
+
 
 // Display Font: Plus Jakarta Sans
 val PlusJakartaSans = FontFamily(
