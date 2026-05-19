@@ -5,13 +5,6 @@ import kotlin.math.abs
 import kotlin.math.log10
 
 
-val emptyString = ""
-val zero = 0
-val zeroL = 0L
-val zeroF = 0f
-val zeroD = 0.0
-
-
 fun Int?.orZero() = this ?: 0
 
 fun Long?.orZero() = this ?: 0L
