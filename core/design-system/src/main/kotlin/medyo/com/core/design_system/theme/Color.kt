@@ -34,8 +34,6 @@ val TextMuted = Color(0xFF64748B)
 
 
 
-
-
 val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
@@ -48,5 +46,5 @@ val NeonCyan = Color(0xFF22D3EE)      // Primary interactive accent
 val NeonOrange = Color(0xFFFB923C)    // Alert/Expiry accent
 
 // Glassmorphism overlays
-val GlassWhite = Color(0x1AFFFFFF)   // 10% White for frosted effect
+val GlassWhite = Color(0x1a000000)   // 10% White for frosted effect
 val GlassCyan = Color(0x1A22D3EE)    // 10% Cyan for tinted glass

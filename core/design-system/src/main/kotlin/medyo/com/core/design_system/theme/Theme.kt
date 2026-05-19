@@ -1,14 +1,17 @@
 package medyo.com.core.design_system.theme
 
 import android.app.Activity
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.yuma.franchise.ui.theme.shapes.LocalAppShapes
+import com.yuma.franchise.ui.theme.shapes.MedyoShapes
+import com.yuma.franchise.ui.theme.shapes.appShapes
 
 //private val DarkColorScheme = darkColorScheme(
 //    primary = NeonCyan,
@@ -68,9 +71,18 @@ fun MedyoTheme(
         }
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content,
-    )
+    CompositionLocalProvider(
+        LocalDimensions provides Dimensions(),
+        LocalSpacing provides Spacing(),
+        LocalIconSize provides IconSizes(),
+        LocalTintTheme provides TintTheme(colorScheme.onSurfaceVariant),
+        LocalAppShapes provides appShapes
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content,
+            shapes = MedyoShapes
+        )
+    }
 }

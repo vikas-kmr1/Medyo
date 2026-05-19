@@ -1,13 +1,24 @@
 package medyo.com.core.design_system.theme
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.Typography
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import medyo.com.core.design_system.R
+import medyo.com.core.design_system.utils.compose.CommonPreview
 
 
 // Display Font: Plus Jakarta Sans
@@ -40,29 +51,70 @@ val Typography  = Typography(
         fontWeight = FontWeight.Bold,
         fontSize = 32.sp,
         letterSpacing = (-0.5).sp,
-        color = Color.White
     ),
-    // Standard Labels (Inter)
+
+    titleLarge = TextStyle(
+        fontFamily = PlusJakartaSans, // Custom font family
+        fontWeight = FontWeight.Bold,
+        fontSize = 24.sp,
+        letterSpacing = (-0.5).sp,
+    ),
+
+    titleMedium = TextStyle(
+        fontFamily = PlusJakartaSans, // Custom font family
+        fontWeight = FontWeight.Bold,
+        fontSize = 17.sp,
+        letterSpacing = (-0.5).sp,
+    ),
+
+
     bodyLarge = TextStyle(
         fontFamily = Inter,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 24.sp,
-        color = Color.White
-    ),
+        ),
+
+    bodyMedium = TextStyle(
+        fontFamily = Inter,
+        fontWeight = FontWeight.Normal,
+        fontSize = 14.sp,
+        lineHeight = 24.sp,
+        ),
     // Standard Labels (Inter)
     bodySmall = TextStyle(
         fontFamily = Inter,
         fontWeight = FontWeight.Light,
         fontSize = 12.sp,
         lineHeight = 24.sp,
-        color = Color.White.copy(alpha = 0.8f)
+
     ),
     // Technical/AI Data (JetBrains Mono)
     labelSmall = TextStyle(
         fontFamily = JetBrainsMono,
         fontWeight = FontWeight.Medium,
         fontSize = 12.sp,
-        color = NeonCyan // Using your Phase 2 accent color
     )
 )
+
+@CommonPreview
+@Composable
+private fun YumaTypographyPreview(){
+    MedyoTheme() {
+        Surface(
+            modifier = Modifier.fillMaxSize().padding(10.dp),
+            color = Color.White
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                Text(text = "Yuma Typography Preview", style = Typography.displayLarge)
+                Text(text = "Yuma Typography Preview", style = Typography.titleLarge)
+                Text(text = "Yuma Typography Preview", style = Typography.titleMedium)
+                Text(text = "Yuma Typography Preview", style = Typography.bodyLarge)
+                Text(text = "Yuma Typography Preview", style = Typography.bodySmall)
+                Text(text = "Yuma Typography Preview", style = Typography.labelSmall)
+            }
+        }
+    }
+}
