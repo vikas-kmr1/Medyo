@@ -4,7 +4,9 @@ import com.google.firebase.Firebase
 import com.google.firebase.ai.ai
 import com.google.firebase.ai.type.GenerationConfig
 import com.google.firebase.ai.type.GenerativeBackend
+import com.google.firebase.ai.type.Schema
 import com.google.firebase.ai.type.content
+import com.google.firebase.ai.type.generationConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -12,12 +14,38 @@ import timber.log.Timber
 const val MODEL_NAME = "gemini-3.1-pro-preview"
 
 class GeminiAiDataSource {
+    private val config = generationConfig {
+        responseMimeType = "application/json"
+        // Define the schema so the LLM knows exactly what keys to generate
+        responseSchema = Schema.obj(
+            properties = mapOf(
+                "brand" to Schema.string(),
+                "salts" to Schema.string(),
+                "mfgDate" to Schema.string(),
+                "expDate" to Schema.string(),
+                "sideEffects" to Schema.array(
+                    items = Schema.string()
+                ),
+                "cures" to Schema.array(
+                    items = Schema.string()
+                ),
+                "precautions" to Schema.array(
+                    items = Schema.string()
+                ),
+                "instructions" to Schema.array(
+                    items = Schema.string()
+                ),
+                "medicine icon=" to Schema.string(),
+            ),
+        )
+        temperature = 1f // Low temperature for factual extraction, no creativity
+    }
 
     private val genAi by lazy {
         Firebase.ai(backend = GenerativeBackend.vertexAI(
             location = "global",
         ))
-            .generativeModel(modelName = MODEL_NAME)
+            .generativeModel(modelName = MODEL_NAME, generationConfig = config)
     }
 
 
@@ -36,7 +64,8 @@ class GeminiAiDataSource {
                   "sideEffects": ["effect 1", "effect 2"],
                   "cures": ["disease 1", "disease 2"],
                   precautions: ["precaution 1", "precaution 2"]
-                  instructions: ["Empty Stomach"]
+                  instructions: ["Empty Stomach"],
+                  medicine icon: "svg icon for the medicine i.e its a capsule, table, or drop etc. it should be gradient icon like nowinandroid app interest's outlined icon"
                 }
                 If you cannot find dates, try to infer them from the text (e.g. 05/2026 -> 2026-05-01). If truly not found, return null for dates.
                 If brand or salts are not found, leave them blank.
@@ -52,7 +81,10 @@ class GeminiAiDataSource {
 
         return withContext(Dispatchers.IO) {
             try {
-                val response = genAi.generateContent(prompt)
+                val inputContent = content {
+                    text(prompt)
+                }
+                val response = genAi.generateContent(inputContent)
                 Timber.tag("gemini response").d("Response: ${response.text}")
                 response.text ?: "no response"
             } catch (e: Exception) {
