@@ -61,7 +61,7 @@ fun MedicineCardItem(
                 spotColor = shadowColor.copy(alpha = 0.6f),
                 ambientColor = shadowColor.copy(alpha = 0.3f)
             )
-            .clip(RoundedCornerShape(24.dp))
+            .clip(shape)
             .background(colorScheme.background) // Base color
             .clickable { onClick() }
     ) {
@@ -149,7 +149,7 @@ private fun MedicineInfo(
     ) {
         Text(
             text = name,
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleMedium,
         )
         Spacer(modifier = Modifier.height(LocalDimensions.current.dimen2dp)) // Small gap for readability
         Text(

@@ -28,15 +28,9 @@ val TrackCyanDark = Color(0xFF38BDF8)         // High-contrast neon cyan for dar
 val TrackAmberDark = Color(0xFFFB923C)        // Vivid orange/amber for nighttime warnings
 
 // Common Utilities
-val TextPrimaryLight = Color(0xFF0F172A)
+val TextPrimaryLight = Color(0xD7333847)
 val TextPrimaryDark = Color(0xFFF8FAFC)
 val TextMuted = Color(0xFF64748B)
-
-
-
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
 
 
 

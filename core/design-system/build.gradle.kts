@@ -1,6 +1,11 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
+
+}
+enum class Flavors(val flavorName: String) {
+    DEV("dev"),
+    PROD("prod")
 }
 
 android {
@@ -27,9 +32,20 @@ android {
             )
         }
     }
+
+    flavorDimensions += "environment"
+    productFlavors {
+        create(Flavors.DEV.flavorName) {
+            dimension = "environment"
+        }
+
+        create(Flavors.PROD.flavorName) {
+            dimension = "environment"
+        }
+    }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     buildFeatures { compose = true }

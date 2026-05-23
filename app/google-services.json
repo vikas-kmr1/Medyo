@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "677108863466",
+    "firebase_url": "https://yuma-operations-app-default-rtdb.firebaseio.com",
+    "project_id": "yuma-operations-app",
+    "storage_bucket": "yuma-operations-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:677108863466:android:5820e834f34072ee2aa293",
+        "android_client_info": {
+          "package_name": "app.yuma.iot"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDq1BFAF_7mt8oiNnmiRXnXrN_AmMJZjdk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:677108863466:android:388195940d602f712aa293",
+        "android_client_info": {
+          "package_name": "com.yuma"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDq1BFAF_7mt8oiNnmiRXnXrN_AmMJZjdk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:677108863466:android:19fe9053e8003db02aa293",
+        "android_client_info": {
+          "package_name": "medyo.com"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDq1BFAF_7mt8oiNnmiRXnXrN_AmMJZjdk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -34,7 +34,7 @@ data class ExtendedShapes(
  */
 val appShapes =
     ExtendedShapes(
-        cardShape = RoundedCornerShape(15.dp),
+        cardShape = RoundedCornerShape(24.dp),
         bottomSheetShape = RectangleShape,
         buttonShape = RoundedCornerShape(24.dp),
         chipShape = RoundedCornerShape(16.dp),
