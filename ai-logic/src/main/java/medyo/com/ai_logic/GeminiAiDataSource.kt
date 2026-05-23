@@ -13,6 +13,11 @@ import timber.log.Timber
 
 const val MODEL_NAME = "gemini-3.1-pro-preview"
 
+
+enum class MedicineType {
+    CAPSULE, TABLET, DROPS, INHALER, INJECTION, PATCH, SUSPENSION, SYRUP, VIAL, OTHER
+}
+
 class GeminiAiDataSource {
     private val config = generationConfig {
         responseMimeType = "application/json"
@@ -35,10 +40,10 @@ class GeminiAiDataSource {
                 "instructions" to Schema.array(
                     items = Schema.string()
                 ),
-                "medicine icon=" to Schema.string(),
+                "category" to Schema.string(),
             ),
         )
-        temperature = 1f // Low temperature for factual extraction, no creativity
+        temperature = .1f // Low temperature for factual extraction, no creativity
     }
 
     private val genAi by lazy {
@@ -65,7 +70,7 @@ class GeminiAiDataSource {
                   "cures": ["disease 1", "disease 2"],
                   precautions: ["precaution 1", "precaution 2"]
                   instructions: ["Empty Stomach"],
-                  medicine icon: "svg icon for the medicine i.e its a capsule, table, or drop etc. it should be gradient icon like nowinandroid app interest's outlined icon"
+                  category: "Medicine Category" i.e. ${MedicineType.entries.joinToString { it.name }}
                 }
                 If you cannot find dates, try to infer them from the text (e.g. 05/2026 -> 2026-05-01). If truly not found, return null for dates.
                 If brand or salts are not found, leave them blank.

@@ -25,6 +25,9 @@
             <option value="$PROJECT_DIR$/core/utils" />
             <option value="$PROJECT_DIR$/core/work-manager" />
             <option value="$PROJECT_DIR$/feature" />
+            <option value="$PROJECT_DIR$/logger" />
+            <option value="$PROJECT_DIR$/logger/api" />
+            <option value="$PROJECT_DIR$/logger/impl" />
           </set>
         </option>
       </GradleProjectSettings>

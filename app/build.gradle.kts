@@ -1,9 +1,5 @@
 import java.util.Properties
 
-enum class Flavors(val flavorName: String) {
-    DEV("dev"),
-    PROD("prod")
-}
 
 
 plugins {
@@ -34,7 +30,13 @@ android {
     }
 
     buildTypes {
+
+        debug {
+            versionNameSuffix = "-dev"
+            manifestPlaceholders["appName"] = "Medyo dev"
+        }
         release {
+            manifestPlaceholders["appName"] = "Medyo"
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -43,22 +45,6 @@ android {
         }
     }
 
-    flavorDimensions += "environment"
-    productFlavors {
-        val stringType = String().javaClass.name
-        create(Flavors.DEV.flavorName) {
-            dimension = "environment"
-            //applicationIdSuffix = ".dev"
-            versionNameSuffix = "-dev"
-            manifestPlaceholders["appName"] = "Medyo dev"
-
-        }
-
-        create(Flavors.PROD.flavorName) {
-            dimension = "environment"
-            manifestPlaceholders["appName"] = "Medyo"
-        }
-    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -76,6 +62,8 @@ dependencies {
     implementation(projects.core.designSystem)
     implementation(projects.core.ui)
     implementation(projects.aiLogic)
+    implementation(projects.logger.api)
+    implementation(projects.logger.impl)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.ai)

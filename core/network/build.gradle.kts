@@ -5,10 +5,6 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
-enum class Flavors(val flavorName: String) {
-    DEV("dev"),
-    PROD("prod")
-}
 
 
 android {
@@ -33,16 +29,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-        }
-    }
-
-    flavorDimensions += "environment"
-    productFlavors {
-        create(Flavors.DEV.flavorName) {
-            dimension = "environment"
-        }
-        create(Flavors.PROD.flavorName) {
-            dimension = "environment"
         }
     }
 
