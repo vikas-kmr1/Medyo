@@ -33,6 +33,7 @@ android {
 
         debug {
             versionNameSuffix = "-dev"
+            applicationIdSuffix = ".dev"
             manifestPlaceholders["appName"] = "Medyo dev"
         }
         release {
