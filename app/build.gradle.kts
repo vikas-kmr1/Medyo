@@ -62,9 +62,11 @@ android {
 dependencies {
     implementation(projects.core.designSystem)
     implementation(projects.core.ui)
-    implementation(projects.aiLogic)
+    implementation(projects.core.aiLogic)
     implementation(projects.logger.api)
     implementation(projects.logger.impl)
+    implementation(projects.feature.scanner.api)
+    implementation(projects.feature.scanner.impl)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.ai)
