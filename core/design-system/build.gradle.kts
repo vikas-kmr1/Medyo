@@ -39,6 +39,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.utils)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.compose.icons.extended)
     implementation(libs.androidx.lifecycle.runtime.ktx)

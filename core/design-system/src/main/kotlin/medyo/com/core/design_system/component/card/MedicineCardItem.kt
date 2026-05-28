@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,13 +28,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.yuma.franchise.ui.theme.shapes.LocalAppShapes
+import medyo.com.core.design_system.R
 import medyo.com.core.design_system.component.tooltip.MedyoTooltip
 import medyo.com.core.design_system.theme.LocalDimensions
 import medyo.com.core.design_system.theme.LocalIconSize
 import medyo.com.core.design_system.theme.LocalTintTheme
 import medyo.com.core.design_system.theme.MedyoTheme
 import medyo.com.core.design_system.theme.icon.MedyoIcons
+import medyo.com.core.design_system.theme.shapes.LocalAppShapes
+import medyo.com.core.design_system.utils.getMedicineIcon
+import medyo.com.core.utils.constants.MedicineType
 
 @Composable
 fun MedicineCardItem(
@@ -129,7 +134,7 @@ private fun MedicineIcon(
         Icon(
             painter = painterResource(id = iconRes),
             contentDescription = "$name Icon",
-            modifier = Modifier.size(LocalIconSize.current.medium),
+            modifier = Modifier.matchParentSize().padding(2.dp),
             tint = Color.Unspecified
         )
     }
@@ -168,30 +173,92 @@ private fun MedicineInfo(
 private fun MedicineCardItemPreview() {
     MedyoTheme {
         Column(
-            modifier = Modifier.padding(24.dp),
+            modifier = Modifier
+                .safeDrawingPadding()
+                .padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp) // Generous spacing between cards
         ) {
-            // Amoxicillin Card
-            MedicineCardItem(
-                name = "Amoxicillin 500mg",
-                dosage = "500mg",
-                iconRes = android.R.drawable.ic_menu_camera,
-                iconBackgroundColor = Color(0xFF00ACC1),
-                cardGradientStartColor = Color(0xFF4DD0E1),
-                shadowColor = Color(0xFF00ACC1), // Cyan shadow glow
-                onClick = { /* Handle Click */ }
-            )
+          sampleMedicineList.forEach { medicine ->
+              MedicineCardItem(
 
-            // Lipitor Card
-            MedicineCardItem(
-                name = "Lipitor 10mg",
-                dosage = "10mg",
-                iconRes = android.R.drawable.ic_menu_camera,
-                iconBackgroundColor = Color(0xFFFF9800),
-                cardGradientStartColor = Color(0xFFFFB74D),
-                shadowColor = Color(0xFFFF9800), // Orange shadow glow
-                onClick = { /* Handle Click */ }
-            )
+                  name = medicine.name,
+                  dosage = medicine.dosage,
+                  iconRes = medicine.iconRes,
+                  iconBackgroundColor = medicine.iconBackgroundColor,
+                  cardGradientStartColor = medicine.cardGradientStartColor,
+                  shadowColor = medicine.shadowColor,
+                  onClick = {},
+              )
+          }
         }
     }
 }
+
+data class MedicineCardItemData(
+    val id: Int, // Important for LazyColumn keys
+    val name: String,
+    val dosage: String,
+    val iconRes: Int,
+    val iconBackgroundColor: Color,
+    val cardGradientStartColor: Color,
+    val shadowColor: Color
+)
+
+val sampleMedicineList = listOf(
+    MedicineCardItemData(
+        id = 1,
+        name = "Amoxicillin 500mg",
+        dosage = "500mg",
+        iconRes = android.R.drawable.ic_menu_camera,
+        iconBackgroundColor = Color(0xFF00ACC1),
+        cardGradientStartColor = Color(0xFF4DD0E1),
+        shadowColor = Color(0xFF00ACC1)
+    ),
+    MedicineCardItemData(
+        id = 2,
+        name = "Lipitor 10mg",
+        dosage = "10mg",
+        iconRes = android.R.drawable.ic_menu_camera,
+        iconBackgroundColor = Color(0xFFFF9800),
+        cardGradientStartColor = Color(0xFFFFB74D),
+        shadowColor = Color(0xFFFF9800)
+    ),
+    MedicineCardItemData(
+        id = 3,
+        name = "Lipitor 10mg", // Note: Same name but different ID and Icon
+        dosage = "10mg",
+        iconRes = getMedicineIcon(MedicineType.INJECTION),
+        iconBackgroundColor = Color.White, // Using hardcoded or MaterialTheme colors
+        cardGradientStartColor = Color.White,
+        shadowColor = Color.Black
+    ),
+    MedicineCardItemData(
+        id = 4,
+        name = "Amoxicillin 500mg",
+        dosage = "500mg",
+        iconRes = android.R.drawable.ic_menu_camera,
+        iconBackgroundColor = Color(0xFF00ACC1),
+        cardGradientStartColor = Color(0xFF4DD0E1),
+        shadowColor = Color(0xFF00ACC1)
+    ),
+    MedicineCardItemData(
+        id = 5,
+        name = "Lipitor 10mg",
+        dosage = "10mg",
+        iconRes = android.R.drawable.ic_menu_camera,
+        iconBackgroundColor = Color(0xFFFF9800),
+        cardGradientStartColor = Color(0xFFFFB74D),
+        shadowColor = Color(0xFFFF9800)
+    ),
+    MedicineCardItemData(
+        id = 6,
+        name = "Lipitor 10mg", // Note: Same name but different ID and Icon
+        dosage = "10mg",
+        iconRes = getMedicineIcon(MedicineType.INJECTION),
+        iconBackgroundColor = Color.White, // Using hardcoded or MaterialTheme colors
+        cardGradientStartColor = Color.White,
+        shadowColor = Color.Black
+    )
+
+
+)

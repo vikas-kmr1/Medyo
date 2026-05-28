@@ -8,14 +8,11 @@ import com.google.firebase.ai.type.content
 import com.google.firebase.ai.type.generationConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import medyo.com.core.utils.constants.MedicineType
 import timber.log.Timber
 
 const val MODEL_NAME = "gemini-3.1-pro-preview"
 
-
-enum class MedicineType {
-    CAPSULE, TABLET, DROPS, INHALER, INJECTION, PATCH, SUSPENSION, SYRUP, VIAL, OTHER
-}
 
 class GeminiAiDataSource {
     private val config = generationConfig {

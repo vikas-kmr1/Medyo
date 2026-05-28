@@ -67,10 +67,10 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
-import com.yuma.franchise.ui.theme.shapes.LocalAppShapes
 import kotlinx.coroutines.delay
 import medyo.com.core.design_system.theme.LocalDimensions
 import medyo.com.core.design_system.theme.icon.MedyoIcons
+import medyo.com.core.design_system.theme.shapes.LocalAppShapes
 import java.util.UUID
 
 

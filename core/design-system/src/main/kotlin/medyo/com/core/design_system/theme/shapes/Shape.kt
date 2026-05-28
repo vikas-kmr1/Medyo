@@ -1,4 +1,4 @@
-package com.yuma.franchise.ui.theme.shapes
+package medyo.com.core.design_system.theme.shapes
 
 
 import androidx.compose.foundation.shape.CornerBasedShape

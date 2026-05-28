@@ -9,9 +9,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.yuma.franchise.ui.theme.shapes.LocalAppShapes
-import com.yuma.franchise.ui.theme.shapes.MedyoShapes
-import com.yuma.franchise.ui.theme.shapes.appShapes
+import medyo.com.core.design_system.theme.shapes.LocalAppShapes
+import medyo.com.core.design_system.theme.shapes.MedyoShapes
+import medyo.com.core.design_system.theme.shapes.appShapes
 
 //private val DarkColorScheme = darkColorScheme(
 //    primary = NeonCyan,
