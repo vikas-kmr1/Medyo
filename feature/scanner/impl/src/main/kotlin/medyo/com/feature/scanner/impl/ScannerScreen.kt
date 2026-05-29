@@ -1,6 +1,7 @@
 package medyo.com.feature.scanner.impl
 
 import android.Manifest
+import android.app.Activity
 import android.graphics.Bitmap
 import androidx.camera.compose.CameraXViewfinder
 import androidx.camera.viewfinder.compose.MutableCoordinateTransformer
@@ -40,6 +41,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,9 +58,13 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -87,6 +93,33 @@ internal fun ScannerScreen() {
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 internal fun CameraPreviewScreen(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    val view = LocalView.current
+
+    // Bind system bar visibility lifecycle to this Composable screen
+    DisposableEffect(context, view) {
+        val window = (context as? Activity)?.window
+        if (window != null) {
+            val insetsController = WindowCompat.getInsetsController(window, view)
+            
+            // Allow transient system bars to overlay temporarily when user swipes
+            insetsController.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            
+            // Fully hide both status and navigation bars for scanner focus
+            insetsController.hide(WindowInsetsCompat.Type.systemBars())
+        }
+
+        onDispose {
+            // Restore system bars immediately when exiting the scanner screen
+            val window = (context as? Activity)?.window
+            if (window != null) {
+                val insetsController = WindowCompat.getInsetsController(window, view)
+                insetsController.show(WindowInsetsCompat.Type.systemBars())
+            }
+        }
+    }
+
     val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
     if (cameraPermissionState.status.isGranted) {
         CameraPreviewContent(modifier = modifier)
