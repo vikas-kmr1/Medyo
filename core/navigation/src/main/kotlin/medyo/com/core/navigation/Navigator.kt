@@ -19,44 +19,104 @@ package medyo.com.core.navigation
 import androidx.navigation3.runtime.NavKey
 
 /**
- * Handles navigation events (forward and back) by updating the navigation state.
+ * ======================================================================================
+ * CONCEPTUAL OVERVIEW & PSEUDO-ALGORITHMS: HOW ROUTING & BACK NAVIGATION ARE HANDLED
+ * ======================================================================================
  *
- * @param state - The navigation state that will be updated in response to navigation events.
+ * The [Navigator] class acts as the transactional engine for routing. It intercepts 
+ * request intents and manipulates the [NavigationState] backstacks directly.
+ *
+ * --------------------------------------------------------------------------------------
+ * 1. METHOD: navigate(key)
+ * --------------------------------------------------------------------------------------
+ * Conceptual Pseudo-Code Flow:
+ *
+ * IF (key is the currently selected tab) {
+ *     -> Action: Double-tap on active tab!
+ *     -> Execute: Clear all nested detail screens to return to tab root. (e.g. Scanner -> BioScan)
+ * } ELSE IF (key is a top-level tab) {
+ *     -> Action: Switch bottom tabs!
+ *     -> Execute: Adjust topLevelStack to bring the requested tab to the front.
+ * } ELSE {
+ *     -> Action: Deep navigation! (e.g. opening Scanner screen)
+ *     -> Execute: Push key onto current active tab's sub-stack.
+ * }
+ *
+ * --------------------------------------------------------------------------------------
+ * 2. METHOD: goBack()
+ * --------------------------------------------------------------------------------------
+ * Conceptual Pseudo-Code Flow:
+ *
+ * IF (active screen is the root start destination: BioScan) {
+ *     -> Action: User pressing back on start screen!
+ *     -> Execute: Do nothing (let system handle exit / minimize).
+ * } ELSE IF (active screen is a tab root, e.g., Settings) {
+ *     -> Action: User pressing back on a top-level tab!
+ *     -> Execute: Pop the tab from topLevelStack to return to the previous tab (e.g. BioScan).
+ * } ELSE {
+ *     -> Action: User pressing back from a detail screen! (e.g. Scanner)
+ *     -> Execute: Pop the screen from the current sub-stack to reveal the screen below it.
+ * }
+ * ======================================================================================
+ */
+
+/**
+ * Handles navigation events (forward and back) by updating the reactive navigation state.
+ *
+ * @param state The navigation state that will be updated in response to navigation events.
  */
 class Navigator(val state: NavigationState) {
 
     /**
-     * Navigate to a navigation key
+     * Navigates to a specific destination key.
+     * Evaluates the destination to decide if it is a tab switch, sub-stack reset, or nested push.
      *
-     * @param key - the navigation key to navigate to.
+     * @param key The destination [NavKey] to navigate to.
      */
     fun navigate(key: NavKey) {
         when (key) {
+            // Case A: The user tapped the already active tab -> clear sub-stack back to tab root
             state.currentTopLevelKey -> clearSubStack()
+            
+            // Case B: The user tapped a different top-level tab -> perform tab switch
             in state.topLevelKeys -> goToTopLevel(key)
+            
+            // Case C: The user opened a detail/nested screen -> push onto current sub-stack
             else -> goToKey(key)
         }
     }
 
     /**
-     * Go back to the previous navigation key.
+     * Pops the current active screen or tab from the backstack.
+     * Reverts to the previous screen, respecting the multi-stack tab hierarchy.
      */
     fun goBack() {
         when (state.currentKey) {
+            // Case A: At the start key root -> cannot go back further (exit condition)
             state.startKey -> {
                 // Exit app or let system handle it
             }
+            
+            // Case B: At a tab root (e.g. Settings) -> return to previous active tab
             state.currentTopLevelKey -> {
-                // We're at the base of the current sub stack, go back to the previous top level
-                // stack.
+                // Pop the active tab from the topLevelStack to bring previous tab to front
                 state.topLevelStack.removeLastOrNull()
             }
-            else -> state.currentSubStack.removeLastOrNull()
+            
+            // Case C: Deep detail screen (e.g. Scanner) -> pop back to previous screen (BioScan)
+            else -> {
+                state.currentSubStack.removeLastOrNull()
+            }
         }
     }
 
     /**
-     * Go to a non top level key.
+     * Navigates to a nested/detail screen within the active tab.
+     *
+     * STEP-BY-STEP ALGORITHM:
+     * 1. Get current tab's sub-stack.
+     * 2. If the destination screen already exists in the stack, remove it first (avoids duplicate cycles).
+     * 3. Add the screen to the end of the stack, making it the active screen.
      */
     private fun goToKey(key: NavKey) {
         state.currentSubStack.apply {
@@ -67,7 +127,13 @@ class Navigator(val state: NavigationState) {
     }
 
     /**
-     * Go to a top level stack.
+     * Switches the active bottom navigation tab.
+     *
+     * STEP-BY-STEP ALGORITHM:
+     * 1. Check if the target tab is the default `startKey` (e.g. BioScan).
+     * 2. If yes: Clear the entire topLevelStack so it's added as the only root key.
+     * 3. If no: Remove any existing instance of the key in `topLevelStack` to avoid cycles.
+     * 4. Add the tab to the end of the `topLevelStack` to display it.
      */
     private fun goToTopLevel(key: NavKey) {
         state.topLevelStack.apply {
@@ -83,7 +149,13 @@ class Navigator(val state: NavigationState) {
     }
 
     /**
-     * Clearing all but the root key in the current sub stack.
+     * Clears all stacked screens on the active tab, returning the user to the tab root.
+     *
+     * STEP-BY-STEP ALGORITHM:
+     * 1. Get current active sub-stack.
+     * 2. If stack has more than 1 item (e.g. [BioScan, Scanner]):
+     *    - Slice list from index 1 (just after the root tab) to the end.
+     *    - Clear that slice, popping all detail screens off the active stack.
      */
     private fun clearSubStack() {
         state.currentSubStack.run {
