@@ -16,6 +16,13 @@
 
 package medyo.com.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -47,35 +54,55 @@ fun MedyoApp(
 ) {
     val navigator = remember(appState.navigationState) { Navigator(appState.navigationState) }
 
+    // 1. RESOLVE SELECTED TAB: Home = 0, Settings = 1, BioScan = -1
     val selectedTab = when (appState.navigationState.currentTopLevelKey) {
         HomeNavKey -> 0
         SettingsNavKey -> 1
         else -> -1
     }
 
+    // 2. VISIBILITY LOGIC: Show bottom bar ONLY when current active screen is a top-level tab root
+    val showBottomBar = appState.navigationState.currentKey in appState.navigationState.topLevelKeys
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        contentWindowInsets = androidx.compose.foundation.layout.WindowInsets(0, 0, 0, 0),
         bottomBar = {
-            CustomBottomNavigation(
-                modifier = Modifier.padding(WindowInsets.navigationBars.asPaddingValues()),
-                selectedTab = selectedTab,
-                onTabSelected = { tabIndex ->
-                    val targetKey = when (tabIndex) {
-                        0 -> HomeNavKey
-                        1 -> SettingsNavKey
-                        else -> BioScanNavKey
+            // 3. ANIMATED TRANSITION: Smoothly slide the bottom bar in/out
+            AnimatedVisibility(
+                visible = showBottomBar,
+                enter = slideInVertically(
+                    initialOffsetY = { it },
+                    animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
+                ) + fadeIn(),
+                exit = slideOutVertically(
+                    targetOffsetY = { it },
+                    animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
+                ) + fadeOut()
+            ) {
+                CustomBottomNavigation(
+                    modifier = Modifier.padding(WindowInsets.navigationBars.asPaddingValues()),
+                    selectedTab = selectedTab,
+                    onTabSelected = { tabIndex ->
+                        val targetKey = when (tabIndex) {
+                            0 -> HomeNavKey
+                            1 -> SettingsNavKey
+                            else -> BioScanNavKey
+                        }
+                        navigator.navigate(targetKey)
+                    },
+                    onCentralButtonClick = {
+                        navigator.navigate(BioScanNavKey)
                     }
-                    navigator.navigate(targetKey)
-                },
-                onCentralButtonClick = {
-                    navigator.navigate(BioScanNavKey)
-                }
-            )
+                )
+            }
         }
     ) { padding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                // 4. REACTIVE HEIGHT ADAPTATION: The Scaffold padding dynamically updates to 0.dp
+                //    when bottomBar is hidden, smoothly expanding content to fill the screen!
                 .padding(bottom = padding.calculateBottomPadding())
         ) {
             val entryProvider = entryProvider {
