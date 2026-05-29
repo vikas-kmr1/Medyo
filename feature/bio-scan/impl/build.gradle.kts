@@ -43,6 +43,9 @@ android {
 dependencies {
     implementation(projects.core.designSystem)
     implementation(projects.core.ui)
+    implementation(projects.core.navigation)
+    implementation(projects.feature.bioScan.api)
+    implementation(projects.feature.scanner.api)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.hilt.android)

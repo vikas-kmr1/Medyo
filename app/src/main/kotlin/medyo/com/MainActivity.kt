@@ -23,7 +23,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import medyo.com.core.ai_logic.GeminiAiDataSource
 import medyo.com.core.design_system.theme.MedyoTheme
-import medyo.com.feature.scanner.impl.CameraPreviewScreen
+import medyo.com.ui.MedyoApp
 
 
 @AndroidEntryPoint
@@ -36,8 +36,6 @@ class MainActivity : ComponentActivity() {
         } else {
             null
         }
-
-        val genAi = GeminiAiDataSource()
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
@@ -62,59 +60,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MedyoTheme {
-                var text  by remember { mutableStateOf("Hello, World!") }
-                val scope = rememberCoroutineScope()
-                CameraPreviewScreen(modifier = Modifier.fillMaxSize())
-//                Surface {
-//                    Scaffold(
-//                        modifier = Modifier
-//                            .fillMaxSize(),
-//                        topBar = {}
-//                    ) { innerPadding ->
-//                        LazyColumn(modifier = Modifier.padding(innerPadding),
-//                            verticalArrangement = Arrangement.spacedBy(10.dp)) {
-//                            item{
-//                                Column(
-//                                    modifier = Modifier.padding(16.dp),
-//                                    verticalArrangement = Arrangement.spacedBy(20.dp) // Generous spacing between cards
-//                                ) {
-//                                    // Amoxicillin Card
-//                                    MedicineCardItem(
-//                                        name = "azithromycin 250",
-//                                        dosage = "500mg",
-//                                        iconRes = android.R.drawable.ic_menu_camera,
-//                                        iconBackgroundColor = Color(0xFF00ACC1),
-//                                        cardGradientStartColor = Color(0xFF4DD0E1),
-//                                        shadowColor = Color(0xFF00ACC1), // Cyan shadow glow
-//                                        onClick = {
-//                                            scope.launch {
-//                                                text = genAi.generateContext("azithromycin 250")
-//                                            }
-//                                        }
-//                                    )
-//
-//                                    // Lipitor Card
-//                                    MedicineCardItem(
-//                                        name = "Lipitor 10mg",
-//                                        dosage = "10mg",
-//                                        iconRes = android.R.drawable.ic_menu_camera,
-//                                        iconBackgroundColor = Color(0xFFFF9800),
-//                                        cardGradientStartColor = Color(0xFFFFB74D),
-//                                        shadowColor = Color(0xFFFF9800), // Orange shadow glow
-//                                        onClick = {
-//                                        }
-//                                    )
-//
-//
-//                                    Text(text = text)
-//
-//                                }
-//                            }
-//
-//                        }
-//
-//                    }
-//                }
+                MedyoApp()
             }
         }
     }

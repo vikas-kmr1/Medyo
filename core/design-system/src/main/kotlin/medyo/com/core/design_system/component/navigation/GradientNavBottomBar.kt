@@ -51,12 +51,10 @@ import medyo.com.core.design_system.theme.MedyoTheme
 @Composable
 fun CustomBottomNavigation(
     modifier: Modifier = Modifier,
-    initialTab: Int = 0,
-    onTabSelected: (Int) -> Unit = {}
+    selectedTab: Int = 0,
+    onTabSelected: (Int) -> Unit = {},
+    onCentralButtonClick: () -> Unit = {}
 ) {
-    // 1. STATE MANAGEMENT: Track which tab is active (0 = Home, 1 = Settings)
-    var selectedTab by remember { mutableIntStateOf(initialTab) }
-
     // 2. COLORS: Matching the glowing wave design
     val inactiveColor = Color(0xFFCBD5E1) // Muted Slate Gray
     val activeHomeColor = Color(0xFF00ACC1) // Cyan (Left side of wave)
@@ -149,7 +147,6 @@ fun CustomBottomNavigation(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null
                     ) {
-                        selectedTab = 0
                         onTabSelected(0)
                     },
                 contentAlignment = Alignment.Center
@@ -170,7 +167,6 @@ fun CustomBottomNavigation(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null
                     ) {
-                        selectedTab = 1
                         onTabSelected(1)
                     },
                 contentAlignment = Alignment.Center
@@ -202,7 +198,7 @@ fun CustomBottomNavigation(
                     ),
                     shape = CircleShape
                 )
-                .clickable { /* Central action */ },
+                .clickable { onCentralButtonClick() },
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -230,7 +226,7 @@ fun CustomBottomNavigationPreview() {
         ) {
             CustomBottomNavigation(
                 modifier = Modifier.align(Alignment.BottomCenter),
-                initialTab = selectedTab.intValue,
+                selectedTab = selectedTab.intValue,
                 onTabSelected = { selectedTab.intValue = it }
             )
         }
