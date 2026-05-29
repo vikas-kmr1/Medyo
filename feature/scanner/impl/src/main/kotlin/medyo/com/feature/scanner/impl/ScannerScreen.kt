@@ -2,7 +2,6 @@ package medyo.com.feature.scanner.impl
 
 import android.Manifest
 import android.graphics.Bitmap
-import androidx.camera.camera2.interop.ExperimentalCamera2Interop
 import androidx.camera.compose.CameraXViewfinder
 import androidx.camera.viewfinder.compose.MutableCoordinateTransformer
 import androidx.compose.animation.AnimatedVisibility
@@ -39,6 +38,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -69,8 +69,10 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import kotlinx.coroutines.delay
 import medyo.com.core.design_system.theme.LocalDimensions
+import medyo.com.core.design_system.theme.MedyoTheme
 import medyo.com.core.design_system.theme.icon.MedyoIcons
 import medyo.com.core.design_system.theme.shapes.LocalAppShapes
+import medyo.com.core.design_system.utils.compose.CommonPreview
 import java.util.UUID
 
 
@@ -84,7 +86,7 @@ internal fun ScannerScreen() {
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun CameraPreviewScreen(modifier: Modifier = Modifier) {
+internal fun CameraPreviewScreen(modifier: Modifier = Modifier) {
     val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
     if (cameraPermissionState.status.isGranted) {
         CameraPreviewContent(modifier = modifier)
@@ -118,7 +120,6 @@ fun CameraPreviewScreen(modifier: Modifier = Modifier) {
     }
 }
 
-@androidx.annotation.OptIn(ExperimentalCamera2Interop::class)
 @Composable
 private fun CameraPreviewContent(
     viewModel: ScannerViewModel = hiltViewModel(),
@@ -216,6 +217,19 @@ private fun CameraPreviewContent(
     }
 }
 
+@Composable
+private fun CameraTopAppBar() {
+
+
+}
+
+@CommonPreview
+@Composable
+private fun PreviewCameraTopAppBar() {
+    MedyoTheme {
+        CameraTopAppBar()
+    }
+}
 
 @Composable
 private fun CameraBottomControls(
@@ -301,3 +315,16 @@ private fun CameraBottomControls(
     }
 }
 
+
+@CommonPreview
+@Composable
+private fun PreviewCameraBottomControls() {
+    MedyoTheme {
+        CameraBottomControls(
+            capturedImages = emptyList(),
+            onCapture = {},
+            onRemove = {},
+            onProcess = {}
+        )
+    }
+}

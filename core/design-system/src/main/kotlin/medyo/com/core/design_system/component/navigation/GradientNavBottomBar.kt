@@ -76,11 +76,11 @@ fun CustomBottomNavigation(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(100.dp)
-            .background(Color.White)
+            .height(95.dp)
+            .background(Color.Transparent)
     ) {
         // Glowing Wavy Divider (Unchanged)
-        Canvas(modifier = Modifier.fillMaxSize()) {
+        Canvas(modifier = Modifier.fillMaxSize().background(Color.Transparent)) {
             val width = size.width
             val height = size.height
 

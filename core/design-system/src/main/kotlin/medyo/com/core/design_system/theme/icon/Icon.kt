@@ -21,6 +21,8 @@ import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Upcoming
 import androidx.compose.material.icons.rounded.ViewDay
+import androidx.compose.material.icons.sharp.FlashOff
+import androidx.compose.material.icons.sharp.FlashOn
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 
@@ -33,6 +35,8 @@ data class MedyoIcon(
 object MedyoIcons {
     val Add = MedyoIcon(icon = Icons.Rounded.Add)
     val ArrowBack = MedyoIcon(Icons.AutoMirrored.Rounded.ArrowBack)
+    val FlashOn = MedyoIcon(Icons.Sharp.FlashOn)
+    val FlashOff = MedyoIcon(Icons.Sharp.FlashOff)
     val seemore = MedyoIcon(Icons.AutoMirrored.Filled.ArrowForwardIos, contentDescription = "See More")
     val Bookmark = MedyoIcon(Icons.Rounded.Bookmark)
     val BookmarkBorder = MedyoIcon(Icons.Rounded.BookmarkBorder)

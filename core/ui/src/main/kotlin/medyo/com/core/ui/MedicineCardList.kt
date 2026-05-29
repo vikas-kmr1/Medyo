@@ -17,7 +17,6 @@ fun LazyListScope.MedicineCardList(
 ) { medicineCardItem ->
     MedicineCardItem(
         modifier = Modifier.padding(
-            horizontal = LocalDimensions.current.dimen16dp,
             vertical = LocalDimensions.current.dimen8dp
         ),
         name = medicineCardItem.name,

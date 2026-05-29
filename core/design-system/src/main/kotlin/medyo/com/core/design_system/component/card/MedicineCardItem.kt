@@ -258,6 +258,34 @@ val sampleMedicineList = listOf(
         iconBackgroundColor = Color.White, // Using hardcoded or MaterialTheme colors
         cardGradientStartColor = Color.White,
         shadowColor = Color.Black
+    ),
+
+    MedicineCardItemData(
+        id = 7,
+        name = "Amoxicillin 500mg",
+        dosage = "500mg",
+        iconRes = android.R.drawable.ic_menu_camera,
+        iconBackgroundColor = Color(0xFF00ACC1),
+        cardGradientStartColor = Color(0xFF4DD0E1),
+        shadowColor = Color(0xFF00ACC1)
+    ),
+    MedicineCardItemData(
+        id = 8,
+        name = "Lipitor 10mg",
+        dosage = "10mg",
+        iconRes = android.R.drawable.ic_menu_camera,
+        iconBackgroundColor = Color(0xFFFF9800),
+        cardGradientStartColor = Color(0xFFFFB74D),
+        shadowColor = Color(0xFFFF9800)
+    ),
+    MedicineCardItemData(
+        id = 9,
+        name = "Lipitor 10mg", // Note: Same name but different ID and Icon
+        dosage = "10mg",
+        iconRes = getMedicineIcon(MedicineType.INJECTION),
+        iconBackgroundColor = Color.White, // Using hardcoded or MaterialTheme colors
+        cardGradientStartColor = Color.White,
+        shadowColor = Color.Black
     )
 
 
