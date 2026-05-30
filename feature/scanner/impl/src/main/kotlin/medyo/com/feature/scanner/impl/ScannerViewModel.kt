@@ -22,15 +22,25 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import medyo.com.core.domain.GetAiGenerativeResultUseCase
 import java.util.concurrent.Executors
+import javax.inject.Inject
 
 private val MAX_CAPTURE_ATTEMPTS = 5
 
-class ScannerViewModel : ViewModel() {
+
+@HiltViewModel
+class ScannerViewModel @Inject constructor(
+    private val getGenerativeResultUseCase: GetAiGenerativeResultUseCase
+) : ViewModel() {
     // Used to set up a link between the Camera and your UI.
     private val _surfaceRequest = MutableStateFlow<SurfaceRequest?>(null)
     val surfaceRequest: StateFlow<SurfaceRequest?> = _surfaceRequest
@@ -60,12 +70,13 @@ class ScannerViewModel : ViewModel() {
 
     suspend fun bindToCamera(appContext: Context, lifecycleOwner: LifecycleOwner) {
         val processCameraProvider = ProcessCameraProvider.awaitInstance(appContext)
-        processCameraProvider.bindToLifecycle(
+        val camera = processCameraProvider.bindToLifecycle(
             lifecycleOwner,
             CameraSelector.DEFAULT_BACK_CAMERA,
             cameraPreviewUseCase,
             imageCaptureUseCase
         )
+        cameraControl = camera.cameraControl
 
         // Cancellation signals we're done with the camera
         try {
@@ -73,6 +84,10 @@ class ScannerViewModel : ViewModel() {
         } finally {
             processCameraProvider.unbindAll()
         }
+    }
+
+    fun toggleTorch(enabled: Boolean) {
+        cameraControl?.enableTorch(enabled)
     }
 
     fun captureImage(context: Context) {
@@ -110,6 +125,12 @@ class ScannerViewModel : ViewModel() {
         if (point != null) {
             val meteringAction = FocusMeteringAction.Builder(point).build()
             cameraControl?.startFocusAndMetering(meteringAction)
+        }
+    }
+
+    fun onProceed(){
+        viewModelScope.launch {
+            getGenerativeResultUseCase.invoke(capturedImages)
         }
     }
 

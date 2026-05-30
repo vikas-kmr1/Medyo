@@ -6,8 +6,17 @@ import android.graphics.Bitmap
 import androidx.camera.compose.CameraXViewfinder
 import androidx.camera.viewfinder.compose.MutableCoordinateTransformer
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -15,6 +24,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -27,19 +37,16 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -53,8 +60,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.geometry.takeOrElse
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -81,18 +90,12 @@ import medyo.com.core.design_system.theme.shapes.LocalAppShapes
 import medyo.com.core.design_system.utils.compose.CommonPreview
 import java.util.UUID
 
-
-@Composable
-internal fun ScannerScreen() {
-    Column(
-        content = {}
-    )
-}
-
-
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-internal fun CameraPreviewScreen(modifier: Modifier = Modifier) {
+internal fun CameraPreviewScreen(
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val context = LocalContext.current
     val view = LocalView.current
 
@@ -101,11 +104,11 @@ internal fun CameraPreviewScreen(modifier: Modifier = Modifier) {
         val window = (context as? Activity)?.window
         if (window != null) {
             val insetsController = WindowCompat.getInsetsController(window, view)
-            
+
             // Allow transient system bars to overlay temporarily when user swipes
             insetsController.systemBarsBehavior =
                 WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            
+
             // Fully hide both status and navigation bars for scanner focus
             insetsController.hide(WindowInsetsCompat.Type.systemBars())
         }
@@ -122,7 +125,10 @@ internal fun CameraPreviewScreen(modifier: Modifier = Modifier) {
 
     val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
     if (cameraPermissionState.status.isGranted) {
-        CameraPreviewContent(modifier = modifier)
+        CameraPreviewContent(
+            onBackClick = onBackClick,
+            modifier = modifier
+        )
     } else {
         Column(
             modifier = modifier
@@ -132,15 +138,10 @@ internal fun CameraPreviewScreen(modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val textToShow = if (cameraPermissionState.status.shouldShowRationale) {
-                // If the user has denied the permission but the rationale can be shown,
-                // then gently explain why the app requires this permission
                 "Whoops! Looks like we need your camera to work our magic!" +
                         "Don't worry, we just wanna see your pretty face (and maybe some cats).  " +
                         "Grant us permission and let's get this party started!"
             } else {
-                // If it's the first time the user lands on this feature, or the user
-                // doesn't want to be asked again for this permission, explain that the
-                // permission is required
                 "Hi there! We need your camera to work our magic! ✨\n" +
                         "Grant us permission and let's get this party started! \uD83C\uDF89"
             }
@@ -155,6 +156,7 @@ internal fun CameraPreviewScreen(modifier: Modifier = Modifier) {
 
 @Composable
 private fun CameraPreviewContent(
+    onBackClick: () -> Unit,
     viewModel: ScannerViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
@@ -169,24 +171,24 @@ private fun CameraPreviewContent(
     var autofocusRequest by remember { mutableStateOf(UUID.randomUUID() to Offset.Unspecified) }
 
     val autofocusRequestId = autofocusRequest.first
-    // Show the autofocus indicator if the offset is specified
     val showAutofocusIndicator = autofocusRequest.second.isSpecified
-    // Cache the initial coords for each autofocus request
     val autofocusCoords = remember(autofocusRequestId) { autofocusRequest.second }
 
-    // Queue hiding the request for each unique autofocus tap
     if (showAutofocusIndicator) {
         LaunchedEffect(autofocusRequestId) {
             delay(1000)
-            // Clear the offset to finish the request and hide the indicator
             autofocusRequest = autofocusRequestId to Offset.Unspecified
         }
     }
 
+    var torchEnabled by remember { mutableStateOf(false) }
 
     surfaceRequest?.let { request ->
         val coordinateTransformer = remember { MutableCoordinateTransformer() }
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black)) {
+            // 1. Camera viewfinder
             CameraXViewfinder(
                 surfaceRequest = request,
                 coordinateTransformer = coordinateTransformer,
@@ -200,6 +202,67 @@ private fun CameraPreviewContent(
                 }
             )
 
+
+            // 4. Instructional Badge
+            val infiniteBadgeTransition = rememberInfiniteTransition(label = "badgePulse")
+            val badgeAlpha by infiniteBadgeTransition.animateFloat(
+                initialValue = 0.5f,
+                targetValue = 1.0f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(durationMillis = 1500, easing = FastOutSlowInEasing),
+                    repeatMode = RepeatMode.Reverse
+                ),
+                label = "badgeAlpha"
+            )
+
+            Box(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .offset(y = 110.dp)
+                    .graphicsLayer(alpha = badgeAlpha)
+                    .background(Color.Black.copy(alpha = 0.7f), CircleShape)
+                    .border(1.dp, Color.White.copy(alpha = 0.15f), CircleShape)
+                    .padding(horizontal = 20.dp, vertical = 8.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(6.dp)
+                            .background(Color(0xFF00F2FE), CircleShape)
+                    )
+                    Text(
+                        text = "ALIGN MEDICATION WITHIN FRAME",
+                        color = Color.White,
+                        style = MaterialTheme.typography.labelMedium,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+
+            // 5. Immersive Top App Bar
+            CameraTopAppBar(
+                onBackClick = onBackClick,
+                torchEnabled = torchEnabled,
+                onTorchToggle = {
+                    torchEnabled = !torchEnabled
+                    viewModel.toggleTorch(torchEnabled)
+                },
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
+
+            // 6. Bottom Controls Panel
+            CameraBottomControls(
+                capturedImages = capturedImages,
+                onCapture = { viewModel.captureImage(context) },
+                onRemove = viewModel::onRemoveImage,
+                onProcess = viewModel::onProceed,
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
+
+            // 7. Autofocus Tap Indicator
             AnimatedVisibility(
                 visible = showAutofocusIndicator,
                 enter = fadeIn(),
@@ -208,59 +271,81 @@ private fun CameraPreviewContent(
                     .offset { autofocusCoords.takeOrElse { Offset.Zero }.round() }
                     .offset((-24).dp, (-24).dp)
             ) {
+                val focusScale = remember(autofocusRequestId) { Animatable(1.5f) }
+                LaunchedEffect(autofocusRequestId) {
+                    focusScale.animateTo(
+                        targetValue = 1.0f,
+                        animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)
+                    )
+                }
                 Spacer(
                     Modifier
+                        .graphicsLayer(scaleX = focusScale.value, scaleY = focusScale.value)
                         .border(2.dp, Color.White, CircleShape)
                         .size(48.dp)
                 )
             }
         }
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding(),
-                )
-        ) {
-            // Overlay elements
-            Text(
-                "${capturedImages.size}/5 Captured",
-                color = Color.White,
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .background(
-                        Color.Black.copy(alpha = 0.6f),
-                        shape = MaterialTheme.shapes.small
-                    )
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-            )
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-            ) {
-                CameraBottomControls(
-                    capturedImages = capturedImages,
-                    onCapture = { viewModel.captureImage(context) },
-                    onRemove = viewModel::onRemoveImage,
-                    onProcess = {}
-                )
-            }
-        }
-
     }
 }
 
 @Composable
-private fun CameraTopAppBar() {
+private fun CameraTopAppBar(
+    onBackClick: () -> Unit,
+    torchEnabled: Boolean,
+    onTorchToggle: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(Color.Black.copy(alpha = 0.6f))
+            .padding(
+                vertical = WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + 32.dp,
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        IconButton(
+            onClick = onBackClick,
+            modifier = Modifier) {
+            Icon(
+                imageVector = MedyoIcons.ArrowBack.icon,
+                contentDescription = "Back",
+                tint = Color.White,
+                modifier = Modifier.size(20.dp)
+            )
+        }
 
 
-}
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(6.dp)
+                    .background(Color(0xFF00FF87), CircleShape)
+            )
+            Text(
+                text = "LIVE CAMERA",
+                color = Color.White.copy(alpha = 0.6f),
+                style = MaterialTheme.typography.labelSmall
+            )
+        }
 
-@CommonPreview
-@Composable
-private fun PreviewCameraTopAppBar() {
-    MedyoTheme {
-        CameraTopAppBar()
+
+        IconButton(
+            onClick = onTorchToggle,
+            modifier = Modifier
+        ) {
+            Icon(
+                imageVector = if (torchEnabled) MedyoIcons.FlashOn.icon else MedyoIcons.FlashOff.icon,
+                contentDescription = "Toggle Torch",
+                tint = Color.White,
+                modifier = Modifier.size(20.dp)
+            )
+        }
     }
 }
 
@@ -270,47 +355,100 @@ private fun CameraBottomControls(
     onCapture: () -> Unit,
     onRemove: (Int) -> Unit,
     onProcess: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val dimensions = LocalDimensions.current
     val shape = LocalAppShapes.current
 
-
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .background(Color.Black.copy(alpha = 0.6f))
             .padding(
-                vertical = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
-                horizontal = dimensions.dimen16dp
+                bottom = WindowInsets.navigationBars.asPaddingValues()
+                    .calculateBottomPadding() + 24.dp,
+                top = 24.dp,
+                start = 20.dp,
+                end = 20.dp
             ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        if (capturedImages.isNotEmpty()) {
+        Box(
+            modifier = Modifier
+                .background(Color.White.copy(alpha = 0.12f), CircleShape)
+                .border(1.dp, Color.White.copy(alpha = 0.1f), CircleShape)
+                .padding(horizontal = 14.dp, vertical = 6.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                val dotTransition = rememberInfiniteTransition(label = "pulseDot")
+                val dotAlpha by dotTransition.animateFloat(
+                    initialValue = 0.4f,
+                    targetValue = 1f,
+                    animationSpec = infiniteRepeatable(
+                        animation = tween(durationMillis = 1000, easing = FastOutSlowInEasing),
+                        repeatMode = RepeatMode.Reverse
+                    ),
+                    label = "dotAlpha"
+                )
+                Box(
+                    modifier = Modifier
+                        .size(6.dp)
+                        .graphicsLayer(alpha = dotAlpha)
+                        .background(
+                            if (capturedImages.size >= 5) Color(0xFFFF4B4B) else Color(0xFF00FF87),
+                            CircleShape
+                        )
+                )
+                Text(
+                    text = "${capturedImages.size} / 5 CAPTURED",
+                    color = Color.White,
+                    style = MaterialTheme.typography.labelMedium
+                )
+            }
+        }
+
+        AnimatedVisibility(
+            visible = capturedImages.isNotEmpty(),
+            enter = fadeIn() + expandVertically(),
+            exit = fadeOut() + shrinkVertically()
+        ) {
             LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(dimensions.dimen8dp),
-                modifier = Modifier.padding(bottom = dimensions.dimen8dp)
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(horizontal = 8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(84.dp)
             ) {
                 itemsIndexed(capturedImages) { index, bitmap ->
-                    Box {
+                    Box(
+                        modifier = Modifier
+                            .size(76.dp)
+                            .clip(shape.curvedRect)
+                            .border(1.5.dp, Color.White.copy(alpha = 0.25f), shape.curvedRect)
+                    ) {
                         Image(
                             bitmap = bitmap.asImageBitmap(),
                             contentDescription = "Captured Image",
                             contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .size(dimensions.dimen70dp)
-                                .clip(shape.curvedRect)
+                            modifier = Modifier.fillMaxSize()
                         )
                         IconButton(
                             onClick = { onRemove(index) },
                             modifier = Modifier
                                 .align(Alignment.TopEnd)
-                                .size(dimensions.dimen24dp)
-                                .background(Color.Black.copy(alpha = 0.5f), CircleShape)
+                                .padding(4.dp)
+                                .size(20.dp)
+                                .background(Color.Black.copy(alpha = 0.65f), CircleShape)
                         ) {
                             Icon(
-                                MedyoIcons.Close.icon,
-                                "Remove",
+                                imageVector = MedyoIcons.Close.icon,
+                                contentDescription = "Remove",
                                 tint = Color.White,
-                                modifier = Modifier.size(dimensions.dimen16dp)
+                                modifier = Modifier.size(12.dp)
                             )
                         }
                     }
@@ -320,34 +458,134 @@ private fun CameraBottomControls(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Button(
-                onClick = onCapture,
-                enabled = capturedImages.size < 5,
-                modifier = Modifier
-                    .weight(1f)
-                    .height(dimensions.dimen48dp)
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.CenterStart
             ) {
-                Text("Capture Photo")
+                if (capturedImages.isNotEmpty()) {
+                    IconButton(
+                        onClick = {
+                            for (i in capturedImages.indices.reversed()) {
+                                onRemove(i)
+                            }
+                        },
+                        modifier = Modifier
+                            .background(Color.White.copy(alpha = 0.08f), CircleShape)
+                            .border(1.dp, Color.White.copy(alpha = 0.06f), CircleShape)
+                            .size(48.dp)
+                    ) {
+                        Icon(
+                            imageVector = MedyoIcons.Close.icon,
+                            contentDescription = "Clear All",
+                            tint = Color.White.copy(alpha = 0.7f),
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                } else {
+                    Spacer(modifier = Modifier.size(48.dp))
+                }
             }
-            Spacer(modifier = Modifier.width(dimensions.dimen70dp))
-            FilledTonalButton(
-                onClick = onProcess,
-                enabled = capturedImages.isNotEmpty(),
-                modifier = Modifier
-                    .weight(1f)
-                    .height(dimensions.dimen48dp)
+
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.Center
             ) {
-                Icon(MedyoIcons.Check.icon, contentDescription = null)
-                Spacer(modifier = Modifier.width(dimensions.dimen8dp))
-                Text("Process Items")
+                val isFull = capturedImages.size >= 5
+
+                IconButton(
+                    onClick = onCapture,
+                    enabled = !isFull,
+                    modifier = Modifier.size(84.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Spacer(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .border(
+                                    width = 3.dp,
+                                    color = if (isFull) Color.White.copy(alpha = 0.3f) else Color(
+                                        0xFF00F2FE
+                                    ),
+                                    shape = CircleShape
+                                )
+                        )
+                        Spacer(
+                            modifier = Modifier
+                                .size(68.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    if (isFull) {
+                                        androidx.compose.ui.graphics.SolidColor(
+                                            Color.White.copy(
+                                                alpha = 0.2f
+                                            )
+                                        )
+                                    } else {
+                                        Brush.linearGradient(
+                                            colors = listOf(Color.White, Color(0xFFE2E8F0))
+                                        )
+                                    }
+                                )
+                        )
+                        if (isFull) {
+                            Icon(
+                                imageVector = MedyoIcons.Close.icon,
+                                contentDescription = "Camera Full",
+                                tint = Color.White.copy(alpha = 0.5f),
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
+                }
+            }
+
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                val isProcessable = capturedImages.isNotEmpty()
+
+                IconButton(
+                    onClick = onProcess,
+                    enabled = isProcessable,
+                    modifier = Modifier
+                        .background(
+                            if (isProcessable) Color(0xFF00F2FE) else Color.White.copy(alpha = 0.05f),
+                            CircleShape
+                        )
+                        .border(
+                            1.dp,
+                            if (isProcessable) Color.Transparent else Color.White.copy(alpha = 0.08f),
+                            CircleShape
+                        )
+                        .size(54.dp)
+                ) {
+                    Icon(
+                        imageVector = MedyoIcons.Check.icon,
+                        contentDescription = "Process Items",
+                        tint = if (isProcessable) Color.Black else Color.White.copy(alpha = 0.2f),
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
             }
         }
     }
 }
 
+@CommonPreview
+@Composable
+private fun PreviewCameraTopAppBar() {
+    MedyoTheme {
+        CameraTopAppBar(
+            onBackClick = {},
+            torchEnabled = false,
+            onTorchToggle = {}
+        )
+    }
+}
 
 @CommonPreview
 @Composable
