@@ -4,6 +4,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.ai.GenerativeModel
 import com.google.firebase.ai.ai
 import com.google.firebase.ai.type.GenerativeBackend
+import com.google.firebase.ai.type.JsonSchema
 import com.google.firebase.ai.type.Schema
 import com.google.firebase.ai.type.generationConfig
 import dagger.Module
@@ -24,34 +25,40 @@ internal object AiLogicModule {
     private val config = generationConfig {
         responseMimeType = "application/json"
         // Define the schema so the LLM knows exactly what keys to generate
-        responseSchema = Schema.obj(
+        responseJsonSchema = JsonSchema.obj(
             properties = mapOf(
-                "brand" to Schema.string(),
-                "salts" to Schema.string(),
-                "mfgDate" to Schema.string(
-                    description = "The date the medicine was manufactured. Must be in the format mm-YYYY i.e May-2026 or Jun 2026."
+                "brand" to JsonSchema.string(),
+                "salts" to JsonSchema.string(),
+                "mfgDate" to JsonSchema.long(
+                    description = "The date the medicine was manufactured. Must be in epoch type."
                 ),
-                "expDate" to Schema.string(
-                    description = "The date the medicine expires. Must be in the format mm-YYYY i.e May-2027 or Jun 2027."
+                "expDate" to JsonSchema.long(
+                    description = "The date the medicine expires. Must be in epoch type."
                 ),
-                "sideEffects" to Schema.array(items = Schema.string()),
-                "cures" to Schema.array(items = Schema.string()),
-                "precautions" to Schema.array(items = Schema.string()),
-                "instructions" to Schema.array(items = Schema.string()),
-                "category" to Schema.string(
+                "sideEffects" to JsonSchema.array(items = JsonSchema.string()),
+                "cures" to JsonSchema.array(items = JsonSchema.string()),
+                "precautions" to JsonSchema.array(items = JsonSchema.string()),
+                "instructions" to JsonSchema.array(items = JsonSchema.string()),
+                "category" to JsonSchema.string(
                     nullable = false,
                     // Passing the enum values here helps the model pick the correct one
                     description = "The type of medicine. Must be one of: ${MedicineType.entries.joinToString()}"
                 ),
+                "errorMessage" to JsonSchema.string(nullable = true, description = "Error message if any other item scanned except medicines."),
+                "statusCode" to JsonSchema.string(nullable = true, description = "Status code of the response. 200 for success, 400 for bad request, etc.")
             ),
         )
-        temperature = .1f // Low temperature for factual extraction, no creativity
+        temperature = .2f // Low temperature for factual extraction, no creativity
     }
 
     @Provides
     @Singleton
     fun provideFirebaseAiBackend(): GenerativeModel = Firebase.ai(
-        backend = GenerativeBackend.vertexAI(location = LOCATION,)
-    ).generativeModel(modelName = MODEL_NAME, generationConfig = config)
+        backend = GenerativeBackend.vertexAI(location = LOCATION)
+    ).generativeModel(
+        modelName = MODEL_NAME, generationConfig = config,
+        systemInstruction = com.google.firebase.ai.type.content {
+            text("ONLY GENERATE RESPONSES FOR MEDICINES ONLY, don't entertain any other item.")
+        })
 
 }

@@ -71,6 +71,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
+import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -185,9 +186,11 @@ private fun CameraPreviewContent(
 
     surfaceRequest?.let { request ->
         val coordinateTransformer = remember { MutableCoordinateTransformer() }
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black)
+        ) {
             // 1. Camera viewfinder
             CameraXViewfinder(
                 surfaceRequest = request,
@@ -308,7 +311,8 @@ private fun CameraTopAppBar(
     ) {
         IconButton(
             onClick = onBackClick,
-            modifier = Modifier) {
+            modifier = Modifier
+        ) {
             Icon(
                 imageVector = MedyoIcons.ArrowBack.icon,
                 contentDescription = "Back",
@@ -426,16 +430,24 @@ private fun CameraBottomControls(
                 itemsIndexed(capturedImages) { index, bitmap ->
                     Box(
                         modifier = Modifier
-                            .size(76.dp)
+                            .size(80.dp)
                             .clip(shape.curvedRect)
                             .border(1.5.dp, Color.White.copy(alpha = 0.25f), shape.curvedRect)
                     ) {
+
                         Image(
                             bitmap = bitmap.asImageBitmap(),
                             contentDescription = "Captured Image",
                             contentScale = ContentScale.Crop,
                             modifier = Modifier.fillMaxSize()
                         )
+                        Text(
+                            modifier = Modifier.align(Alignment.BottomCenter),
+                            text = "${index + 1}",
+                            color = Color.White,
+                            style = MaterialTheme.typography.labelSmall
+                        )
+
                         IconButton(
                             onClick = { onRemove(index) },
                             modifier = Modifier
