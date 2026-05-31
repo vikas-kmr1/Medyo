@@ -10,7 +10,7 @@ import medyo.com.core.utils.constants.MedicineType
  */
 @Keep
 @Serializable
-data class AiMedicineResponseDto(
+internal data class AiMedicineResponseDto(
     val brand: String? = null,
     val salts: String? = null,
     val mfgDate: Long? = null,

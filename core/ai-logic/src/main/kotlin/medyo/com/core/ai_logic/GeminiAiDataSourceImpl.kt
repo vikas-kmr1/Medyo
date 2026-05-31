@@ -7,6 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import medyo.com.core.ai_logic.dto.AiMedicineResponseDto
+import medyo.com.core.utils.helpers.prettyPrint
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -42,8 +43,11 @@ STRICT RULES:
                 val response = genAI.generateContent(inputContent)
                 val responseText = response.text
                 Timber.tag("gemini response").d("Response: $responseText")
+
                 if (!responseText.isNullOrBlank()) {
-                    json.decodeFromString<AiMedicineResponseDto>(responseText)
+                    val result = json.decodeFromString<AiMedicineResponseDto>(responseText)
+                    Timber.tag("gemini result dto").d("Response: ${result.prettyPrint()}")
+                    return@withContext result
                 } else {
                     null
                 }
