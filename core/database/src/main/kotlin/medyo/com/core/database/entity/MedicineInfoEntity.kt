@@ -22,5 +22,8 @@ data class MedicineInfoEntity(
     val sideEffects: List<String> = emptyList(),
     val cures: List<String> = emptyList(),
     val precautions: List<String> = emptyList(),
-    val instructions: List<String> = emptyList()
+    val instructions: List<String> = emptyList(),
+    val mfgDate: Long? = null,
+    val errorMessage: String? = null,
+    val statusCode: String? = null
 )

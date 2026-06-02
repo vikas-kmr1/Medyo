@@ -23,24 +23,35 @@ import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import medyo.com.core.domain.GetAiGenerativeResultUseCase
+import medyo.com.core.domain.usecase.ScanAndSaveMedicineUseCase
 import java.util.concurrent.Executors
 import javax.inject.Inject
 
 private val MAX_CAPTURE_ATTEMPTS = 5
 
+sealed interface ScannerUiState  {
+    data object Idle : ScannerUiState 
+    data object Loading : ScannerUiState 
+    data class Success(val medicineId: Long) : ScannerUiState 
+    data class Error(val message: String) : ScannerUiState 
+}
 
 @HiltViewModel
 class ScannerViewModel @Inject constructor(
-    private val getGenerativeResultUseCase: GetAiGenerativeResultUseCase
+    private val scanAndSaveMedicineUseCase: ScanAndSaveMedicineUseCase
 ) : ViewModel() {
+
+    private val _uiState = MutableStateFlow<ScannerUiState >(ScannerUiState .Idle)
+    val uiState: StateFlow<ScannerUiState > = _uiState.asStateFlow()
+
+
     // Used to set up a link between the Camera and your UI.
     private val _surfaceRequest = MutableStateFlow<SurfaceRequest?>(null)
     val surfaceRequest: StateFlow<SurfaceRequest?> = _surfaceRequest
@@ -128,11 +139,29 @@ class ScannerViewModel @Inject constructor(
         }
     }
 
-    fun onProceed(){
+    fun onProceed() {
         viewModelScope.launch {
-            getGenerativeResultUseCase.invoke(capturedImages)
+            analyzeImage(capturedImages)
         }
     }
+
+
+    private fun analyzeImage(images: List<Bitmap>) {
+        _uiState.value = ScannerUiState .Loading
+        viewModelScope.launch {
+            val result = scanAndSaveMedicineUseCase.invoke(images)
+            result.onSuccess { medicationId ->
+                // Observe the DB flow via UseCase
+                _uiState.value = ScannerUiState .Success(medicationId)
+
+            }
+                .onFailure { error ->
+                    _uiState.value =
+                        ScannerUiState .Error(error.message ?: "Unknown error occurred.")
+                }
+        }
+    }
+
 
     // Convert ImageProxy to Bitmap handling rotation
     private fun imageProxyToBitmap(image: ImageProxy): Bitmap {

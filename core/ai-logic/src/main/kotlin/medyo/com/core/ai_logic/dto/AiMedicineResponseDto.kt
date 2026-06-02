@@ -11,7 +11,7 @@ import medyo.com.core.utils.constants.MedicineType
  */
 @Keep
 @Serializable
-internal data class AiMedicineResponseDto(
+data class AiMedicineResponseDto(
     val brand: String? = null,
     val salts: String? = null,
     val mfgDate: Long? = null,
@@ -23,25 +23,5 @@ internal data class AiMedicineResponseDto(
     val category: String? = null,
     val errorMessage: String? = null,
     val statusCode: String? = null
-){
-    /**
-     * Extension function to map the AI DTO to our Domain Model.
-     */
-    fun AiMedicineResponseDto.toDomainModel(): MedicineInfo {
-        return MedicineInfo(
-            brand = this.brand.orEmpty(),
-            salts = this.salts.orEmpty(),
-            mfgDate = this.mfgDate,
-            expDate = this.expDate,
-            sideEffects = this.sideEffects,
-            cures = this.cures,
-            precautions = this.precautions,
-            instructions = this.instructions,
-            category = this.category.orEmpty(),
-            errorMessage = this.errorMessage,
-            statusCode = this.statusCode
-        )
-    }
-
-}
+)
 
