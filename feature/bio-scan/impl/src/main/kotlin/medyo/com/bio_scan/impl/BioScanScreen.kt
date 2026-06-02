@@ -25,6 +25,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -33,18 +34,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import medyo.com.core.design_system.component.button.BioScanWidget
-import medyo.com.core.design_system.component.card.sampleMedicineList
 import medyo.com.core.design_system.component.scrollbar.DraggableScrollbar
 import medyo.com.core.design_system.component.scrollbar.rememberDraggableScroller
 import medyo.com.core.design_system.component.scrollbar.scrollbarState
 import medyo.com.core.design_system.theme.MedyoTheme
 import medyo.com.core.design_system.utils.compose.CommonPreview
 import medyo.com.core.ui.MedicineCardList
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import medyo.com.core.design_system.component.card.MedicineCardItemData
+import medyo.com.core.design_system.utils.getMedicineIcon
+import medyo.com.core.utils.constants.MedicineType
 
 @Composable
 internal fun BioScanScreen(
     onBioScanClick: () -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: BioScanViewmodel = hiltViewModel()
 ) {
     // 1. STATE MANAGEMENT: Track the scrolling of the medications list
     val lazyListState = rememberLazyListState()
@@ -56,8 +62,8 @@ internal fun BioScanScreen(
         }
     }
 
-
-    val itemsAvailable = sampleMedicineList.size
+    val scannedMedicines by viewModel.scannedMedicinesList.collectAsStateWithLifecycle()
+    val itemsAvailable = scannedMedicines.size
 
     val scrollbarState = lazyListState.scrollbarState(
         itemsAvailable = itemsAvailable,
@@ -109,7 +115,17 @@ internal fun BioScanScreen(
                 state = lazyListState,
             ) {
                 MedicineCardList(
-                    medicineItems = sampleMedicineList,
+                    medicineItems = scannedMedicines.map {
+                        MedicineCardItemData(
+                            id = it.medicationId.toInt(),
+                            name = "Lipitor 10mg", // Note: Same name but different ID and Icon
+                            dosage = "10mg",
+                            iconRes = getMedicineIcon(MedicineType.INJECTION),
+                            iconBackgroundColor = Color.White, // Using hardcoded or MaterialTheme colors
+                            cardGradientStartColor = Color.White,
+                            shadowColor = Color.Black
+                        )
+                    },
                 )
             }
 

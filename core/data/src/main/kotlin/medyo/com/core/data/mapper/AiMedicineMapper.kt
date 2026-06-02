@@ -36,6 +36,7 @@ fun AiMedicineResponseDto.toMedicineInfoEntity(medicationId: Long): MedicineInfo
 
 fun MedicineDetails.toDomainModel(): MedicineInfo {
     return MedicineInfo(
+        medicationId = this.medicationId,
         brand = this.brand ?: this.name,
         salts = this.salts.orEmpty(),
         mfgDate = this.mfgDate,

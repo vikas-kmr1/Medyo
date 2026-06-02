@@ -48,4 +48,10 @@ class BioScanRepositoryImpl @Inject constructor(
             details?.toDomainModel()
         }
     }
+
+    override fun getAllScannedMedicines(): Flow<List<MedicineInfo>> {
+        return medicationDao.getAllMedicineDetails().map { detailsList ->
+            detailsList.map { it.toDomainModel() }
+        }
+    }
 }

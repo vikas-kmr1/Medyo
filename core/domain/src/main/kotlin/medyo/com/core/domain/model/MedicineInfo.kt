@@ -5,6 +5,7 @@ package medyo.com.core.domain.model
  * This model is used by app features, abstracting away the AI/network layer DTOs.
  */
 data class MedicineInfo(
+    val medicationId: Long,
     val brand: String = "",
     val salts: String = "",
     val mfgDate: Long? = null,

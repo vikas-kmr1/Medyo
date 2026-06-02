@@ -16,4 +16,9 @@ interface BioScanRepository {
      * mapped to the domain model `MedicineInfo`.
      */
     fun getScannedMedicine(medicationId: Long): Flow<MedicineInfo?>
+
+    /**
+     * Reads all scanned medicines from the local database.
+     */
+    fun getAllScannedMedicines(): Flow<List<MedicineInfo>>
 }

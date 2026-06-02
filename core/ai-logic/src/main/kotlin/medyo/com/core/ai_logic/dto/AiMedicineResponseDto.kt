@@ -2,8 +2,6 @@ package medyo.com.core.ai_logic.dto
 
 import androidx.annotation.Keep
 import kotlinx.serialization.Serializable
-import medyo.com.core.domain.model.MedicineInfo
-import medyo.com.core.utils.constants.MedicineType
 
 /**
  * Data Transfer Object representing the structured AI response for medicines.

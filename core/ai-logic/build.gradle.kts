@@ -40,7 +40,6 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.domain)
     implementation(projects.core.utils)
     implementation(libs.androidx.core.ktx)
     implementation(platform(libs.firebase.bom))

@@ -25,4 +25,12 @@ interface MedicationDao {
         WHERE m.id = :medicationId
     """)
     fun getMedicineDetails(medicationId: Long): Flow<MedicineDetails?>
+
+    @Query("""
+        SELECT m.id AS medicationId, m.name, m.dosageStrength, m.expiryDate AS expDate,
+               i.brand, i.salts, i.sideEffects, i.cures, i.precautions, i.instructions, i.mfgDate, i.errorMessage, i.statusCode
+        FROM medications m
+        LEFT JOIN medicine_info i ON m.id = i.medicationId
+    """)
+    fun getAllMedicineDetails(): Flow<List<MedicineDetails>>
 }
