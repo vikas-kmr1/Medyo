@@ -9,19 +9,31 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +53,7 @@ import medyo.com.core.design_system.utils.getMedicationIcon
 import medyo.com.core.utils.constants.MedicationCategory
 import medyo.com.core.utils.constants.MedicationType
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MedicationEditScreen(
     uiState: MedicationEditUiState,
@@ -58,6 +71,9 @@ fun MedicationEditScreen(
     onTotalDosesChange: (String) -> Unit,
 ) {
     val dimen = LocalDimensions.current
+    var showBottomSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
+
     FullScreenDialog{
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(dimen.dimen16dp, Alignment.Top),
@@ -85,8 +101,9 @@ fun MedicationEditScreen(
             item {
                 MedicationNameWithIconField(
                     name = uiState.name,
-                    onNameChange = {},
-                    medicationType = uiState.medicationType
+                    onNameChange = onNameChange,
+                    medicationType = uiState.medicationType,
+                    onIconClick = { showBottomSheet = true }
                 )
             }
             item {
@@ -119,6 +136,16 @@ fun MedicationEditScreen(
             }
         }
 
+        if (showBottomSheet) {
+            MedicationTypeBottomSheet(
+                sheetState = sheetState,
+                onDismissRequest = { showBottomSheet = false },
+                onTypeSelected = { type ->
+                    onMedicationTypeChange(type)
+                    showBottomSheet = false
+                }
+            )
+        }
     }
 }
 
@@ -141,6 +168,7 @@ private fun MedicationNameWithIconField(
     name: String,
     onNameChange: (String) -> Unit,
     medicationType: MedicationType,
+    onIconClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val dimen = LocalDimensions.current
@@ -154,7 +182,7 @@ private fun MedicationNameWithIconField(
         MedicationIcon(
             iconRes = getMedicationIcon(medicationType),
             name = medicationType.name.lowercase(),
-            onIconClick = {}
+            onIconClick = onIconClick
         )
 
         MedyoTextField(
@@ -301,6 +329,73 @@ private fun MedicationIcon(
 
 }
 
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun MedicationTypeBottomSheet(
+    sheetState: androidx.compose.material3.SheetState,
+    onDismissRequest: () -> Unit,
+    onTypeSelected: (MedicationType) -> Unit
+) {
+    ModalBottomSheet(
+        onDismissRequest = onDismissRequest,
+        sheetState = sheetState,
+        dragHandle = {
+      BottomSheetDefaults.DragHandle()
+        }
+    ) {
+        Text(
+            text = "Select Medication Type",
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier
+                .padding(16.dp)
+                .align(Alignment.CenterHorizontally)
+        )
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(3),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .navigationBarsPadding(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(MedicationType.entries) { type ->
+                MedicationTypeGridItem(
+                    type = type,
+                    onClick = { onTypeSelected(type) }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun MedicationTypeGridItem(
+    type: MedicationType,
+    onClick: () -> Unit
+) {
+    androidx.compose.foundation.layout.Column(
+        modifier = Modifier
+            .clip(MaterialTheme.shapes.medium)
+            .clickable(onClick = onClick)
+            .padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Icon(
+            painter = painterResource(id = getMedicationIcon(type)),
+            contentDescription = null,
+            modifier = Modifier.size(48.dp),
+            tint = Color.Unspecified
+        )
+        Text(
+            text = type.label,
+            style = MaterialTheme.typography.bodySmall,
+            maxLines = 1
+        )
+    }
+}
 
 @Composable
 private fun MedicineCategoryChipGroup(

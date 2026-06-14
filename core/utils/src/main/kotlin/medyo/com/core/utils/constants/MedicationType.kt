@@ -1,22 +1,22 @@
 package medyo.com.core.utils.constants
 
-enum class MedicationType {
-    BANDAGE,
-    BLISTER,
-    CAPSULE,
-    CREAM,
-    DROP,
-    INHALER,
-    INJECTION,
-    LOTION,
-    AYURVEDIC,
-    OINTMENT,
-    PATCH,
-    TABLET,
-    SACHET,
-    SOFTGEL,
-    SYRUP,
-    OTHER
+enum class MedicationType(val label: String) {
+    BANDAGE("Bandage"),
+    BLISTER("Blister"),
+    CAPSULE("Capsule"),
+    CREAM("Cream"),
+    DROP("Drop"),
+    INHALER("Inhaler"),
+    INJECTION("Injection"),
+    LOTION("Lotion"),
+    AYURVEDIC("Ayurvedic"),
+    OINTMENT("Ointment"),
+    PATCH("Patch"),
+    TABLET("Tablet"),
+    SACHET("Sachet"),
+    SOFTGEL("Softgel"),
+    SYRUP("Syrup"),
+    OTHER("Other")
 }
 
 enum class MedicationCategory(val label: String, val description: String) {
