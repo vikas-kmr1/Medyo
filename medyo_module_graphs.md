@@ -24,6 +24,8 @@
 This is the **master graph** showing every module in the project and how they connect. Derived from all `build.gradle.kts` files.
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#ffffff' }}}%%
+
 graph TD
     classDef app fill:#ff6b6b,stroke:#c92a2a,stroke-width:3px,color:#fff;
     classDef featureApi fill:#e8d5f5,stroke:#7c3aed,stroke-width:2px;
@@ -102,6 +104,7 @@ graph TD
 Each feature is split into two sub-modules. The `api` module exposes **only the navigation key** (route), while `impl` contains the full UI, ViewModel, and logic. This prevents feature-to-feature coupling.
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#ffffff' }}}%%
 graph LR
     classDef api fill:#e8d5f5,stroke:#7c3aed,stroke-width:2px;
     classDef impl fill:#c4b5fd,stroke:#7c3aed,stroke-width:2px;
@@ -150,6 +153,7 @@ graph LR
 Detailed view of how the 13 core modules relate to each other.
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#ffffff' }}}%%
 graph TD
     classDef data fill:#bfdbfe,stroke:#2563eb,stroke-width:2px;
     classDef ai fill:#fef08a,stroke:#ca8a04,stroke-width:2px;
@@ -193,6 +197,7 @@ graph TD
 The **core user journey**: capturing medicine images, sending them to Gemini AI, saving the result, and displaying it. This sequence diagram traces data through every architectural layer.
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#ffffff' }}}%%
 sequenceDiagram
     autonumber
     participant User as 👤 User
@@ -251,6 +256,7 @@ sequenceDiagram
 Medyo uses a custom **multi-backstack navigation system** built on Jetpack Navigation 3. Each tab maintains its own sub-stack of screens.
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#ffffff' }}}%%
 graph TD
     classDef tab fill:#dbeafe,stroke:#2563eb,stroke-width:2px;
     classDef screen fill:#f0fdf4,stroke:#16a34a,stroke-width:2px;
@@ -295,6 +301,7 @@ graph TD
 ### Navigation Decision Tree
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#ffffff' }}}%%
 flowchart TD
     A["navigate(key) called"] --> B{Is key the\ncurrently active tab?}
     B -->|Yes| C["clearSubStack()\nPop all detail screens\nReturn to tab root"]
@@ -325,6 +332,7 @@ flowchart TD
 This pattern is consistent across all feature `impl` modules. Shown here with the **Scanner** feature as a concrete example.
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#ffffff' }}}%%
 graph TD
     classDef ui fill:#dbeafe,stroke:#2563eb,stroke-width:2px;
     classDef vm fill:#bbf7d0,stroke:#16a34a,stroke-width:2px;
@@ -360,6 +368,7 @@ graph TD
 The `core:data` module implements the repository interface defined in `core:domain`, orchestrating between the AI data source and the local database.
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#ffffff' }}}%%
 graph TD
     classDef domain fill:#e8d5f5,stroke:#7c3aed,stroke-width:2px;
     classDef data fill:#bfdbfe,stroke:#2563eb,stroke-width:2px;
@@ -413,6 +422,7 @@ graph TD
 The `core:ai-logic` module encapsulates all interaction with the Firebase Gemini generative AI model.
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#ffffff' }}}%%
 sequenceDiagram
     participant Repo as BioScanRepositoryImpl
     participant AI as GeminiAiDataSourceImpl
@@ -447,6 +457,7 @@ sequenceDiagram
 ### AI Response Structure
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#ffffff' }}}%%
 classDiagram
     class AiMedicineResponseDto {
         +String? brand
@@ -488,6 +499,7 @@ classDiagram
 The logger follows the same API/Impl split as features, allowing it to be swapped for different platforms or implementations.
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#ffffff' }}}%%
 graph LR
     classDef api fill:#fecaca,stroke:#dc2626,stroke-width:2px;
     classDef impl fill:#fca5a5,stroke:#dc2626,stroke-width:2px;
@@ -519,6 +531,7 @@ graph LR
 The complete user flow through the application, mapping which modules are involved at each step.
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#ffffff' }}}%%
 flowchart TD
     classDef start fill:#7c3aed,color:#fff,stroke-width:0;
     classDef screen fill:#dbeafe,stroke:#2563eb,stroke-width:2px;
