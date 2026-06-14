@@ -1,15 +1,15 @@
 package medyo.com.core.data.mapper
 
-import medyo.com.core.ai_logic.dto.AiMedicineResponseDto
-import medyo.com.core.database.dao.MedicineDetails
+import medyo.com.core.ai_logic.dto.AiMedicationResponseDto
+import medyo.com.core.database.dao.MedicationDetail
 import medyo.com.core.database.entity.MedicationCategory
 import medyo.com.core.database.entity.MedicationEntity
-import medyo.com.core.database.entity.MedicineInfoEntity
-import medyo.com.core.domain.model.MedicineInfo
+import medyo.com.core.database.entity.MedicationInfoEntity
+import medyo.com.core.domain.model.MedicationInfo
 
-fun AiMedicineResponseDto.toMedicationEntity(): MedicationEntity {
+fun AiMedicationResponseDto.toMedicationEntity(): MedicationEntity {
     return MedicationEntity(
-        name = this.brand ?: "Unknown Medicine",
+        name = this.brand ?: "Unknown Medication",
         dosageStrength = "", // AI doesn't explicitly return this in current schema
         form = "", 
         category = MedicationCategory.FIRST_AID_STOCK, 
@@ -19,8 +19,8 @@ fun AiMedicineResponseDto.toMedicationEntity(): MedicationEntity {
     )
 }
 
-fun AiMedicineResponseDto.toMedicineInfoEntity(medicationId: Long): MedicineInfoEntity {
-    return MedicineInfoEntity(
+fun AiMedicationResponseDto.toMedicationInfoEntity(medicationId: Long): MedicationInfoEntity {
+    return MedicationInfoEntity(
         medicationId = medicationId,
         brand = this.brand,
         salts = this.salts,
@@ -29,14 +29,13 @@ fun AiMedicineResponseDto.toMedicineInfoEntity(medicationId: Long): MedicineInfo
         precautions = this.precautions,
         instructions = this.instructions,
         mfgDate = this.mfgDate,
-        errorMessage = null,
-        statusCode = this.statusCode
     )
 }
 
-fun MedicineDetails.toDomainModel(): MedicineInfo {
-    return MedicineInfo(
+fun MedicationDetail.toDomainModel(): MedicationInfo {
+    return MedicationInfo(
         medicationId = this.medicationId,
+        name = this.name,
         brand = this.brand ?: this.name,
         salts = this.salts.orEmpty(),
         mfgDate = this.mfgDate,
@@ -46,7 +45,6 @@ fun MedicineDetails.toDomainModel(): MedicineInfo {
         precautions = this.precautions,
         instructions = this.instructions,
         category = "", // Not currently joined or mapped directly from DB details, left blank for UI
-        errorMessage = this.errorMessage,
-        statusCode = this.statusCode
+
     )
 }

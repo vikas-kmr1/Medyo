@@ -5,13 +5,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import medyo.com.core.ai_logic.GeminiAiDataSource
 import medyo.com.core.database.dao.MedicationDao
-import medyo.com.core.database.entity.MedicationCategory
-import medyo.com.core.database.entity.MedicationEntity
-import medyo.com.core.database.entity.MedicineInfoEntity
-import medyo.com.core.domain.model.MedicineInfo
+import medyo.com.core.domain.model.MedicationInfo
 import medyo.com.core.domain.repository.BioScanRepository
 import medyo.com.core.data.mapper.toMedicationEntity
-import medyo.com.core.data.mapper.toMedicineInfoEntity
+import medyo.com.core.data.mapper.toMedicationInfoEntity
 import medyo.com.core.data.mapper.toDomainModel
 import javax.inject.Inject
 
@@ -20,7 +17,7 @@ class BioScanRepositoryImpl @Inject constructor(
     private val medicationDao: MedicationDao
 ) : BioScanRepository {
 
-    override suspend fun scanAndSaveMedicine(images: List<Bitmap>): Result<Long> {
+    override suspend fun scanAndSaveMedication(images: List<Bitmap>): Result<Long> {
         return try {
             val aiResponse = aiDataSource.generateContext(images)
                 ?: return Result.failure(Exception("AI returned empty response"))
@@ -33,9 +30,9 @@ class BioScanRepositoryImpl @Inject constructor(
             val medicationEntity = aiResponse.toMedicationEntity()
             val generatedId = medicationDao.insertMedication(medicationEntity)
 
-            // 2. Create and insert detailed MedicineInfoEntity
-            val infoEntity = aiResponse.toMedicineInfoEntity(generatedId)
-            medicationDao.insertMedicineInfo(infoEntity)
+            // 2. Create and insert detailed MedicationInfoEntity
+            val infoEntity = aiResponse.toMedicationInfoEntity(generatedId)
+            medicationDao.insertMedicationInfo(infoEntity)
 
             Result.success(generatedId)
         } catch (e: Exception) {
@@ -43,14 +40,14 @@ class BioScanRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getScannedMedicine(medicationId: Long): Flow<MedicineInfo?> {
-        return medicationDao.getMedicineDetails(medicationId).map { details ->
+    override fun getScannedMedication(medicationId: Long): Flow<MedicationInfo?> {
+        return medicationDao.getMedicationDetails(medicationId).map { details ->
             details?.toDomainModel()
         }
     }
 
-    override fun getAllScannedMedicines(): Flow<List<MedicineInfo>> {
-        return medicationDao.getAllMedicineDetails().map { detailsList ->
+    override fun getAllScannedMedications(): Flow<List<MedicationInfo>> {
+        return medicationDao.getAllMedicationDetails().map { detailsList ->
             detailsList.map { it.toDomainModel() }
         }
     }

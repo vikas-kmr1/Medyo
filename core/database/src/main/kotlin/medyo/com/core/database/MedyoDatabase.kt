@@ -8,7 +8,9 @@ import medyo.com.core.database.converter.StringListConverter
 import medyo.com.core.database.dao.MedicationDao
 import medyo.com.core.database.entity.MedicationEntity
 
-@Database(entities = [MedicationEntity::class], version = 1, exportSchema = false)
+import medyo.com.core.database.entity.MedicationInfoEntity
+
+@Database(entities = [MedicationEntity::class, MedicationInfoEntity::class], version = 3, exportSchema = false)
 @TypeConverters(InstantConverter::class, StringListConverter::class)
 internal abstract class MedyoDatabase: RoomDatabase() {
     abstract fun medicationDao(): MedicationDao

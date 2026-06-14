@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.window.PopupPositionProvider
-import medyo.com.core.design_system.component.card.MedicineCardItem
+import medyo.com.core.design_system.component.card.MedicationCardItem
 import medyo.com.core.design_system.theme.LocalDimensions
 import medyo.com.core.design_system.theme.MedyoTheme
 
@@ -111,11 +111,11 @@ fun MedyoTooltip(
 private fun PreviewTooltip() {
     MedyoTheme {
         MedyoTooltip(
-            text = "Medicine info",
+            text = "Medication info",
             modifier = Modifier,
             rich = true,
         ) {
-            MedicineCardItem(
+            MedicationCardItem(
                 name = "Lipitor 10mg",
                 dosage = "10mg",
                 iconRes = R.drawable.ic_menu_camera,

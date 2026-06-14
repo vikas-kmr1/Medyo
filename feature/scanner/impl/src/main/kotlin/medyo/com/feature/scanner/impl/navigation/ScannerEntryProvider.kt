@@ -24,6 +24,6 @@ import medyo.com.feature.scanner.impl.CameraPreviewScreen
 
 fun EntryProviderScope<NavKey>.scannerEntry(navigator: Navigator) {
     entry<ScannerNavKey> {
-        CameraPreviewScreen(onBackClick = { navigator.goBack() })
+        MedicationEditScreen()//CameraPreviewScreen(onBackClick = { navigator.goBack() })
     }
 }

@@ -1,6 +1,6 @@
 package medyo.com.core.database.dao
 
-data class MedicineDetails(
+data class MedicationDetail(
     val medicationId: Long,
     val name: String,
     val dosageStrength: String,
@@ -12,6 +12,4 @@ data class MedicineDetails(
     val instructions: List<String>,
     val mfgDate: Long?,
     val expDate: Long?,
-    val errorMessage: String?,
-    val statusCode: String?
 )

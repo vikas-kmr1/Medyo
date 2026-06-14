@@ -30,7 +30,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import medyo.com.core.domain.usecase.ScanAndSaveMedicineUseCase
+import medyo.com.core.domain.usecase.ScanAndSaveMedicationUseCase
 import java.util.concurrent.Executors
 import javax.inject.Inject
 
@@ -39,13 +39,13 @@ private val MAX_CAPTURE_ATTEMPTS = 5
 sealed interface ScannerUiState  {
     data object Idle : ScannerUiState 
     data object Loading : ScannerUiState 
-    data class Success(val medicineId: Long) : ScannerUiState 
+    data class Success(val MedicationId: Long) : ScannerUiState
     data class Error(val message: String) : ScannerUiState 
 }
 
 @HiltViewModel
 class ScannerViewModel @Inject constructor(
-    private val scanAndSaveMedicineUseCase: ScanAndSaveMedicineUseCase
+    private val scanAndSaveMedicationUseCase: ScanAndSaveMedicationUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<ScannerUiState >(ScannerUiState .Idle)
@@ -149,7 +149,7 @@ class ScannerViewModel @Inject constructor(
     private fun analyzeImage(images: List<Bitmap>) {
         _uiState.value = ScannerUiState .Loading
         viewModelScope.launch {
-            val result = scanAndSaveMedicineUseCase.invoke(images)
+            val result = scanAndSaveMedicationUseCase.invoke(images)
             result.onSuccess { medicationId ->
                 // Observe the DB flow via UseCase
                 _uiState.value = ScannerUiState .Success(medicationId)

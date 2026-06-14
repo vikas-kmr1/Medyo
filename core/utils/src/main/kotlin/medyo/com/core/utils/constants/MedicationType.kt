@@ -1,6 +1,6 @@
 package medyo.com.core.utils.constants
 
-enum class MedicineType {
+enum class MedicationType {
     BANDAGE,
     BLISTER,
     CAPSULE,

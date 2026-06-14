@@ -4,10 +4,10 @@ import android.graphics.Bitmap
 import medyo.com.core.domain.repository.BioScanRepository
 import javax.inject.Inject
 
-class ScanAndSaveMedicineUseCase @Inject constructor(
+class ScanAndSaveMedicationUseCase @Inject constructor(
     private val repository: BioScanRepository
 ) {
     suspend operator fun invoke(images: List<Bitmap>): Result<Long> {
-        return repository.scanAndSaveMedicine(images)
+        return repository.scanAndSaveMedication(images)
     }
 }

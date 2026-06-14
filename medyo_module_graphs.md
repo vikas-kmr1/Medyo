@@ -1,6 +1,6 @@
 # 🏗️ Medyo — Complete Architecture & Module Flow Graphs
 
-> **Medyo** is a modular Android medicine-scanning app powered by **Gemini AI** (Firebase AI Logic). Users scan medicine images via CameraX, the AI analyzes them, and results are persisted locally via Room.
+> **Medyo** is a modular Android Medication-scanning app powered by **Gemini AI** (Firebase AI Logic). Users scan Medication images via CameraX, the AI analyzes them, and results are persisted locally via Room.
 
 ---
 
@@ -9,7 +9,7 @@
 1. [High-Level Module Dependency Graph](#1-high-level-module-dependency-graph)
 2. [Feature Module API/Impl Pattern](#2-feature-module-apiimpl-separation)
 3. [Core Module Internal Dependencies](#3-core-module-internal-dependencies)
-4. [Medicine Scan — End-to-End Data Flow](#4-medicine-scan--end-to-end-data-flow)
+4. [Medication Scan — End-to-End Data Flow](#4-Medication-scan--end-to-end-data-flow)
 5. [Navigation System Architecture](#5-navigation-system--multi-stack-tab-architecture)
 6. [UI Layer — Unidirectional Data Flow](#6-ui-layer--unidirectional-data-flow-udf)
 7. [Data Layer — Repository Pattern](#7-data-layer--repository-pattern)
@@ -157,22 +157,22 @@ graph TD
     classDef ui fill:#fecdd3,stroke:#e11d48,stroke-width:2px;
     classDef infra fill:#e2e8f0,stroke:#64748b,stroke-width:2px;
 
-    Data[":core:data\n─────────\nBioScanRepositoryImpl\nAiMedicineMapper\nDataModule"]:::data
+    Data[":core:data\n─────────\nBioScanRepositoryImpl\nAiMedicationMapper\nDataModule"]:::data
 
-    Domain[":core:domain\n─────────\nBioScanRepository ⟨interface⟩\nScanAndSaveMedicineUseCase\nGetScannedMedicineUseCase\nGetAllScannedMedicinesUseCase\nMedicineInfo ⟨model⟩"]:::data
+    Domain[":core:domain\n─────────\nBioScanRepository ⟨interface⟩\nScanAndSaveMedicationUseCase\nGetScannedMedicationUseCase\nGetAllScannedMedicationsUseCase\nMedicationInfo ⟨model⟩"]:::data
 
-    AiLogic[":core:ai-logic\n─────────\nGeminiAiDataSource ⟨interface⟩\nGeminiAiDataSourceImpl\nAiMedicineResponseDto\nAiLogicModule ⟨Hilt⟩"]:::ai
+    AiLogic[":core:ai-logic\n─────────\nGeminiAiDataSource ⟨interface⟩\nGeminiAiDataSourceImpl\nAiMedicationResponseDto\nAiLogicModule ⟨Hilt⟩"]:::ai
 
-    Database[":core:database\n─────────\nMedicationDao\nMedicationEntity\nMedicineInfoEntity\nRoom DB"]:::storage
+    Database[":core:database\n─────────\nMedicationDao\nMedicationEntity\nMedicationInfoEntity\nRoom DB"]:::storage
 
     Datastore[":core:datastore"]:::storage
     DatastoreProto[":core:datastore-proto"]:::storage
     Network[":core:network\n─────────\nRetrofit + OkHttp"]:::infra
 
     Navigation[":core:navigation\n─────────\nNavigator\nNavigationState"]:::infra
-    DesignSystem[":core:design-system\n─────────\nTheme, Colors, Typography\nMedicineCardItem\nCustomBottomNavigation\nShimmerBrush\nScrollbar"]:::ui
+    DesignSystem[":core:design-system\n─────────\nTheme, Colors, Typography\nMedicationCardItem\nCustomBottomNavigation\nShimmerBrush\nScrollbar"]:::ui
     UI[":core:ui\n─────────\nShared Composables"]:::ui
-    Utils[":core:utils\n─────────\nURLs, Enums, MedicineType\nDateAndTime, PrettyPrint\nKotlinExtension"]:::infra
+    Utils[":core:utils\n─────────\nURLs, Enums, MedicationType\nDateAndTime, PrettyPrint\nKotlinExtension"]:::infra
     Notification[":core:notification"]:::infra
     WorkManager[":core:work-manager"]:::infra
 
@@ -188,9 +188,9 @@ graph TD
 
 ---
 
-## 4. Medicine Scan — End-to-End Data Flow
+## 4. Medication Scan — End-to-End Data Flow
 
-The **core user journey**: capturing medicine images, sending them to Gemini AI, saving the result, and displaying it. This sequence diagram traces data through every architectural layer.
+The **core user journey**: capturing Medication images, sending them to Gemini AI, saving the result, and displaying it. This sequence diagram traces data through every architectural layer.
 
 ```mermaid
 sequenceDiagram
@@ -198,11 +198,11 @@ sequenceDiagram
     participant User as 👤 User
     participant ScanUI as ScannerScreen<br/>⟨Compose⟩
     participant ScanVM as ScannerViewModel<br/>⟨Hilt ViewModel⟩
-    participant UseCase as ScanAndSaveMedicine<br/>UseCase
+    participant UseCase as ScanAndSaveMedication<br/>UseCase
     participant Repo as BioScanRepository<br/>Impl
     participant AI as GeminiAiDataSource<br/>Impl
     participant Gemini as ☁️ Firebase Gemini AI
-    participant Mapper as AiMedicineMapper
+    participant Mapper as AiMedicationMapper
     participant DAO as MedicationDao<br/>⟨Room⟩
     participant DB as 💾 SQLite
 
@@ -218,28 +218,28 @@ sequenceDiagram
     ScanVM->>ScanVM: _uiState = Loading
 
     ScanVM->>UseCase: invoke(images)
-    UseCase->>Repo: scanAndSaveMedicine(images)
+    UseCase->>Repo: scanAndSaveMedication(images)
     
     Repo->>AI: generateContext(images)
     AI->>Gemini: genAI.generateContent(prompt + images)
     Gemini-->>AI: JSON response text
-    AI->>AI: json.decodeFromString → AiMedicineResponseDto
-    AI-->>Repo: AiMedicineResponseDto
+    AI->>AI: json.decodeFromString → AiMedicationResponseDto
+    AI-->>Repo: AiMedicationResponseDto
 
     Repo->>Mapper: toMedicationEntity()
     Repo->>DAO: insertMedication(entity)
     DAO->>DB: INSERT INTO medications
     DB-->>DAO: generatedId (Long)
     
-    Repo->>Mapper: toMedicineInfoEntity(generatedId)
-    Repo->>DAO: insertMedicineInfo(infoEntity)
-    DAO->>DB: INSERT INTO medicine_info
+    Repo->>Mapper: toMedicationInfoEntity(generatedId)
+    Repo->>DAO: insertMedicationInfo(infoEntity)
+    DAO->>DB: INSERT INTO Medication_info
 
     DAO-->>Repo: Success
     Repo-->>UseCase: Result.success(generatedId)
     UseCase-->>ScanVM: Result<Long>
 
-    ScanVM->>ScanVM: _uiState = Success(medicineId)
+    ScanVM->>ScanVM: _uiState = Success(MedicationId)
     ScanVM-->>ScanUI: Re-render with success state
     ScanUI-->>User: Navigate to BioScan details
 ```
@@ -337,11 +337,11 @@ graph TD
     subgraph UIState ["ScannerUiState (Sealed Interface)"]
         Idle["Idle"]:::state
         Loading["Loading"]:::state
-        Success["Success(medicineId)"]:::state
+        Success["Success(MedicationId)"]:::state
         Error["Error(message)"]:::state
     end
 
-    UseCase["ScanAndSaveMedicineUseCase"]:::domain
+    UseCase["ScanAndSaveMedicationUseCase"]:::domain
     CameraX["CameraX\nImageCapture + Preview"]:::ui
 
     Screen -- "1️⃣ captureImage()\nonProceed()\ntoggleTorch()\ntapToFocus()" --> VM
@@ -368,14 +368,14 @@ graph TD
 
     subgraph DomainLayer [":core:domain"]
         RepoInterface["BioScanRepository\n⟨interface⟩"]:::domain
-        UseCases["UseCases\n──────\nScanAndSaveMedicine\nGetScannedMedicine\nGetAllScannedMedicines"]:::domain
-        MedicineInfo["MedicineInfo\n⟨domain model⟩"]:::domain
+        UseCases["UseCases\n──────\nScanAndSaveMedication\nGetScannedMedication\nGetAllScannedMedications"]:::domain
+        MedicationInfo["MedicationInfo\n⟨domain model⟩"]:::domain
         UseCases --> RepoInterface
     end
 
     subgraph DataLayer [":core:data"]
         RepoImpl["BioScanRepositoryImpl\n⟨@Inject⟩"]:::data
-        Mapper["AiMedicineMapper\n──────\ntoMedicationEntity()\ntoMedicineInfoEntity()\ntoDomainModel()"]:::data
+        Mapper["AiMedicationMapper\n──────\ntoMedicationEntity()\ntoMedicationInfoEntity()\ntoDomainModel()"]:::data
         DataModule["DataModule\n⟨@Provides Hilt⟩"]:::data
         RepoImpl --> Mapper
         DataModule -.->|"binds"| RepoImpl
@@ -384,14 +384,14 @@ graph TD
     subgraph AILayer [":core:ai-logic"]
         AiInterface["GeminiAiDataSource\n⟨interface⟩"]:::ai
         AiImpl["GeminiAiDataSourceImpl\n⟨Firebase GenerativeModel⟩"]:::ai
-        DTO["AiMedicineResponseDto\n⟨@Serializable⟩"]:::ai
+        DTO["AiMedicationResponseDto\n⟨@Serializable⟩"]:::ai
         AiImpl --> AiInterface
         AiImpl --> DTO
     end
 
     subgraph DBLayer [":core:database"]
         DAO["MedicationDao\n⟨@Dao⟩"]:::db
-        Entities["MedicationEntity\nMedicineInfoEntity\nMedicationCategory"]:::db
+        Entities["MedicationEntity\nMedicationInfoEntity\nMedicationCategory"]:::db
         DAO --> Entities
     end
 
@@ -403,7 +403,7 @@ graph TD
     AiInterface -- "AI Response DTO" --> RepoImpl
     RepoImpl -- "Mapper → Entity" --> DAO
     DAO -- "Flow<Entity>" --> RepoImpl
-    RepoImpl -- "Mapper → Domain Model" --> MedicineInfo
+    RepoImpl -- "Mapper → Domain Model" --> MedicationInfo
 ```
 
 ---
@@ -427,16 +427,16 @@ sequenceDiagram
 
     AI->>Model: generateContent(inputContent)
     
-    Note over Model: AI analyzes medicine images<br/>Returns structured JSON
+    Note over Model: AI analyzes Medication images<br/>Returns structured JSON
 
     Model-->>AI: GenerateContentResponse
 
     AI->>AI: Extract response.text
 
     alt Response is not blank
-        AI->>Json: decodeFromString<AiMedicineResponseDto>(text)
-        Json-->>AI: AiMedicineResponseDto
-        AI-->>Repo: AiMedicineResponseDto
+        AI->>Json: decodeFromString<AiMedicationResponseDto>(text)
+        Json-->>AI: AiMedicationResponseDto
+        AI-->>Repo: AiMedicationResponseDto
     else Response is blank
         AI-->>Repo: null
     end
@@ -448,7 +448,7 @@ sequenceDiagram
 
 ```mermaid
 classDiagram
-    class AiMedicineResponseDto {
+    class AiMedicationResponseDto {
         +String? brand
         +String? salts
         +Long? mfgDate
@@ -462,7 +462,7 @@ classDiagram
         +String? statusCode
     }
 
-    class MedicineInfo {
+    class MedicationInfo {
         +Long medicationId
         +String name
         +String brand
@@ -478,7 +478,7 @@ classDiagram
         +String? statusCode
     }
 
-    AiMedicineResponseDto ..> MedicineInfo : "mapped via\nAiMedicineMapper"
+    AiMedicationResponseDto ..> MedicationInfo : "mapped via\nAiMedicationMapper"
 ```
 
 ---
@@ -529,7 +529,7 @@ flowchart TD
     Launch["🚀 App Launch\nMainActivity + SplashScreen"]:::start
     --> AppShell["MedyoApp Scaffold\nNavigationState initialized\nstartKey = BioScanNavKey"]:::screen
 
-    AppShell --> BioScan["💊 BioScan Screen\n⟨feature:bio-scan:impl⟩\nShows list of scanned medicines\nvia GetAllScannedMedicinesUseCase"]:::screen
+    AppShell --> BioScan["💊 BioScan Screen\n⟨feature:bio-scan:impl⟩\nShows list of scanned Medications\nvia GetAllScannedMedicationsUseCase"]:::screen
 
     BioScan -->|"Tap scan button"| Scanner["📷 Scanner Screen\n⟨feature:scanner:impl⟩\nCameraX preview\nCapture up to 5 images"]:::screen
 
@@ -539,13 +539,13 @@ flowchart TD
     MorePhotos -->|"Yes (max 5)"| Scanner
     MorePhotos -->|"No, tap Proceed"| Analyze
 
-    Analyze["🤖 AI Analysis\nScanAndSaveMedicineUseCase\n→ BioScanRepositoryImpl\n→ GeminiAiDataSourceImpl"]:::ai
+    Analyze["🤖 AI Analysis\nScanAndSaveMedicationUseCase\n→ BioScanRepositoryImpl\n→ GeminiAiDataSourceImpl"]:::ai
 
     Analyze --> AIResult{AI Result}:::decision
-    AIResult -->|"Success"| SaveDB["💾 Save to Room DB\nMedicationEntity +\nMedicineInfoEntity"]:::action
+    AIResult -->|"Success"| SaveDB["💾 Save to Room DB\nMedicationEntity +\nMedicationInfoEntity"]:::action
     AIResult -->|"Error"| ErrorState["❌ Error State\nShow error message"]:::screen
 
-    SaveDB --> Navigate["Navigate to\nBioScan Details\nmedicineId passed"]:::action
+    SaveDB --> Navigate["Navigate to\nBioScan Details\nMedicationId passed"]:::action
     Navigate --> BioScan
 
     ErrorState -->|"Retry"| Scanner
@@ -573,4 +573,4 @@ flowchart TD
 ---
 
 > [!TIP]
-> The most critical data path in the app is: **ScannerScreen → ScannerViewModel → ScanAndSaveMedicineUseCase → BioScanRepositoryImpl → GeminiAiDataSourceImpl → Firebase Gemini → Room DB**. This is the heart of Medyo.
+> The most critical data path in the app is: **ScannerScreen → ScannerViewModel → ScanAndSaveMedicationUseCase → BioScanRepositoryImpl → GeminiAiDataSourceImpl → Firebase Gemini → Room DB**. This is the heart of Medyo.

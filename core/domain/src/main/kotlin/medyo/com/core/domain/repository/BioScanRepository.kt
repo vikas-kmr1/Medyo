@@ -2,23 +2,23 @@ package medyo.com.core.domain.repository
 
 import android.graphics.Bitmap
 import kotlinx.coroutines.flow.Flow
-import medyo.com.core.domain.model.MedicineInfo
+import medyo.com.core.domain.model.MedicationInfo
 
 interface BioScanRepository {
     /**
      * Sends images to the AI logic for context generation.
      * If successful, saves the generated information to the database and returns the generated medicationId.
      */
-    suspend fun scanAndSaveMedicine(images: List<Bitmap>): Result<Long>
+    suspend fun scanAndSaveMedication(images: List<Bitmap>): Result<Long>
 
     /**
-     * Reads a scanned medicine from the local database, returning a continuous stream (Flow) 
-     * mapped to the domain model `MedicineInfo`.
+     * Reads a scanned Medication from the local database, returning a continuous stream (Flow) 
+     * mapped to the domain model `MedicationInfo`.
      */
-    fun getScannedMedicine(medicationId: Long): Flow<MedicineInfo?>
+    fun getScannedMedication(medicationId: Long): Flow<MedicationInfo?>
 
     /**
-     * Reads all scanned medicines from the local database.
+     * Reads all scanned Medications from the local database.
      */
-    fun getAllScannedMedicines(): Flow<List<MedicineInfo>>
+    fun getAllScannedMedications(): Flow<List<MedicationInfo>>
 }

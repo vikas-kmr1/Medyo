@@ -6,7 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import medyo.com.core.database.entity.MedicationEntity
-import medyo.com.core.database.entity.MedicineInfoEntity
+import medyo.com.core.database.entity.MedicationInfoEntity
 
 @Dao
 interface MedicationDao {
@@ -14,23 +14,23 @@ interface MedicationDao {
     suspend fun insertMedication(medication: MedicationEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMedicineInfo(medicineInfo: MedicineInfoEntity)
+    suspend fun insertMedicationInfo(MedicationInfo: MedicationInfoEntity)
 
     // Fetches the combined data using a standard SQL JOIN
     @Query("""
         SELECT m.id AS medicationId, m.name, m.dosageStrength, m.expiryDate AS expDate,
-               i.brand, i.salts, i.sideEffects, i.cures, i.precautions, i.instructions, i.mfgDate, i.errorMessage, i.statusCode
+               i.brand, i.salts, i.sideEffects, i.cures, i.precautions, i.instructions, i.mfgDate
         FROM medications m
-        LEFT JOIN medicine_info i ON m.id = i.medicationId
+        LEFT JOIN Medication_info i ON m.id = i.medicationId
         WHERE m.id = :medicationId
     """)
-    fun getMedicineDetails(medicationId: Long): Flow<MedicineDetails?>
+    fun getMedicationDetails(medicationId: Long): Flow<MedicationDetail?>
 
     @Query("""
         SELECT m.id AS medicationId, m.name, m.dosageStrength, m.expiryDate AS expDate,
-               i.brand, i.salts, i.sideEffects, i.cures, i.precautions, i.instructions, i.mfgDate, i.errorMessage, i.statusCode
+               i.brand, i.salts, i.sideEffects, i.cures, i.precautions, i.instructions, i.mfgDate
         FROM medications m
-        LEFT JOIN medicine_info i ON m.id = i.medicationId
+        LEFT JOIN Medication_info i ON m.id = i.medicationId
     """)
-    fun getAllMedicineDetails(): Flow<List<MedicineDetails>>
+    fun getAllMedicationDetails(): Flow<List<MedicationDetail>>
 }

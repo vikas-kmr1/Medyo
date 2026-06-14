@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -28,7 +27,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import medyo.com.core.design_system.R
 import medyo.com.core.design_system.component.tooltip.MedyoTooltip
 import medyo.com.core.design_system.theme.LocalDimensions
 import medyo.com.core.design_system.theme.LocalIconSize
@@ -36,11 +34,11 @@ import medyo.com.core.design_system.theme.LocalTintTheme
 import medyo.com.core.design_system.theme.MedyoTheme
 import medyo.com.core.design_system.theme.icon.MedyoIcons
 import medyo.com.core.design_system.theme.shapes.LocalAppShapes
-import medyo.com.core.design_system.utils.getMedicineIcon
-import medyo.com.core.utils.constants.MedicineType
+import medyo.com.core.design_system.utils.getMedicationIcon
+import medyo.com.core.utils.constants.MedicationType
 
 @Composable
-fun MedicineCardItem(
+fun MedicationCardItem(
     modifier: Modifier = Modifier,
     name: String,
     dosage: String,
@@ -90,7 +88,7 @@ fun MedicineCardItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            MedicineIcon(
+            MedicationIcon(
                 iconBackgroundColor = iconBackgroundColor,
                 iconRes = iconRes,
                 name = name,
@@ -98,7 +96,7 @@ fun MedicineCardItem(
 
             Spacer(modifier = Modifier.width(dimensions.dimen16dp))
 
-            MedicineInfo(
+            MedicationInfo(
                 modifier = Modifier.weight(1f),
                 name = name,
                 dosage = dosage,
@@ -119,7 +117,7 @@ fun MedicineCardItem(
 }
 
 @Composable
-private fun MedicineIcon(
+private fun MedicationIcon(
     iconBackgroundColor: Color,
     iconRes: Int,
     name: String,
@@ -142,7 +140,7 @@ private fun MedicineIcon(
 }
 
 @Composable
-private fun MedicineInfo(
+private fun MedicationInfo(
     modifier: Modifier = Modifier,
     name: String,
     dosage: String,
@@ -170,7 +168,7 @@ private fun MedicineInfo(
 
 @Preview(showBackground = true, backgroundColor = 0xFFF8FAFC)
 @Composable
-private fun MedicineCardItemPreview() {
+private fun MedicationCardItemPreview() {
     MedyoTheme {
         Column(
             modifier = Modifier
@@ -178,15 +176,15 @@ private fun MedicineCardItemPreview() {
                 .padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp) // Generous spacing between cards
         ) {
-          sampleMedicineList.forEach { medicine ->
-              MedicineCardItem(
+          sampleMedicationList.forEach { Medication ->
+              MedicationCardItem(
 
-                  name = medicine.name,
-                  dosage = medicine.dosage,
-                  iconRes = medicine.iconRes,
-                  iconBackgroundColor = medicine.iconBackgroundColor,
-                  cardGradientStartColor = medicine.cardGradientStartColor,
-                  shadowColor = medicine.shadowColor,
+                  name = Medication.name,
+                  dosage = Medication.dosage,
+                  iconRes = Medication.iconRes,
+                  iconBackgroundColor = Medication.iconBackgroundColor,
+                  cardGradientStartColor = Medication.cardGradientStartColor,
+                  shadowColor = Medication.shadowColor,
                   onClick = {},
               )
           }
@@ -194,7 +192,7 @@ private fun MedicineCardItemPreview() {
     }
 }
 
-data class MedicineCardItemData(
+data class MedicationCardItemData(
     val id: Int, // Important for LazyColumn keys
     val name: String,
     val dosage: String,
@@ -204,8 +202,8 @@ data class MedicineCardItemData(
     val shadowColor: Color
 )
 
-val sampleMedicineList = listOf(
-    MedicineCardItemData(
+val sampleMedicationList = listOf(
+    MedicationCardItemData(
         id = 1,
         name = "Amoxicillin 500mg",
         dosage = "500mg",
@@ -214,7 +212,7 @@ val sampleMedicineList = listOf(
         cardGradientStartColor = Color(0xFF4DD0E1),
         shadowColor = Color(0xFF00ACC1)
     ),
-    MedicineCardItemData(
+    MedicationCardItemData(
         id = 2,
         name = "Lipitor 10mg",
         dosage = "10mg",
@@ -223,16 +221,16 @@ val sampleMedicineList = listOf(
         cardGradientStartColor = Color(0xFFFFB74D),
         shadowColor = Color(0xFFFF9800)
     ),
-    MedicineCardItemData(
+    MedicationCardItemData(
         id = 3,
         name = "Lipitor 10mg", // Note: Same name but different ID and Icon
         dosage = "10mg",
-        iconRes = getMedicineIcon(MedicineType.INJECTION),
+        iconRes = getMedicationIcon(MedicationType.INJECTION),
         iconBackgroundColor = Color.White, // Using hardcoded or MaterialTheme colors
         cardGradientStartColor = Color.White,
         shadowColor = Color.Black
     ),
-    MedicineCardItemData(
+    MedicationCardItemData(
         id = 4,
         name = "Amoxicillin 500mg",
         dosage = "500mg",
@@ -241,7 +239,7 @@ val sampleMedicineList = listOf(
         cardGradientStartColor = Color(0xFF4DD0E1),
         shadowColor = Color(0xFF00ACC1)
     ),
-    MedicineCardItemData(
+    MedicationCardItemData(
         id = 5,
         name = "Lipitor 10mg",
         dosage = "10mg",
@@ -250,17 +248,17 @@ val sampleMedicineList = listOf(
         cardGradientStartColor = Color(0xFFFFB74D),
         shadowColor = Color(0xFFFF9800)
     ),
-    MedicineCardItemData(
+    MedicationCardItemData(
         id = 6,
         name = "Lipitor 10mg", // Note: Same name but different ID and Icon
         dosage = "10mg",
-        iconRes = getMedicineIcon(MedicineType.INJECTION),
+        iconRes = getMedicationIcon(MedicationType.INJECTION),
         iconBackgroundColor = Color.White, // Using hardcoded or MaterialTheme colors
         cardGradientStartColor = Color.White,
         shadowColor = Color.Black
     ),
 
-    MedicineCardItemData(
+    MedicationCardItemData(
         id = 7,
         name = "Amoxicillin 500mg",
         dosage = "500mg",
@@ -269,7 +267,7 @@ val sampleMedicineList = listOf(
         cardGradientStartColor = Color(0xFF4DD0E1),
         shadowColor = Color(0xFF00ACC1)
     ),
-    MedicineCardItemData(
+    MedicationCardItemData(
         id = 8,
         name = "Lipitor 10mg",
         dosage = "10mg",
@@ -278,11 +276,11 @@ val sampleMedicineList = listOf(
         cardGradientStartColor = Color(0xFFFFB74D),
         shadowColor = Color(0xFFFF9800)
     ),
-    MedicineCardItemData(
+    MedicationCardItemData(
         id = 9,
         name = "Lipitor 10mg", // Note: Same name but different ID and Icon
         dosage = "10mg",
-        iconRes = getMedicineIcon(MedicineType.INJECTION),
+        iconRes = getMedicationIcon(MedicationType.INJECTION),
         iconBackgroundColor = Color.White, // Using hardcoded or MaterialTheme colors
         cardGradientStartColor = Color.White,
         shadowColor = Color.Black

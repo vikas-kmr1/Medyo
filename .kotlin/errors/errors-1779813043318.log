@@ -1,23 +1,23 @@
 kotlin version: 2.3.21
 error message: java.lang.RuntimeException: Exception while generating code for:
-FUN name:MedicineCardList visibility:public modality:FINAL returnType:kotlin.Unit
+FUN name:MedicationCardList visibility:public modality:FINAL returnType:kotlin.Unit
   VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:androidx.compose.foundation.lazy.LazyListScope
-  VALUE_PARAMETER kind:Regular name:medicineItems index:1 type:kotlin.collections.List<medyo.com.core.ui.MedicineCardItemData>
+  VALUE_PARAMETER kind:Regular name:MedicationItems index:1 type:kotlin.collections.List<medyo.com.core.ui.MedicationCardItemData>
     EXPRESSION_BODY
-      ERROR_EXPR 'Default Stub' type=kotlin.collections.List<medyo.com.core.ui.MedicineCardItemData>
+      ERROR_EXPR 'Default Stub' type=kotlin.collections.List<medyo.com.core.ui.MedicationCardItemData>
   annotations:
     Composable
   BLOCK_BODY
-    RETURN type=kotlin.Nothing from='public final fun MedicineCardList (<this>: androidx.compose.foundation.lazy.LazyListScope, medicineItems: kotlin.collections.List<medyo.com.core.ui.MedicineCardItemData>): kotlin.Unit declared in medyo.com.core.ui.MedicineCardListKt'
+    RETURN type=kotlin.Nothing from='public final fun MedicationCardList (<this>: androidx.compose.foundation.lazy.LazyListScope, MedicationItems: kotlin.collections.List<medyo.com.core.ui.MedicationCardItemData>): kotlin.Unit declared in medyo.com.core.ui.MedicationCardListKt'
       CALL 'public final fun items$default <T> (<this>: androidx.compose.foundation.lazy.LazyListScope, items: kotlin.collections.List<T of androidx.compose.foundation.lazy.LazyDslKt.items$default>, key: kotlin.Function1<@[ParameterName(name = "item")] T of androidx.compose.foundation.lazy.LazyDslKt.items$default, kotlin.Any>?, contentType: kotlin.Function1<@[ParameterName(name = "item")] T of androidx.compose.foundation.lazy.LazyDslKt.items$default, kotlin.Any?>?, itemContent: @[Composable] @[ExtensionFunctionType] kotlin.Function2<androidx.compose.foundation.lazy.LazyItemScope, @[ParameterName(name = "item")] T of androidx.compose.foundation.lazy.LazyDslKt.items$default, kotlin.Unit>, $mask0: kotlin.Int, $handler: kotlin.Any?): kotlin.Unit [inline] declared in androidx.compose.foundation.lazy.LazyDslKt' type=kotlin.Unit origin=DEFAULT_DISPATCH_CALL
-        TYPE_ARG T: medyo.com.core.ui.MedicineCardItemData
-        ARG <this>: GET_VAR '<this>: androidx.compose.foundation.lazy.LazyListScope declared in medyo.com.core.ui.MedicineCardListKt.MedicineCardList' type=androidx.compose.foundation.lazy.LazyListScope origin=IMPLICIT_ARGUMENT
-        ARG items: GET_VAR 'medicineItems: kotlin.collections.List<medyo.com.core.ui.MedicineCardItemData> declared in medyo.com.core.ui.MedicineCardListKt.MedicineCardList' type=kotlin.collections.List<medyo.com.core.ui.MedicineCardItemData> origin=null
-        ARG key: BLOCK type=kotlin.Function1<medyo.com.core.ui.MedicineCardItemData, kotlin.Any> origin=LAMBDA
+        TYPE_ARG T: medyo.com.core.ui.MedicationCardItemData
+        ARG <this>: GET_VAR '<this>: androidx.compose.foundation.lazy.LazyListScope declared in medyo.com.core.ui.MedicationCardListKt.MedicationCardList' type=androidx.compose.foundation.lazy.LazyListScope origin=IMPLICIT_ARGUMENT
+        ARG items: GET_VAR 'MedicationItems: kotlin.collections.List<medyo.com.core.ui.MedicationCardItemData> declared in medyo.com.core.ui.MedicationCardListKt.MedicationCardList' type=kotlin.collections.List<medyo.com.core.ui.MedicationCardItemData> origin=null
+        ARG key: BLOCK type=kotlin.Function1<medyo.com.core.ui.MedicationCardItemData, kotlin.Any> origin=LAMBDA
           COMPOSITE type=kotlin.Unit origin=null
-          CALL 'public final fun <jvm-indy> <T> (dynamicCall: T of kotlin.jvm.internal.<jvm-indy>, bootstrapMethodHandle: kotlin.Any, vararg bootstrapMethodArguments: kotlin.Any): T of kotlin.jvm.internal.<jvm-indy> declared in kotlin.jvm.internal' type=kotlin.Function1<medyo.com.core.ui.MedicineCardItemData, kotlin.Any> origin=null
-            TYPE_ARG T: kotlin.Function1<medyo.com.core.ui.MedicineCardItemData, kotlin.Any>
-            ARG dynamicCall: CALL 'public final fun invoke (): kotlin.Function1<medyo.com.core.ui.MedicineCardItemData, kotlin.Any> declared in kotlin.jvm.internal.invokeDynamic' type=kotlin.Function1<medyo.com.core.ui.MedicineCardItemData, kotlin.Any> origin=null
+          CALL 'public final fun <jvm-indy> <T> (dynamicCall: T of kotlin.jvm.internal.<jvm-indy>, bootstrapMethodHandle: kotlin.Any, vararg bootstrapMethodArguments: kotlin.Any): T of kotlin.jvm.internal.<jvm-indy> declared in kotlin.jvm.internal' type=kotlin.Function1<medyo.com.core.ui.MedicationCardItemData, kotlin.Any> origin=null
+            TYPE_ARG T: kotlin.Function1<medyo.com.core.ui.MedicationCardItemData, kotlin.Any>
+            ARG dynamicCall: CALL 'public final fun invoke (): kotlin.Function1<medyo.com.core.ui.MedicationCardItemData, kotlin.Any> declared in kotlin.jvm.internal.invokeDynamic' type=kotlin.Function1<medyo.com.core.ui.MedicationCardItemData, kotlin.Any> origin=null
             ARG bootstrapMethodHandle: CALL 'public final fun <jvm-method-handle> (tag: kotlin.Int, owner: kotlin.String, name: kotlin.String, descriptor: kotlin.String, isInterface: kotlin.Boolean): kotlin.Any declared in kotlin.jvm.internal' type=kotlin.Any origin=null
               ARG tag: CONST Int type=kotlin.Int value=6
               ARG owner: CONST String type=kotlin.String value="java/lang/invoke/LambdaMetafactory"
@@ -27,23 +27,23 @@ FUN name:MedicineCardList visibility:public modality:FINAL returnType:kotlin.Uni
             ARG bootstrapMethodArguments: VARARG type=kotlin.Array<kotlin.Any> varargElementType=kotlin.Any
               CALL 'public final fun <jvm-original-method-type> (method: kotlin.Any): kotlin.Any declared in kotlin.jvm.internal' type=kotlin.Any origin=null
                 ARG method: RAW_FUNCTION_REFERENCE 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 [operator] declared in kotlin.Function1' type=kotlin.Any
-              RAW_FUNCTION_REFERENCE 'private final fun MedicineCardList$lambda$0 (it: medyo.com.core.ui.MedicineCardItemData): kotlin.Any declared in medyo.com.core.ui.MedicineCardListKt' type=kotlin.Any
+              RAW_FUNCTION_REFERENCE 'private final fun MedicationCardList$lambda$0 (it: medyo.com.core.ui.MedicationCardItemData): kotlin.Any declared in medyo.com.core.ui.MedicationCardListKt' type=kotlin.Any
               CALL 'public final fun <jvm-original-method-type> (method: kotlin.Any): kotlin.Any declared in kotlin.jvm.internal' type=kotlin.Any origin=null
-                ARG method: RAW_FUNCTION_REFERENCE 'public abstract fun invoke (p1: medyo.com.core.ui.MedicineCardItemData): kotlin.Any [fake_override,operator] declared in kotlin.jvm.internal.invokeDynamic.<fake>' type=kotlin.Any
+                ARG method: RAW_FUNCTION_REFERENCE 'public abstract fun invoke (p1: medyo.com.core.ui.MedicationCardItemData): kotlin.Any [fake_override,operator] declared in kotlin.jvm.internal.invokeDynamic.<fake>' type=kotlin.Any
         ARG contentType: COMPOSITE type=kotlin.Function1<@[ParameterName(name = "item")] T of androidx.compose.foundation.lazy.LazyDslKt.items$default, kotlin.Any?>? origin=DEFAULT_VALUE
           CONST Null type=kotlin.Function1<@[ParameterName(name = "item")] T of androidx.compose.foundation.lazy.LazyDslKt.items$default, kotlin.Any?>? value=null
-        ARG itemContent: RICH_FUNCTION_REFERENCE type=@[ExtensionFunctionType] kotlin.Function2<androidx.compose.foundation.lazy.LazyItemScope, medyo.com.core.ui.MedicineCardItemData, kotlin.Unit> origin=INLINE_LAMBDA reflectionTarget='null'
+        ARG itemContent: RICH_FUNCTION_REFERENCE type=@[ExtensionFunctionType] kotlin.Function2<androidx.compose.foundation.lazy.LazyItemScope, medyo.com.core.ui.MedicationCardItemData, kotlin.Unit> origin=INLINE_LAMBDA reflectionTarget='null'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.Function2, p2: P2 of kotlin.Function2): R of kotlin.Function2 [operator] declared in kotlin.Function2
-          invoke: FUN INLINE_LAMBDA name:MedicineCardList$lambda$1 visibility:private modality:FINAL returnType:kotlin.Unit
+          invoke: FUN INLINE_LAMBDA name:MedicationCardList$lambda$1 visibility:private modality:FINAL returnType:kotlin.Unit
             VALUE_PARAMETER BOUND_RECEIVER_PARAMETER kind:Regular name:$this$items index:0 type:androidx.compose.foundation.lazy.LazyItemScope
-            VALUE_PARAMETER kind:Regular name:medicineCardItem index:1 type:medyo.com.core.ui.MedicineCardItemData
+            VALUE_PARAMETER kind:Regular name:MedicationCardItem index:1 type:medyo.com.core.ui.MedicationCardItemData
             BLOCK_BODY
-              VAR name:$i$a$-items$default-MedicineCardListKt$MedicineCardList$2 type:kotlin.Int [val]
+              VAR name:$i$a$-items$default-MedicationCardListKt$MedicationCardList$2 type:kotlin.Int [val]
                 CONST Int type=kotlin.Int value=0
               CALL 'public final fun Text-TjK39Kw$default (text: kotlin.String, modifier: androidx.compose.ui.Modifier?, color: androidx.compose.ui.graphics.Color, autoSize: androidx.compose.foundation.text.TextAutoSize?, fontSize: androidx.compose.ui.unit.TextUnit, fontStyle: androidx.compose.ui.text.font.FontStyle?, fontWeight: androidx.compose.ui.text.font.FontWeight?, fontFamily: androidx.compose.ui.text.font.FontFamily?, letterSpacing: androidx.compose.ui.unit.TextUnit, textDecoration: androidx.compose.ui.text.style.TextDecoration?, textAlign: androidx.compose.ui.text.style.TextAlign?, lineHeight: androidx.compose.ui.unit.TextUnit, overflow: androidx.compose.ui.text.style.TextOverflow, softWrap: kotlin.Boolean, maxLines: kotlin.Int, minLines: kotlin.Int, onTextLayout: kotlin.Function1<androidx.compose.ui.text.TextLayoutResult, kotlin.Unit>?, style: androidx.compose.ui.text.TextStyle?, $mask0: kotlin.Int, $handler: kotlin.Any?): kotlin.Unit declared in androidx.compose.material3.TextKt' type=kotlin.Unit origin=DEFAULT_DISPATCH_CALL
                 ARG text: CALL 'public final fun valueOf (value: kotlin.Int): kotlin.String declared in java.lang.String' type=kotlin.String origin=null
-                  ARG value: CALL 'public final fun <get-id> (): kotlin.Int declared in medyo.com.core.ui.MedicineCardItemData' type=kotlin.Int origin=GET_PROPERTY
-                    ARG <this>: GET_VAR 'medicineCardItem: medyo.com.core.ui.MedicineCardItemData declared in medyo.com.core.ui.MedicineCardListKt.MedicineCardList.MedicineCardList$lambda$1' type=medyo.com.core.ui.MedicineCardItemData origin=null
+                  ARG value: CALL 'public final fun <get-id> (): kotlin.Int declared in medyo.com.core.ui.MedicationCardItemData' type=kotlin.Int origin=GET_PROPERTY
+                    ARG <this>: GET_VAR 'MedicationCardItem: medyo.com.core.ui.MedicationCardItemData declared in medyo.com.core.ui.MedicationCardListKt.MedicationCardList.MedicationCardList$lambda$1' type=medyo.com.core.ui.MedicationCardItemData origin=null
                 ARG modifier: COMPOSITE type=androidx.compose.ui.Modifier? origin=DEFAULT_VALUE
                   CONST Null type=androidx.compose.ui.Modifier? value=null
                 ARG color: COMPOSITE type=androidx.compose.ui.graphics.Color origin=DEFAULT_VALUE
@@ -175,24 +175,24 @@ Caused by: java.lang.IllegalStateException: couldn't find inline method Landroid
 
 
 error message: java.lang.RuntimeException: Exception while generating code for:
-FUN name:MedicineCardList visibility:public modality:FINAL returnType:kotlin.Unit
+FUN name:MedicationCardList visibility:public modality:FINAL returnType:kotlin.Unit
   VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:androidx.compose.foundation.lazy.LazyListScope
-  VALUE_PARAMETER kind:Regular name:medicineItems index:1 type:kotlin.collections.List<medyo.com.core.ui.MedicineCardItemData>
+  VALUE_PARAMETER kind:Regular name:MedicationItems index:1 type:kotlin.collections.List<medyo.com.core.ui.MedicationCardItemData>
     EXPRESSION_BODY
-      ERROR_EXPR 'Default Stub' type=kotlin.collections.List<medyo.com.core.ui.MedicineCardItemData>
+      ERROR_EXPR 'Default Stub' type=kotlin.collections.List<medyo.com.core.ui.MedicationCardItemData>
   annotations:
     Composable
   BLOCK_BODY
-    RETURN type=kotlin.Nothing from='public final fun MedicineCardList (<this>: androidx.compose.foundation.lazy.LazyListScope, medicineItems: kotlin.collections.List<medyo.com.core.ui.MedicineCardItemData>): kotlin.Unit declared in medyo.com.core.ui.MedicineCardListKt'
+    RETURN type=kotlin.Nothing from='public final fun MedicationCardList (<this>: androidx.compose.foundation.lazy.LazyListScope, MedicationItems: kotlin.collections.List<medyo.com.core.ui.MedicationCardItemData>): kotlin.Unit declared in medyo.com.core.ui.MedicationCardListKt'
       CALL 'public final fun items$default <T> (<this>: androidx.compose.foundation.lazy.LazyListScope, items: kotlin.collections.List<T of androidx.compose.foundation.lazy.LazyDslKt.items$default>, key: kotlin.Function1<@[ParameterName(name = "item")] T of androidx.compose.foundation.lazy.LazyDslKt.items$default, kotlin.Any>?, contentType: kotlin.Function1<@[ParameterName(name = "item")] T of androidx.compose.foundation.lazy.LazyDslKt.items$default, kotlin.Any?>?, itemContent: @[Composable] @[ExtensionFunctionType] kotlin.Function2<androidx.compose.foundation.lazy.LazyItemScope, @[ParameterName(name = "item")] T of androidx.compose.foundation.lazy.LazyDslKt.items$default, kotlin.Unit>, $mask0: kotlin.Int, $handler: kotlin.Any?): kotlin.Unit [inline] declared in androidx.compose.foundation.lazy.LazyDslKt' type=kotlin.Unit origin=DEFAULT_DISPATCH_CALL
-        TYPE_ARG T: medyo.com.core.ui.MedicineCardItemData
-        ARG <this>: GET_VAR '<this>: androidx.compose.foundation.lazy.LazyListScope declared in medyo.com.core.ui.MedicineCardListKt.MedicineCardList' type=androidx.compose.foundation.lazy.LazyListScope origin=IMPLICIT_ARGUMENT
-        ARG items: GET_VAR 'medicineItems: kotlin.collections.List<medyo.com.core.ui.MedicineCardItemData> declared in medyo.com.core.ui.MedicineCardListKt.MedicineCardList' type=kotlin.collections.List<medyo.com.core.ui.MedicineCardItemData> origin=null
-        ARG key: BLOCK type=kotlin.Function1<medyo.com.core.ui.MedicineCardItemData, kotlin.Any> origin=LAMBDA
+        TYPE_ARG T: medyo.com.core.ui.MedicationCardItemData
+        ARG <this>: GET_VAR '<this>: androidx.compose.foundation.lazy.LazyListScope declared in medyo.com.core.ui.MedicationCardListKt.MedicationCardList' type=androidx.compose.foundation.lazy.LazyListScope origin=IMPLICIT_ARGUMENT
+        ARG items: GET_VAR 'MedicationItems: kotlin.collections.List<medyo.com.core.ui.MedicationCardItemData> declared in medyo.com.core.ui.MedicationCardListKt.MedicationCardList' type=kotlin.collections.List<medyo.com.core.ui.MedicationCardItemData> origin=null
+        ARG key: BLOCK type=kotlin.Function1<medyo.com.core.ui.MedicationCardItemData, kotlin.Any> origin=LAMBDA
           COMPOSITE type=kotlin.Unit origin=null
-          CALL 'public final fun <jvm-indy> <T> (dynamicCall: T of kotlin.jvm.internal.<jvm-indy>, bootstrapMethodHandle: kotlin.Any, vararg bootstrapMethodArguments: kotlin.Any): T of kotlin.jvm.internal.<jvm-indy> declared in kotlin.jvm.internal' type=kotlin.Function1<medyo.com.core.ui.MedicineCardItemData, kotlin.Any> origin=null
-            TYPE_ARG T: kotlin.Function1<medyo.com.core.ui.MedicineCardItemData, kotlin.Any>
-            ARG dynamicCall: CALL 'public final fun invoke (): kotlin.Function1<medyo.com.core.ui.MedicineCardItemData, kotlin.Any> declared in kotlin.jvm.internal.invokeDynamic' type=kotlin.Function1<medyo.com.core.ui.MedicineCardItemData, kotlin.Any> origin=null
+          CALL 'public final fun <jvm-indy> <T> (dynamicCall: T of kotlin.jvm.internal.<jvm-indy>, bootstrapMethodHandle: kotlin.Any, vararg bootstrapMethodArguments: kotlin.Any): T of kotlin.jvm.internal.<jvm-indy> declared in kotlin.jvm.internal' type=kotlin.Function1<medyo.com.core.ui.MedicationCardItemData, kotlin.Any> origin=null
+            TYPE_ARG T: kotlin.Function1<medyo.com.core.ui.MedicationCardItemData, kotlin.Any>
+            ARG dynamicCall: CALL 'public final fun invoke (): kotlin.Function1<medyo.com.core.ui.MedicationCardItemData, kotlin.Any> declared in kotlin.jvm.internal.invokeDynamic' type=kotlin.Function1<medyo.com.core.ui.MedicationCardItemData, kotlin.Any> origin=null
             ARG bootstrapMethodHandle: CALL 'public final fun <jvm-method-handle> (tag: kotlin.Int, owner: kotlin.String, name: kotlin.String, descriptor: kotlin.String, isInterface: kotlin.Boolean): kotlin.Any declared in kotlin.jvm.internal' type=kotlin.Any origin=null
               ARG tag: CONST Int type=kotlin.Int value=6
               ARG owner: CONST String type=kotlin.String value="java/lang/invoke/LambdaMetafactory"
@@ -202,23 +202,23 @@ FUN name:MedicineCardList visibility:public modality:FINAL returnType:kotlin.Uni
             ARG bootstrapMethodArguments: VARARG type=kotlin.Array<kotlin.Any> varargElementType=kotlin.Any
               CALL 'public final fun <jvm-original-method-type> (method: kotlin.Any): kotlin.Any declared in kotlin.jvm.internal' type=kotlin.Any origin=null
                 ARG method: RAW_FUNCTION_REFERENCE 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 [operator] declared in kotlin.Function1' type=kotlin.Any
-              RAW_FUNCTION_REFERENCE 'private final fun MedicineCardList$lambda$0 (it: medyo.com.core.ui.MedicineCardItemData): kotlin.Any declared in medyo.com.core.ui.MedicineCardListKt' type=kotlin.Any
+              RAW_FUNCTION_REFERENCE 'private final fun MedicationCardList$lambda$0 (it: medyo.com.core.ui.MedicationCardItemData): kotlin.Any declared in medyo.com.core.ui.MedicationCardListKt' type=kotlin.Any
               CALL 'public final fun <jvm-original-method-type> (method: kotlin.Any): kotlin.Any declared in kotlin.jvm.internal' type=kotlin.Any origin=null
-                ARG method: RAW_FUNCTION_REFERENCE 'public abstract fun invoke (p1: medyo.com.core.ui.MedicineCardItemData): kotlin.Any [fake_override,operator] declared in kotlin.jvm.internal.invokeDynamic.<fake>' type=kotlin.Any
+                ARG method: RAW_FUNCTION_REFERENCE 'public abstract fun invoke (p1: medyo.com.core.ui.MedicationCardItemData): kotlin.Any [fake_override,operator] declared in kotlin.jvm.internal.invokeDynamic.<fake>' type=kotlin.Any
         ARG contentType: COMPOSITE type=kotlin.Function1<@[ParameterName(name = "item")] T of androidx.compose.foundation.lazy.LazyDslKt.items$default, kotlin.Any?>? origin=DEFAULT_VALUE
           CONST Null type=kotlin.Function1<@[ParameterName(name = "item")] T of androidx.compose.foundation.lazy.LazyDslKt.items$default, kotlin.Any?>? value=null
-        ARG itemContent: RICH_FUNCTION_REFERENCE type=@[ExtensionFunctionType] kotlin.Function2<androidx.compose.foundation.lazy.LazyItemScope, medyo.com.core.ui.MedicineCardItemData, kotlin.Unit> origin=INLINE_LAMBDA reflectionTarget='null'
+        ARG itemContent: RICH_FUNCTION_REFERENCE type=@[ExtensionFunctionType] kotlin.Function2<androidx.compose.foundation.lazy.LazyItemScope, medyo.com.core.ui.MedicationCardItemData, kotlin.Unit> origin=INLINE_LAMBDA reflectionTarget='null'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.Function2, p2: P2 of kotlin.Function2): R of kotlin.Function2 [operator] declared in kotlin.Function2
-          invoke: FUN INLINE_LAMBDA name:MedicineCardList$lambda$1 visibility:private modality:FINAL returnType:kotlin.Unit
+          invoke: FUN INLINE_LAMBDA name:MedicationCardList$lambda$1 visibility:private modality:FINAL returnType:kotlin.Unit
             VALUE_PARAMETER BOUND_RECEIVER_PARAMETER kind:Regular name:$this$items index:0 type:androidx.compose.foundation.lazy.LazyItemScope
-            VALUE_PARAMETER kind:Regular name:medicineCardItem index:1 type:medyo.com.core.ui.MedicineCardItemData
+            VALUE_PARAMETER kind:Regular name:MedicationCardItem index:1 type:medyo.com.core.ui.MedicationCardItemData
             BLOCK_BODY
-              VAR name:$i$a$-items$default-MedicineCardListKt$MedicineCardList$2 type:kotlin.Int [val]
+              VAR name:$i$a$-items$default-MedicationCardListKt$MedicationCardList$2 type:kotlin.Int [val]
                 CONST Int type=kotlin.Int value=0
               CALL 'public final fun Text-TjK39Kw$default (text: kotlin.String, modifier: androidx.compose.ui.Modifier?, color: androidx.compose.ui.graphics.Color, autoSize: androidx.compose.foundation.text.TextAutoSize?, fontSize: androidx.compose.ui.unit.TextUnit, fontStyle: androidx.compose.ui.text.font.FontStyle?, fontWeight: androidx.compose.ui.text.font.FontWeight?, fontFamily: androidx.compose.ui.text.font.FontFamily?, letterSpacing: androidx.compose.ui.unit.TextUnit, textDecoration: androidx.compose.ui.text.style.TextDecoration?, textAlign: androidx.compose.ui.text.style.TextAlign?, lineHeight: androidx.compose.ui.unit.TextUnit, overflow: androidx.compose.ui.text.style.TextOverflow, softWrap: kotlin.Boolean, maxLines: kotlin.Int, minLines: kotlin.Int, onTextLayout: kotlin.Function1<androidx.compose.ui.text.TextLayoutResult, kotlin.Unit>?, style: androidx.compose.ui.text.TextStyle?, $mask0: kotlin.Int, $handler: kotlin.Any?): kotlin.Unit declared in androidx.compose.material3.TextKt' type=kotlin.Unit origin=DEFAULT_DISPATCH_CALL
                 ARG text: CALL 'public final fun valueOf (value: kotlin.Int): kotlin.String declared in java.lang.String' type=kotlin.String origin=null
-                  ARG value: CALL 'public final fun <get-id> (): kotlin.Int declared in medyo.com.core.ui.MedicineCardItemData' type=kotlin.Int origin=GET_PROPERTY
-                    ARG <this>: GET_VAR 'medicineCardItem: medyo.com.core.ui.MedicineCardItemData declared in medyo.com.core.ui.MedicineCardListKt.MedicineCardList.MedicineCardList$lambda$1' type=medyo.com.core.ui.MedicineCardItemData origin=null
+                  ARG value: CALL 'public final fun <get-id> (): kotlin.Int declared in medyo.com.core.ui.MedicationCardItemData' type=kotlin.Int origin=GET_PROPERTY
+                    ARG <this>: GET_VAR 'MedicationCardItem: medyo.com.core.ui.MedicationCardItemData declared in medyo.com.core.ui.MedicationCardListKt.MedicationCardList.MedicationCardList$lambda$1' type=medyo.com.core.ui.MedicationCardItemData origin=null
                 ARG modifier: COMPOSITE type=androidx.compose.ui.Modifier? origin=DEFAULT_VALUE
                   CONST Null type=androidx.compose.ui.Modifier? value=null
                 ARG color: COMPOSITE type=androidx.compose.ui.graphics.Color origin=DEFAULT_VALUE

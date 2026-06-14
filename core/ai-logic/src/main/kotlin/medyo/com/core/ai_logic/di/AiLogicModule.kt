@@ -5,13 +5,12 @@ import com.google.firebase.ai.GenerativeModel
 import com.google.firebase.ai.ai
 import com.google.firebase.ai.type.GenerativeBackend
 import com.google.firebase.ai.type.JsonSchema
-import com.google.firebase.ai.type.Schema
 import com.google.firebase.ai.type.generationConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import medyo.com.core.utils.constants.MedicineType
+import medyo.com.core.utils.constants.MedicationType
 import javax.inject.Singleton
 
 
@@ -30,10 +29,10 @@ internal object AiLogicModule {
                 "brand" to JsonSchema.string(),
                 "salts" to JsonSchema.string(),
                 "mfgDate" to JsonSchema.long(
-                    description = "The date the medicine was manufactured. Must be in epoch type."
+                    description = "The date the Medication was manufactured. Must be in epoch type."
                 ),
                 "expDate" to JsonSchema.long(
-                    description = "The date the medicine expires. Must be in epoch type."
+                    description = "The date the Medication expires. Must be in epoch type."
                 ),
                 "sideEffects" to JsonSchema.array(items = JsonSchema.string()),
                 "cures" to JsonSchema.array(items = JsonSchema.string()),
@@ -42,9 +41,9 @@ internal object AiLogicModule {
                 "category" to JsonSchema.string(
                     nullable = false,
                     // Passing the enum values here helps the model pick the correct one
-                    description = "The type of medicine. Must be one of: ${MedicineType.entries.joinToString()}"
+                    description = "The type of Medication. Must be one of: ${MedicationType.entries.joinToString()}"
                 ),
-                "errorMessage" to JsonSchema.string(nullable = true, description = "Error message if any other item scanned except medicines."),
+                "errorMessage" to JsonSchema.string(nullable = true, description = "Error message if any other item scanned except Medications."),
                 "statusCode" to JsonSchema.string(nullable = true, description = "Status code of the response. 200 for success, 400 for bad request, etc.")
             ),
         )
@@ -58,7 +57,7 @@ internal object AiLogicModule {
     ).generativeModel(
         modelName = MODEL_NAME, generationConfig = config,
         systemInstruction = com.google.firebase.ai.type.content {
-            text("ONLY GENERATE RESPONSES FOR MEDICINES ONLY, don't entertain any other item.")
+            text("ONLY GENERATE RESPONSES FOR MedicationS ONLY, don't entertain any other item.")
         })
 
 }

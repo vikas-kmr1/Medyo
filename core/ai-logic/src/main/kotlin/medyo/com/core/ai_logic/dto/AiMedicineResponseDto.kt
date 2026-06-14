@@ -4,12 +4,12 @@ import androidx.annotation.Keep
 import kotlinx.serialization.Serializable
 
 /**
- * Data Transfer Object representing the structured AI response for medicines.
+ * Data Transfer Object representing the structured AI response for Medications.
  * This matches the JSON schema defined in AiLogicModule.
  */
 @Keep
 @Serializable
-data class AiMedicineResponseDto(
+data class AiMedicationResponseDto(
     val brand: String? = null,
     val salts: String? = null,
     val mfgDate: Long? = null,

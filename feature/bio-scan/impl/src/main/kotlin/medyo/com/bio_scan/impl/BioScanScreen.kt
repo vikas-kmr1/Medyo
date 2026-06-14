@@ -25,7 +25,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -39,12 +38,13 @@ import medyo.com.core.design_system.component.scrollbar.rememberDraggableScrolle
 import medyo.com.core.design_system.component.scrollbar.scrollbarState
 import medyo.com.core.design_system.theme.MedyoTheme
 import medyo.com.core.design_system.utils.compose.CommonPreview
-import medyo.com.core.ui.MedicineCardList
+import medyo.com.core.ui.MedicationCardList
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import medyo.com.core.design_system.component.card.MedicineCardItemData
-import medyo.com.core.design_system.utils.getMedicineIcon
-import medyo.com.core.utils.constants.MedicineType
+import medyo.com.core.design_system.component.card.MedicationCardItemData
+import medyo.com.core.design_system.theme.LocalDimensions
+import medyo.com.core.design_system.utils.getMedicationIcon
+import medyo.com.core.utils.constants.MedicationType
 
 @Composable
 internal fun BioScanScreen(
@@ -62,8 +62,8 @@ internal fun BioScanScreen(
         }
     }
 
-    val scannedMedicines by viewModel.scannedMedicinesList.collectAsStateWithLifecycle()
-    val itemsAvailable = scannedMedicines.size
+    val scannedMedications by viewModel.scannedMedicationsList.collectAsStateWithLifecycle()
+    val itemsAvailable = scannedMedications.size
 
     val scrollbarState = lazyListState.scrollbarState(
         itemsAvailable = itemsAvailable,
@@ -111,16 +111,16 @@ internal fun BioScanScreen(
             // 4. SELF-EXPANDING LIST: The LazyColumn naturally fills all available remaining height
             //    (weight = 1f) and dynamically expands to full-screen height when the top widget collapses!
             LazyColumn(
-                modifier = Modifier.padding(horizontal = 24.dp),
+                modifier = Modifier.padding(horizontal = LocalDimensions.current.dimen24dp),
                 state = lazyListState,
             ) {
-                MedicineCardList(
-                    medicineItems = scannedMedicines.map {
-                        MedicineCardItemData(
+                MedicationCardList(
+                    MedicationItems = scannedMedications.map {
+                        MedicationCardItemData(
                             id = it.medicationId.toInt(),
-                            name = "Lipitor 10mg", // Note: Same name but different ID and Icon
+                            name = it.brand, // Note: Same name but different ID and Icon
                             dosage = "10mg",
-                            iconRes = getMedicineIcon(MedicineType.INJECTION),
+                            iconRes = getMedicationIcon(MedicationType.INJECTION),
                             iconBackgroundColor = Color.White, // Using hardcoded or MaterialTheme colors
                             cardGradientStartColor = Color.White,
                             shadowColor = Color.Black

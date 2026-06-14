@@ -4,27 +4,27 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.Modifier
-import medyo.com.core.design_system.component.card.MedicineCardItem
-import medyo.com.core.design_system.component.card.MedicineCardItemData
+import medyo.com.core.design_system.component.card.MedicationCardItem
+import medyo.com.core.design_system.component.card.MedicationCardItemData
 import medyo.com.core.design_system.theme.LocalDimensions
 
 
-fun LazyListScope.MedicineCardList(
-    medicineItems: List<MedicineCardItemData>
+fun LazyListScope.MedicationCardList(
+    MedicationItems: List<MedicationCardItemData>
 ) = items(
-    items = medicineItems,
+    items = MedicationItems,
     key = { it.id },
-) { medicineCardItem ->
-    MedicineCardItem(
+) { MedicationCardItem ->
+    MedicationCardItem(
         modifier = Modifier.padding(
             vertical = LocalDimensions.current.dimen8dp
         ),
-        name = medicineCardItem.name,
-        dosage = medicineCardItem.dosage,
-        iconRes = medicineCardItem.iconRes,
-        iconBackgroundColor = medicineCardItem.iconBackgroundColor,
-        cardGradientStartColor = medicineCardItem.cardGradientStartColor,
-        shadowColor = medicineCardItem.shadowColor,
+        name = MedicationCardItem.name,
+        dosage = MedicationCardItem.dosage,
+        iconRes = MedicationCardItem.iconRes,
+        iconBackgroundColor = MedicationCardItem.iconBackgroundColor,
+        cardGradientStartColor = MedicationCardItem.cardGradientStartColor,
+        shadowColor = MedicationCardItem.shadowColor,
         onClick = { }
     )
 }

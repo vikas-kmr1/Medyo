@@ -5,7 +5,7 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "medicine_info",
+    tableName = "Medication_info",
     foreignKeys = [
         ForeignKey(
             entity = MedicationEntity::class,
@@ -15,7 +15,7 @@ import androidx.room.PrimaryKey
         )
     ]
 )
-data class MedicineInfoEntity(
+data class MedicationInfoEntity(
     @PrimaryKey val medicationId: Long, // Acts as both PK and FK
     val brand: String?,
     val salts: String?,
@@ -24,6 +24,4 @@ data class MedicineInfoEntity(
     val precautions: List<String> = emptyList(),
     val instructions: List<String> = emptyList(),
     val mfgDate: Long? = null,
-    val errorMessage: String? = null,
-    val statusCode: String? = null
 )
