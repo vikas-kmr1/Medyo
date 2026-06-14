@@ -35,6 +35,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.utils)
     implementation(libs.androidx.core.ktx)
     implementation(libs.gson)
     ksp(libs.hilt.compiler)

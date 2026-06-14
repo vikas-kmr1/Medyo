@@ -47,6 +47,7 @@ dependencies {
     implementation(projects.feature.scanner.api)
     implementation(projects.core.designSystem)
     implementation(projects.core.navigation)
+    implementation(projects.core.utils)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(platform(libs.androidx.compose.bom))

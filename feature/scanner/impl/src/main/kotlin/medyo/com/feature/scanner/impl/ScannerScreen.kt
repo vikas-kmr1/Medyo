@@ -50,6 +50,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -71,7 +72,6 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
-import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -84,18 +84,61 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import kotlinx.coroutines.delay
+import medyo.com.core.design_system.component.lottie.AiProgressLottieAnimation
 import medyo.com.core.design_system.theme.LocalDimensions
 import medyo.com.core.design_system.theme.MedyoTheme
 import medyo.com.core.design_system.theme.icon.MedyoIcons
 import medyo.com.core.design_system.theme.shapes.LocalAppShapes
 import medyo.com.core.design_system.utils.compose.CommonPreview
+import medyo.com.feature.scanner.impl.MedicationEdit.MedicationEditScreen
+import medyo.com.feature.scanner.impl.MedicationEdit.MedicationEditViewModel
 import java.util.UUID
+
+@Composable
+internal fun CameraPreviewRoot(
+    onBackClick: () -> Unit,
+    viewModel: ScannerViewModel = hiltViewModel(),
+) {
+
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    when (uiState.value) {
+        ScannerUiState.Idle -> CameraPreviewScreen(
+            viewModel = viewModel,
+            onBackClick = onBackClick
+        )
+
+        ScannerUiState.Loading -> AiProgressLottieAnimation()
+        is ScannerUiState.Error -> {}
+        is ScannerUiState.Success -> {
+            val medicationEditViewModel: MedicationEditViewModel = hiltViewModel()
+            val medicationUiState = medicationEditViewModel.uiState.collectAsState()
+            if (viewModel.showEditMedicationDialog) {
+                MedicationEditScreen(
+                    uiState = medicationUiState.value,
+                    onBackClick = {},
+                    onSave = medicationEditViewModel::onSave,
+                    onNameChange = medicationEditViewModel::onNameChange,
+                    onManufacturerChange = medicationEditViewModel::onManufacturerChange,
+                    onMedicationTypeChange = medicationEditViewModel::onMedicationTypeChange,
+                    onCategoryChange = medicationEditViewModel::onCategoryChange,
+                    onManufacturingDateChange = medicationEditViewModel::onManufacturingDateChange,
+                    onExpiryDateChange = medicationEditViewModel::onExpiryDateChange,
+                    onDosageIntervalChange = medicationEditViewModel::onDosageIntervalChange,
+                    onStartDateChange = medicationEditViewModel::onStartDateChange,
+                    onEndDateChange = medicationEditViewModel::onEndDateChange,
+                    onTotalDosesChange = medicationEditViewModel::onTotalDosesChange
+                )
+            }
+        }
+    }
+}
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-internal fun CameraPreviewScreen(
-    onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+private fun CameraPreviewScreen(
+    modifier: Modifier = Modifier,
+    viewModel: ScannerViewModel = hiltViewModel(),
+    onBackClick: () -> Unit
 ) {
     val context = LocalContext.current
     val view = LocalView.current
@@ -128,7 +171,8 @@ internal fun CameraPreviewScreen(
     if (cameraPermissionState.status.isGranted) {
         CameraPreviewContent(
             onBackClick = onBackClick,
-            modifier = modifier
+            modifier = modifier,
+            viewModel = viewModel
         )
     } else {
         Column(
@@ -158,7 +202,7 @@ internal fun CameraPreviewScreen(
 @Composable
 private fun CameraPreviewContent(
     onBackClick: () -> Unit,
-    viewModel: ScannerViewModel = hiltViewModel(),
+    viewModel: ScannerViewModel,
     modifier: Modifier = Modifier,
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
 ) {
@@ -278,7 +322,10 @@ private fun CameraPreviewContent(
                 LaunchedEffect(autofocusRequestId) {
                     focusScale.animateTo(
                         targetValue = 1.0f,
-                        animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)
+                        animationSpec = tween(
+                            durationMillis = 300,
+                            easing = FastOutSlowInEasing
+                        )
                     )
                 }
                 Spacer(
@@ -304,7 +351,8 @@ private fun CameraTopAppBar(
             .fillMaxWidth()
             .background(Color.Black.copy(alpha = 0.6f))
             .padding(
-                vertical = WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + 32.dp,
+                vertical = WindowInsets.statusBars.asPaddingValues()
+                    .calculateTopPadding() + 32.dp,
             ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -403,7 +451,9 @@ private fun CameraBottomControls(
                         .size(6.dp)
                         .graphicsLayer(alpha = dotAlpha)
                         .background(
-                            if (capturedImages.size >= 5) Color(0xFFFF4B4B) else Color(0xFF00FF87),
+                            if (capturedImages.size >= 5) Color(0xFFFF4B4B) else Color(
+                                0xFF00FF87
+                            ),
                             CircleShape
                         )
                 )

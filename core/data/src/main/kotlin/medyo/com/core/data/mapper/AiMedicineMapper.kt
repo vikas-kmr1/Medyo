@@ -2,17 +2,17 @@ package medyo.com.core.data.mapper
 
 import medyo.com.core.ai_logic.dto.AiMedicationResponseDto
 import medyo.com.core.database.dao.MedicationDetail
-import medyo.com.core.database.entity.MedicationCategory
 import medyo.com.core.database.entity.MedicationEntity
 import medyo.com.core.database.entity.MedicationInfoEntity
 import medyo.com.core.domain.model.MedicationInfo
+import medyo.com.core.utils.constants.MedicationCategory
 
 fun AiMedicationResponseDto.toMedicationEntity(): MedicationEntity {
     return MedicationEntity(
         name = this.brand ?: "Unknown Medication",
         dosageStrength = "", // AI doesn't explicitly return this in current schema
         form = "", 
-        category = MedicationCategory.FIRST_AID_STOCK, 
+        category = MedicationCategory.FIRST_AID_STOCK,
         stockQuantity = 0,
         expiryDate = this.expDate,
         alertDaysBeforeExpiry = null

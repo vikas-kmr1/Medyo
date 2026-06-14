@@ -37,6 +37,7 @@ android {
 dependencies {
     implementation(projects.core.aiLogic)
     implementation(projects.core.database)
+    implementation(projects.core.utils)
     implementation(projects.core.domain)
     
     implementation(libs.androidx.core.ktx)

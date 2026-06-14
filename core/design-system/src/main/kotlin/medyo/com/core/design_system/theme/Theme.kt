@@ -25,6 +25,7 @@ import medyo.com.core.design_system.theme.shapes.appShapes
 private val LightColorScheme = lightColorScheme(
     primary = TrackCyanLight,
     secondary = TrackCyanVariant,
+    secondaryContainer = TrackCyanVariant.copy(alpha = 0.3f),
     tertiary = TrackAmberLight,
     background = LightBackground,
     surface = LightSurface,

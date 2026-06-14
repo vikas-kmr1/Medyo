@@ -1,0 +1,387 @@
+package medyo.com.feature.scanner.impl.MedicationEdit
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
+import medyo.com.core.design_system.component.date_and_time_picker.DatePickerField
+import medyo.com.core.design_system.component.dialog.FullScreenDialog
+import medyo.com.core.design_system.component.textfield.MedyoTextField
+import medyo.com.core.design_system.theme.LocalDimensions
+import medyo.com.core.design_system.theme.MedyoTheme
+import medyo.com.core.design_system.theme.icon.MedyoIcons
+import medyo.com.core.design_system.utils.compose.CommonPreview
+import medyo.com.core.design_system.utils.getMedicationIcon
+import medyo.com.core.utils.constants.MedicationCategory
+import medyo.com.core.utils.constants.MedicationType
+
+@Composable
+fun MedicationEditScreen(
+    uiState: MedicationEditUiState,
+    onBackClick: () -> Unit = {},
+    onSave: () -> Unit,
+    onNameChange: (String) -> Unit,
+    onManufacturerChange: (String) -> Unit,
+    onMedicationTypeChange: (MedicationType) -> Unit,
+    onCategoryChange: (MedicationCategory) -> Unit,
+    onManufacturingDateChange: (String) -> Unit,
+    onExpiryDateChange: (String) -> Unit,
+    onDosageIntervalChange: (String) -> Unit,
+    onStartDateChange: (String) -> Unit,
+    onEndDateChange: (String) -> Unit,
+    onTotalDosesChange: (String) -> Unit,
+) {
+    val dimen = LocalDimensions.current
+    FullScreenDialog{
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(dimen.dimen16dp, Alignment.Top),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            stickyHeader {
+                MedicationTopBar(
+                    title = uiState.category.label,
+                    onClose = onBackClick,
+                    onSave = onSave
+                )
+            }
+            item {
+                MedicineCategoryChipGroup(
+                    selected = uiState.category,
+                    onSelected = onCategoryChange
+                )
+            }
+            item {
+                ManufactureField(
+                    value = uiState.manufacturer,
+                    onValueChange = onManufacturerChange
+                )
+            }
+            item {
+                MedicationNameWithIconField(
+                    name = uiState.name,
+                    onNameChange = {},
+                    medicationType = uiState.medicationType
+                )
+            }
+            item {
+                MedicationDatesFields(
+                    manufacturingDate = uiState.manufacturingDate,
+                    onManufacturingDateChange = onManufacturingDateChange,
+                    expiryDate = uiState.expiryDate,
+                    onExpiryDateChange = onExpiryDateChange
+                )
+            }
+            item {
+                DosageIntervalField(
+                    value = uiState.dosageIntervalMinutes,
+                    onValueChange = onDosageIntervalChange
+                )
+            }
+            item {
+                TreatmentDatesFields(
+                    startDate = uiState.startDate,
+                    onStartDateChange = onStartDateChange,
+                    endDate = uiState.endDate,
+                    onEndDateChange = onEndDateChange
+                )
+            }
+            item {
+                TotalDosesField(
+                    value = uiState.totalDoses,
+                    onValueChange = onTotalDosesChange
+                )
+            }
+        }
+
+    }
+}
+
+@Composable
+private fun ManufactureField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    MedyoTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = "Manufacture",
+        modifier = modifier.fillMaxWidth(),
+    )
+}
+
+@Composable
+private fun MedicationNameWithIconField(
+    name: String,
+    onNameChange: (String) -> Unit,
+    medicationType: MedicationType,
+    modifier: Modifier = Modifier
+) {
+    val dimen = LocalDimensions.current
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min),
+        horizontalArrangement = Arrangement.spacedBy(dimen.dimen8dp),
+        verticalAlignment = Alignment.Bottom
+    ) {
+        MedicationIcon(
+            iconRes = getMedicationIcon(medicationType),
+            name = medicationType.name.lowercase(),
+            onIconClick = {}
+        )
+
+        MedyoTextField(
+            value = name,
+            onValueChange = onNameChange,
+            label = "Medication Name",
+            modifier = Modifier.weight(1f),
+        )
+    }
+}
+
+@Composable
+private fun MedicationDatesFields(
+    modifier: Modifier = Modifier,
+    manufacturingDate: String,
+    onManufacturingDateChange: (String) -> Unit,
+    expiryDate: String,
+    onExpiryDateChange: (String) -> Unit
+) {
+    val dimen = LocalDimensions.current
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(dimen.dimen8dp)
+    ) {
+        DatePickerField(
+            value = manufacturingDate,
+            onValueChange = onManufacturingDateChange,
+            label = "Mfg Date",
+            modifier = Modifier.weight(1f)
+        )
+        DatePickerField(
+            value = expiryDate,
+            onValueChange = onExpiryDateChange,
+            label = "Expiry Date",
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
+
+@Composable
+private fun DosageIntervalField(
+    modifier: Modifier = Modifier,
+    value: String,
+    onValueChange: (String) -> Unit
+) {
+    MedyoTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = "Dosage Interval (in minutes)",
+        placeholder = "e.g. 480 for 8 hours",
+        modifier = modifier.fillMaxWidth(),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Next
+        )
+    )
+}
+
+@Composable
+private fun TreatmentDatesFields(
+    modifier: Modifier = Modifier,
+    startDate: String,
+    onStartDateChange: (String) -> Unit,
+    endDate: String,
+    onEndDateChange: (String) -> Unit
+) {
+    val dimen = LocalDimensions.current
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(dimen.dimen8dp)
+    ) {
+        DatePickerField(
+            value = startDate,
+            onValueChange = onStartDateChange,
+            label = "Start Date",
+            modifier = Modifier.weight(1f)
+        )
+
+        DatePickerField(
+            value = endDate,
+            onValueChange = onEndDateChange,
+            label = "End Date",
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
+
+@Composable
+private fun TotalDosesField(
+    modifier: Modifier = Modifier,
+    value: String,
+    onValueChange: (String) -> Unit
+) {
+    MedyoTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = "Total Doses Prescribed",
+        modifier = modifier.fillMaxWidth(),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Done
+        )
+    )
+}
+
+@Composable
+private fun MedicationIcon(
+    modifier: Modifier = Modifier,
+    iconBackgroundColor: Color = MaterialTheme.colorScheme.background,
+    iconRes: Int,
+    name: String,
+    onIconClick: () -> Unit
+) {
+    Row(
+        modifier = modifier
+            .padding(4.dp)// Slightly larger to match the premium feel
+            .clip(OutlinedTextFieldDefaults.shape) // More rounded
+            .background(iconBackgroundColor.copy(alpha = 0.25f))
+            .border(
+                width = OutlinedTextFieldDefaults.UnfocusedBorderThickness,
+                color = OutlinedTextFieldDefaults.colors().unfocusedIndicatorColor,
+                shape = OutlinedTextFieldDefaults.shape
+            )
+            .clickable(
+                onClick = onIconClick
+            ),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = painterResource(id = iconRes),
+            contentDescription = "$name Icon",
+            modifier = Modifier
+                .size(52.dp),
+            tint = Color.Unspecified
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Icon(
+            imageVector = MedyoIcons.ArrowDropDown.icon,
+            contentDescription = MedyoIcons.ArrowDropDown.contentDescription
+        )
+    }
+
+
+}
+
+
+@Composable
+private fun MedicineCategoryChipGroup(
+    selected: MedicationCategory,
+    onSelected: (MedicationCategory) -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        MedicationCategory.entries.forEach { category ->
+            FilterChip(
+                selected = selected == category,
+                onClick = { onSelected(category) },
+                label = { Text(text = category.label) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun MedicationTopBar(
+    title: String,
+    onClose: () -> Unit,
+    onSave: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.background),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        IconButton(onClick = onClose) {
+            Icon(
+                imageVector = MedyoIcons.Close.icon,
+                contentDescription = MedyoIcons.Close.contentDescription
+            )
+        }
+        Text(
+            modifier = Modifier.weight(1f), text = title,
+            style = MaterialTheme.typography.bodyLarge
+        )
+
+        TextButton(onClick = onSave) {
+            Text(text = "save")
+        }
+
+    }
+}
+
+@CommonPreview
+@Composable
+private fun MedicationTopbarPreveiw() {
+    MedyoTheme() {
+        MedicationTopBar(
+            title = "Meidcation Name",
+            {},
+            {}
+        )
+    }
+}
+
+@CommonPreview
+@Composable
+private fun MedicationEditScreenPreview() {
+    MedyoTheme {
+        MedicationEditScreen(
+            uiState = MedicationEditUiState(),
+            onBackClick = {},
+            onSave = {},
+            onNameChange = {},
+            onManufacturerChange = {},
+            onMedicationTypeChange = {},
+            onCategoryChange = {},
+            onManufacturingDateChange = {},
+            onExpiryDateChange = {},
+            onDosageIntervalChange = {},
+            onStartDateChange = {},
+            onEndDateChange = {},
+            onTotalDosesChange = {}
+        )
+    }
+}

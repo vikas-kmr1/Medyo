@@ -2,11 +2,8 @@ package medyo.com.core.database.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import medyo.com.core.utils.constants.MedicationCategory
 
-enum class MedicationCategory {
-    RUNNING_DOSE,   // Needs scheduling
-    FIRST_AID_STOCK // Expiry tracking only
-}
 
 enum class DosageStatus {
     PENDING, TAKEN, SKIPPED, MISSED

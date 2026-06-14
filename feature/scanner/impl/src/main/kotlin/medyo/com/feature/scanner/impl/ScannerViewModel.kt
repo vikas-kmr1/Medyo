@@ -16,6 +16,7 @@ import androidx.camera.core.SurfaceOrientedMeteringPointFactory
 import androidx.camera.core.SurfaceRequest
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.lifecycle.awaitInstance
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -51,6 +52,7 @@ class ScannerViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<ScannerUiState >(ScannerUiState .Idle)
     val uiState: StateFlow<ScannerUiState > = _uiState.asStateFlow()
 
+    var showEditMedicationDialog by mutableStateOf(false)
 
     // Used to set up a link between the Camera and your UI.
     private val _surfaceRequest = MutableStateFlow<SurfaceRequest?>(null)
@@ -78,6 +80,14 @@ class ScannerViewModel @Inject constructor(
             ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY
         ).build()
 
+
+    private fun showEditMedicationDialog() {
+        showEditMedicationDialog = true
+    }
+
+    fun closeEditMedicationDialog() {
+        showEditMedicationDialog = false
+    }
 
     suspend fun bindToCamera(appContext: Context, lifecycleOwner: LifecycleOwner) {
         val processCameraProvider = ProcessCameraProvider.awaitInstance(appContext)
@@ -147,13 +157,13 @@ class ScannerViewModel @Inject constructor(
 
 
     private fun analyzeImage(images: List<Bitmap>) {
-        _uiState.value = ScannerUiState .Loading
+        _uiState.value = ScannerUiState.Loading
         viewModelScope.launch {
             val result = scanAndSaveMedicationUseCase.invoke(images)
             result.onSuccess { medicationId ->
                 // Observe the DB flow via UseCase
                 _uiState.value = ScannerUiState .Success(medicationId)
-
+                showEditMedicationDialog()
             }
                 .onFailure { error ->
                     _uiState.value =
