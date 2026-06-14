@@ -1,3 +1,4 @@
+<body style="background: #ffffff;">
 # 🏗️ Medyo — Complete Architecture & Module Flow Graphs
 
 > **Medyo** is a modular Android medicine-scanning app powered by **Gemini AI** (Firebase AI Logic). Users scan medicine images via CameraX, the AI analyzes them, and results are persisted locally via Room.
@@ -587,3 +588,5 @@ flowchart TD
 
 > [!TIP]
 > The most critical data path in the app is: **ScannerScreen → ScannerViewModel → ScanAndSaveMedicineUseCase → BioScanRepositoryImpl → GeminiAiDataSourceImpl → Firebase Gemini → Room DB**. This is the heart of Medyo.
+
+</body>
