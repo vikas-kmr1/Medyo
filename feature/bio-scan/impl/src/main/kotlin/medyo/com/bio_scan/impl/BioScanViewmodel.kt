@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.stateIn
 import medyo.com.core.domain.model.MedicationInfo
 import medyo.com.core.domain.usecase.GetAllScannedMedicationsUseCase
 import medyo.com.core.domain.usecase.GetScannedMedicationUseCase
-import medyo.com.core.domain.usecase.ScanAndSaveMedicationUseCase
 import javax.inject.Inject
 
 sealed interface BioScanUiState {
@@ -23,7 +22,6 @@ sealed interface BioScanUiState {
 
 @HiltViewModel
 class BioScanViewmodel @Inject constructor(
-    private val scanAndSaveMedicationUseCase: ScanAndSaveMedicationUseCase,
     private val getScannedMedicationUseCase: GetScannedMedicationUseCase,
     getAllScannedMedicationsUseCase: GetAllScannedMedicationsUseCase
 ) : ViewModel() {

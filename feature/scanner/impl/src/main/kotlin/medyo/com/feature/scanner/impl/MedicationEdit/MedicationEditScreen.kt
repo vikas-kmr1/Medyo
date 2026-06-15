@@ -1,5 +1,6 @@
 package medyo.com.feature.scanner.impl.MedicationEdit
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -52,6 +53,7 @@ import medyo.com.core.design_system.utils.compose.CommonPreview
 import medyo.com.core.design_system.utils.getMedicationIcon
 import medyo.com.core.utils.constants.MedicationCategory
 import medyo.com.core.utils.constants.MedicationType
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,18 +65,19 @@ fun MedicationEditScreen(
     onManufacturerChange: (String) -> Unit,
     onMedicationTypeChange: (MedicationType) -> Unit,
     onCategoryChange: (MedicationCategory) -> Unit,
-    onManufacturingDateChange: (String) -> Unit,
-    onExpiryDateChange: (String) -> Unit,
+    onManufacturingDateChange: (LocalDate) -> Unit,
+    onExpiryDateChange: (LocalDate) -> Unit,
     onDosageIntervalChange: (String) -> Unit,
-    onStartDateChange: (String) -> Unit,
-    onEndDateChange: (String) -> Unit,
+    onStartDateChange: (LocalDate) -> Unit,
+    onEndDateChange: (LocalDate) -> Unit,
     onTotalDosesChange: (String) -> Unit,
 ) {
+    BackHandler() { }
     val dimen = LocalDimensions.current
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
 
-    FullScreenDialog{
+    FullScreenDialog {
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(dimen.dimen16dp, Alignment.Top),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -101,6 +104,7 @@ fun MedicationEditScreen(
             item {
                 MedicationNameWithIconField(
                     name = uiState.name,
+                    nameError = uiState.nameError,
                     onNameChange = onNameChange,
                     medicationType = uiState.medicationType,
                     onIconClick = { showBottomSheet = true }
@@ -109,28 +113,34 @@ fun MedicationEditScreen(
             item {
                 MedicationDatesFields(
                     manufacturingDate = uiState.manufacturingDate,
+                    manufacturingDateError = uiState.manufacturingDateError,
                     onManufacturingDateChange = onManufacturingDateChange,
                     expiryDate = uiState.expiryDate,
+                    expiryDateError = uiState.expiryDateError,
                     onExpiryDateChange = onExpiryDateChange
                 )
             }
             item {
                 DosageIntervalField(
                     value = uiState.dosageIntervalMinutes,
+                    error = uiState.dosageIntervalError,
                     onValueChange = onDosageIntervalChange
                 )
             }
             item {
                 TreatmentDatesFields(
                     startDate = uiState.startDate,
+                    startDateError = uiState.startDateError,
                     onStartDateChange = onStartDateChange,
                     endDate = uiState.endDate,
+                    endDateError = uiState.endDateError,
                     onEndDateChange = onEndDateChange
                 )
             }
             item {
                 TotalDosesField(
                     value = uiState.totalDoses,
+                    error = uiState.totalDosesError,
                     onValueChange = onTotalDosesChange
                 )
             }
@@ -166,6 +176,7 @@ private fun ManufactureField(
 @Composable
 private fun MedicationNameWithIconField(
     name: String,
+    nameError: String?,
     onNameChange: (String) -> Unit,
     medicationType: MedicationType,
     onIconClick: () -> Unit,
@@ -190,6 +201,8 @@ private fun MedicationNameWithIconField(
             onValueChange = onNameChange,
             label = "Medication Name",
             modifier = Modifier.weight(1f),
+            isError = nameError != null,
+            supportingText = nameError?.let { { Text(it) } }
         )
     }
 }
@@ -197,10 +210,12 @@ private fun MedicationNameWithIconField(
 @Composable
 private fun MedicationDatesFields(
     modifier: Modifier = Modifier,
-    manufacturingDate: String,
-    onManufacturingDateChange: (String) -> Unit,
-    expiryDate: String,
-    onExpiryDateChange: (String) -> Unit
+    manufacturingDate: LocalDate?,
+    manufacturingDateError: String?,
+    onManufacturingDateChange: (LocalDate) -> Unit,
+    expiryDate: LocalDate?,
+    expiryDateError: String?,
+    onExpiryDateChange: (LocalDate) -> Unit
 ) {
     val dimen = LocalDimensions.current
     Row(
@@ -211,13 +226,17 @@ private fun MedicationDatesFields(
             value = manufacturingDate,
             onValueChange = onManufacturingDateChange,
             label = "Mfg Date",
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            isError = manufacturingDateError != null,
+            supportingText = manufacturingDateError?.let { { Text(it) } }
         )
         DatePickerField(
             value = expiryDate,
             onValueChange = onExpiryDateChange,
             label = "Expiry Date",
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            isError = expiryDateError != null,
+            supportingText = expiryDateError?.let { { Text(it) } }
         )
     }
 }
@@ -226,6 +245,7 @@ private fun MedicationDatesFields(
 private fun DosageIntervalField(
     modifier: Modifier = Modifier,
     value: String,
+    error: String?,
     onValueChange: (String) -> Unit
 ) {
     MedyoTextField(
@@ -234,6 +254,8 @@ private fun DosageIntervalField(
         label = "Dosage Interval (in minutes)",
         placeholder = "e.g. 480 for 8 hours",
         modifier = modifier.fillMaxWidth(),
+        isError = error != null,
+        supportingText = error?.let { { Text(it) } },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Number,
             imeAction = ImeAction.Next
@@ -244,10 +266,12 @@ private fun DosageIntervalField(
 @Composable
 private fun TreatmentDatesFields(
     modifier: Modifier = Modifier,
-    startDate: String,
-    onStartDateChange: (String) -> Unit,
-    endDate: String,
-    onEndDateChange: (String) -> Unit
+    startDate: LocalDate?,
+    startDateError: String?,
+    onStartDateChange: (LocalDate) -> Unit,
+    endDate: LocalDate?,
+    endDateError: String?,
+    onEndDateChange: (LocalDate) -> Unit
 ) {
     val dimen = LocalDimensions.current
     Row(
@@ -258,14 +282,18 @@ private fun TreatmentDatesFields(
             value = startDate,
             onValueChange = onStartDateChange,
             label = "Start Date",
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            isError = startDateError != null,
+            supportingText = startDateError?.let { { Text(it) } }
         )
 
         DatePickerField(
             value = endDate,
             onValueChange = onEndDateChange,
             label = "End Date",
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            isError = endDateError != null,
+            supportingText = endDateError?.let { { Text(it) } }
         )
     }
 }
@@ -274,6 +302,7 @@ private fun TreatmentDatesFields(
 private fun TotalDosesField(
     modifier: Modifier = Modifier,
     value: String,
+    error: String?,
     onValueChange: (String) -> Unit
 ) {
     MedyoTextField(
@@ -281,6 +310,8 @@ private fun TotalDosesField(
         onValueChange = onValueChange,
         label = "Total Doses Prescribed",
         modifier = modifier.fillMaxWidth(),
+        isError = error != null,
+        supportingText = error?.let { { Text(it) } },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Number,
             imeAction = ImeAction.Done

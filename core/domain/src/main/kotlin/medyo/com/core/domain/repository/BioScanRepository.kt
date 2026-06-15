@@ -9,7 +9,9 @@ interface BioScanRepository {
      * Sends images to the AI logic for context generation.
      * If successful, saves the generated information to the database and returns the generated medicationId.
      */
-    suspend fun scanAndSaveMedication(images: List<Bitmap>): Result<Long>
+    suspend fun scanAndGetMedication(images: List<Bitmap>): Result<MedicationInfo>
+
+    suspend fun SaveMedication(images: List<Bitmap>): Result<Long>
 
     /**
      * Reads a scanned Medication from the local database, returning a continuous stream (Flow) 

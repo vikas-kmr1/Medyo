@@ -19,7 +19,8 @@ fun MedyoTextField(
     readOnly: Boolean = false,
     singleLine: Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-    // ... other common params
+    isError: Boolean = false,
+    supportingText: @Composable (() -> Unit)? = null,
 ) {
     OutlinedTextField(
         value = value,
@@ -29,6 +30,8 @@ fun MedyoTextField(
         singleLine = singleLine,
         keyboardOptions = keyboardOptions,
         readOnly = readOnly,
-        placeholder = {Text(placeholder)}
+        placeholder = { Text(placeholder) },
+        isError = isError,
+        supportingText = supportingText
     )
 }

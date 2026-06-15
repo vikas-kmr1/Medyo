@@ -31,27 +31,36 @@ import androidx.compose.ui.unit.dp
 import medyo.com.core.design_system.theme.shapes.LocalAppShapes
 import medyo.com.core.design_system.theme.shapes.MedyoShapes
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerField(
-    value: String,
-    onValueChange: (String) -> Unit,
+    value: LocalDate?,
+    onValueChange: (LocalDate) -> Unit,
     label: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isError: Boolean = false,
+    supportingText: @Composable (() -> Unit)? = null,
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
-    val datePickerState = rememberDatePickerState()
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = value?.atStartOfDay(ZoneId.of("UTC"))?.toInstant()?.toEpochMilli()
+    )
+
+    val formattedValue = value?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: ""
 
     Box(modifier = modifier) {
         OutlinedTextField(
-            value = value,
+            value = formattedValue,
             onValueChange = {},
             label = { Text(label) },
             placeholder = { Text("YYYY-MM-DD") },
             readOnly = true,
+            isError = isError,
+            supportingText = supportingText,
             trailingIcon = {
                 IconButton(onClick = { showDatePicker = true }) {
                     Icon(Icons.Filled.DateRange, contentDescription = "Select date")
@@ -59,7 +68,6 @@ fun DatePickerField(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { showDatePicker = true } // Make the whole field clickable
         )
         // Hidden surface over the text field to intercept clicks inside the bounding box
         Surface(
@@ -78,13 +86,10 @@ fun DatePickerField(
             confirmButton = {
                 TextButton(onClick = {
                     datePickerState.selectedDateMillis?.let { millis ->
-                        // DatePicker works in UTC. Format it directly without timezone shifts
-                        // to avoid off-by-one errors when converting back to local.
-                        val formatted = Instant.ofEpochMilli(millis)
+                        val selectedDate = Instant.ofEpochMilli(millis)
                             .atZone(ZoneId.of("UTC"))
                             .toLocalDate()
-                            .format(DateTimeFormatter.ISO_LOCAL_DATE)
-                        onValueChange(formatted)
+                        onValueChange(selectedDate)
                     }
                     showDatePicker = false
                 }) {

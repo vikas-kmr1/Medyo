@@ -16,7 +16,6 @@ import androidx.camera.core.SurfaceOrientedMeteringPointFactory
 import androidx.camera.core.SurfaceRequest
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.lifecycle.awaitInstance
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -31,7 +30,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import medyo.com.core.domain.usecase.ScanAndSaveMedicationUseCase
+import medyo.com.core.domain.model.MedicationInfo
+import medyo.com.core.domain.usecase.ScanAndGetMedicationUseCase
 import java.util.concurrent.Executors
 import javax.inject.Inject
 
@@ -40,13 +40,13 @@ private val MAX_CAPTURE_ATTEMPTS = 5
 sealed interface ScannerUiState  {
     data object Idle : ScannerUiState 
     data object Loading : ScannerUiState 
-    data class Success(val MedicationId: Long) : ScannerUiState
+    data class Success(val medicationInfo: MedicationInfo) : ScannerUiState
     data class Error(val message: String) : ScannerUiState 
 }
 
 @HiltViewModel
 class ScannerViewModel @Inject constructor(
-    private val scanAndSaveMedicationUseCase: ScanAndSaveMedicationUseCase
+    private val scanAndGetMedicationUseCase: ScanAndGetMedicationUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<ScannerUiState >(ScannerUiState .Idle)
@@ -87,8 +87,13 @@ class ScannerViewModel @Inject constructor(
 
     fun closeEditMedicationDialog() {
         showEditMedicationDialog = false
+        resetUiState()
     }
 
+    private fun resetUiState(){
+        _uiState.value = ScannerUiState .Idle
+        onAllClear()
+    }
     suspend fun bindToCamera(appContext: Context, lifecycleOwner: LifecycleOwner) {
         val processCameraProvider = ProcessCameraProvider.awaitInstance(appContext)
         val camera = processCameraProvider.bindToLifecycle(
@@ -141,6 +146,10 @@ class ScannerViewModel @Inject constructor(
         capturedImages = capturedImages.toMutableList().apply { removeAt(index) }
     }
 
+    fun onAllClear(){
+        capturedImages = emptyList()
+    }
+
     fun tapToFocus(tapCoords: Offset) {
         val point = surfaceMeteringPointFactory?.createPoint(tapCoords.x, tapCoords.y)
         if (point != null) {
@@ -159,15 +168,15 @@ class ScannerViewModel @Inject constructor(
     private fun analyzeImage(images: List<Bitmap>) {
         _uiState.value = ScannerUiState.Loading
         viewModelScope.launch {
-            val result = scanAndSaveMedicationUseCase.invoke(images)
+            val result = scanAndGetMedicationUseCase.invoke(images)
             result.onSuccess { medicationId ->
                 // Observe the DB flow via UseCase
-                _uiState.value = ScannerUiState .Success(medicationId)
+                _uiState.value = ScannerUiState.Success(medicationId)
                 showEditMedicationDialog()
             }
                 .onFailure { error ->
                     _uiState.value =
-                        ScannerUiState .Error(error.message ?: "Unknown error occurred.")
+                        ScannerUiState.Error(error.message ?: "Unknown error occurred.")
                 }
         }
     }

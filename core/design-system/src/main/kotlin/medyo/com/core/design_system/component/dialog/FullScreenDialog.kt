@@ -1,5 +1,6 @@
 package medyo.com.core.design_system.component.dialog
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -16,8 +17,11 @@ import medyo.com.core.design_system.utils.compose.CommonPreview
 
 @Composable
 fun FullScreenDialog(
+    closeOnBackPress: Boolean = false,
     content: @Composable () -> Unit
 ) {
+    BackHandler(enabled = closeOnBackPress) {}
+
     Surface(
         modifier = Modifier
             .fillMaxSize()

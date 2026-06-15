@@ -99,9 +99,8 @@ internal fun CameraPreviewRoot(
     onBackClick: () -> Unit,
     viewModel: ScannerViewModel = hiltViewModel(),
 ) {
-
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
-    when (uiState.value) {
+    when (val state = uiState.value) {
         ScannerUiState.Idle -> CameraPreviewScreen(
             viewModel = viewModel,
             onBackClick = onBackClick
@@ -112,10 +111,11 @@ internal fun CameraPreviewRoot(
         is ScannerUiState.Success -> {
             val medicationEditViewModel: MedicationEditViewModel = hiltViewModel()
             val medicationUiState = medicationEditViewModel.uiState.collectAsState()
+            medicationEditViewModel.onInit(state.medicationInfo)
             if (viewModel.showEditMedicationDialog) {
                 MedicationEditScreen(
                     uiState = medicationUiState.value,
-                    onBackClick = {},
+                    onBackClick = viewModel::closeEditMedicationDialog,
                     onSave = medicationEditViewModel::onSave,
                     onNameChange = medicationEditViewModel::onNameChange,
                     onManufacturerChange = medicationEditViewModel::onManufacturerChange,
@@ -306,7 +306,8 @@ private fun CameraPreviewContent(
                 onCapture = { viewModel.captureImage(context) },
                 onRemove = viewModel::onRemoveImage,
                 onProcess = viewModel::onProceed,
-                modifier = Modifier.align(Alignment.BottomCenter)
+                modifier = Modifier.align(Alignment.BottomCenter),
+                onClear = viewModel::onAllClear
             )
 
             // 7. Autofocus Tap Indicator
@@ -406,6 +407,7 @@ private fun CameraBottomControls(
     capturedImages: List<Bitmap>,
     onCapture: () -> Unit,
     onRemove: (Int) -> Unit,
+    onClear: () -> Unit ,
     onProcess: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -529,11 +531,7 @@ private fun CameraBottomControls(
             ) {
                 if (capturedImages.isNotEmpty()) {
                     IconButton(
-                        onClick = {
-                            for (i in capturedImages.indices.reversed()) {
-                                onRemove(i)
-                            }
-                        },
+                        onClick = onClear,
                         modifier = Modifier
                             .background(Color.White.copy(alpha = 0.08f), CircleShape)
                             .border(1.dp, Color.White.copy(alpha = 0.06f), CircleShape)
@@ -657,7 +655,8 @@ private fun PreviewCameraBottomControls() {
             capturedImages = emptyList(),
             onCapture = {},
             onRemove = {},
-            onProcess = {}
+            onProcess = {},
+            onClear = {}
         )
     }
 }

@@ -16,6 +16,11 @@ data class MedicationInfo(
     val precautions: List<String> = emptyList(),
     val instructions: List<String> = emptyList(),
     val category: String = "",
+    val dosageIntervalMinutes: String = "",
+    val startDate: Long? = null,
+    val endDate: Long? = null,
+    val totalDoses: String = "",
     val errorMessage: String? = null,
     val statusCode: String? = null
 )
+
