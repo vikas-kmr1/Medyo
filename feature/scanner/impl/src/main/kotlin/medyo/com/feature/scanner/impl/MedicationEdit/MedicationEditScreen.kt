@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -450,6 +451,8 @@ private fun MedicineCategoryChipGroup(
                     selected = selected == category,
                     borderColor = MaterialTheme.colorScheme.outline,
                     selectedBorderColor = MaterialTheme.colorScheme.primary,
+                    borderWidth = 1.dp,
+                    selectedBorderWidth = 1.dp,
 
                 ),
                 label = {
@@ -490,7 +493,8 @@ private fun MedicationTopBar(
         )
 
         TextButton(onClick = onSave) {
-            Text(text = "save")
+            Text(text = "save", modifier = Modifier.padding(horizontal = 16.dp),
+                fontWeight = FontWeight.SemiBold)
         }
 
     }
