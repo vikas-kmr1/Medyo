@@ -22,10 +22,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="medyo.com" />
+                  <option name="mobileSdkAppId" value="1:677108863466:android:19fe9053e8003db02aa293" />
+                  <option name="projectId" value="yuma-operations-app" />
+                  <option name="projectNumber" value="677108863466" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

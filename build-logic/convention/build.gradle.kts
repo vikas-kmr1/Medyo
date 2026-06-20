@@ -8,7 +8,7 @@ group = "medyo.com.build-logic"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 kotlin {

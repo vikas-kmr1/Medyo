@@ -1,4 +1,4 @@
-package com.yuma.franchise.ui.theme.shapes
+package medyo.com.core.design_system.theme.shapes
 
 
 import androidx.compose.foundation.shape.CornerBasedShape
@@ -34,7 +34,7 @@ data class ExtendedShapes(
  */
 val appShapes =
     ExtendedShapes(
-        cardShape = RoundedCornerShape(15.dp),
+        cardShape = RoundedCornerShape(24.dp),
         bottomSheetShape = RectangleShape,
         buttonShape = RoundedCornerShape(24.dp),
         chipShape = RoundedCornerShape(16.dp),

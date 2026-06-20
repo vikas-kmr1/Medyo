@@ -9,9 +9,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.yuma.franchise.ui.theme.shapes.LocalAppShapes
-import com.yuma.franchise.ui.theme.shapes.MedyoShapes
-import com.yuma.franchise.ui.theme.shapes.appShapes
+import medyo.com.core.design_system.theme.shapes.LocalAppShapes
+import medyo.com.core.design_system.theme.shapes.MedyoShapes
+import medyo.com.core.design_system.theme.shapes.appShapes
 
 //private val DarkColorScheme = darkColorScheme(
 //    primary = NeonCyan,
@@ -25,9 +25,12 @@ import com.yuma.franchise.ui.theme.shapes.appShapes
 private val LightColorScheme = lightColorScheme(
     primary = TrackCyanLight,
     secondary = TrackCyanVariant,
+    secondaryContainer = TrackCyanVariant.copy(alpha = 0.3f),
     tertiary = TrackAmberLight,
     background = LightBackground,
     surface = LightSurface,
+    surfaceContainerHigh = LightSurface,
+    surfaceContainerLow = LightSurface,
     surfaceVariant = LightSurfaceVariant,
     onPrimary = LightSurface,
     onBackground = TextPrimaryLight,
@@ -82,7 +85,7 @@ fun MedyoTheme(
             colorScheme = colorScheme,
             typography = Typography,
             content = content,
-            shapes = MedyoShapes
+            shapes = MedyoShapes,
         )
     }
 }

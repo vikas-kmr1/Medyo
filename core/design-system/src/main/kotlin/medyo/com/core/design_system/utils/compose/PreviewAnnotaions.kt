@@ -9,7 +9,7 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Preview(
     showBackground = true,
-    device = PIXEL_9_PRO_XL
+    device = PIXEL_9_PRO_XL,
 )
 annotation class CommonPreview
 

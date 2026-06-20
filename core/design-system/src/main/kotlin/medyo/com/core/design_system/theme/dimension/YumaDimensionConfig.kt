@@ -52,7 +52,8 @@ data class Dimensions(
     val dimen280dp: Dp = 280.dp,
     val dimen360dp: Dp = 360.dp,
     val yumaCardCornerRadius: Dp = 24.dp,
-    val yumaTextFieldRadius: Dp = 16.dp
+    val yumaTextFieldRadius: Dp = 16.dp,
+    val defaultContentPadding: Dp = 16.dp,
 )
 
 val LocalDimensions = staticCompositionLocalOf { Dimensions() }
