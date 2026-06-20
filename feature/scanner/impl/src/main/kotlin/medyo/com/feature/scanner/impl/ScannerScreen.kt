@@ -101,7 +101,7 @@ internal fun CameraPreviewRoot(
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val medicationUiState = medicationEditViewModel.uiState.collectAsStateWithLifecycle()
-
+    val dbWrite = medicationEditViewModel.dbWriteState
     when (val state = uiState.value) {
         ScannerUiState.Idle -> CameraPreviewScreen(
             viewModel = viewModel,
@@ -131,6 +131,12 @@ internal fun CameraPreviewRoot(
                     onTotalDosesChange = medicationEditViewModel::onTotalDosesChange
                 )
             }
+        }
+    }
+
+    LaunchedEffect(dbWrite) {
+        if(dbWrite){
+            onBackClick()
         }
     }
 }

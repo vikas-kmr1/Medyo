@@ -1,5 +1,8 @@
 package medyo.com.feature.scanner.impl.MedicationEdit
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -51,6 +54,9 @@ class MedicationEditViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(MedicationEditUiState())
     val uiState: StateFlow<MedicationEditUiState> = _uiState.asStateFlow()
+
+
+    var dbWriteState by mutableStateOf(false)
 
     fun onInit(medicationInfo: MedicationInfo) {
         _uiState.value = MedicationEditUiState(
@@ -168,7 +174,10 @@ class MedicationEditViewModel @Inject constructor(
 
     fun onSave() {
         viewModelScope.launch(Dispatchers.IO) {
-            saveMedicationUseCase.invoke(medicationInfo = uiState.value.toMedicationInfo())
+            val result = saveMedicationUseCase.invoke(medicationInfo = uiState.value.toMedicationInfo())
+            result.onSuccess {medicationID->
+                dbWriteState = medicationID >= 0
+            }
         }
     }
 }

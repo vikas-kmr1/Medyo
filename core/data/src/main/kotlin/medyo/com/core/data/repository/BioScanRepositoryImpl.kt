@@ -19,6 +19,7 @@ class BioScanRepositoryImpl @Inject constructor(
     private val medicationDao: MedicationDao
 ) : BioScanRepository {
 
+
     override suspend fun scanAndGetMedication(images: List<Bitmap>): Result<MedicationInfo> {
         return try {
             val aiResponse: AiMedicationResponseDto = aiDataSource.generateContext(images)
@@ -43,7 +44,7 @@ class BioScanRepositoryImpl @Inject constructor(
         // 2. Create and insert detailed MedicationInfoEntity
         val infoEntity = medicationInfo.toMedicationInfoEntity(generatedId)
         medicationDao.insertMedicationInfo(infoEntity)
-        return Result.success(zeroL)
+        return Result.success(generatedId)
     }
 
     override fun getScannedMedication(medicationId: Long): Flow<MedicationInfo?> {
