@@ -29,6 +29,8 @@ private val LightColorScheme = lightColorScheme(
     tertiary = TrackAmberLight,
     background = LightBackground,
     surface = LightSurface,
+    surfaceContainerHigh = LightSurface,
+    surfaceContainerLow = LightSurface,
     surfaceVariant = LightSurfaceVariant,
     onPrimary = LightSurface,
     onBackground = TextPrimaryLight,
@@ -83,7 +85,7 @@ fun MedyoTheme(
             colorScheme = colorScheme,
             typography = Typography,
             content = content,
-            shapes = MedyoShapes
+            shapes = MedyoShapes,
         )
     }
 }

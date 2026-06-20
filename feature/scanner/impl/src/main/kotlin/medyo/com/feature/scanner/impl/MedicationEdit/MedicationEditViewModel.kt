@@ -1,14 +1,19 @@
 package medyo.com.feature.scanner.impl.MedicationEdit
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import medyo.com.core.domain.model.MedicationInfo
+import medyo.com.core.domain.usecase.SaveMedicationUseCase
 import medyo.com.core.utils.constants.MedicationCategory
 import medyo.com.core.utils.constants.MedicationType
+import medyo.com.core.utils.kotlin.emptyString
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -18,7 +23,7 @@ data class MedicationEditUiState(
     val name: String = "",
     val nameError: String? = null,
     val manufacturer: String = "",
-    val medicationType: MedicationType = MedicationType.CAPSULE,
+    val medicationType: MedicationType = MedicationType.OTHER,
     val category: MedicationCategory = MedicationCategory.FIRST_AID_STOCK,
     val manufacturingDate: LocalDate? = null,
     val manufacturingDateError: String? = null,
@@ -32,11 +37,17 @@ data class MedicationEditUiState(
     val endDateError: String? = null,
     val totalDoses: String = "",
     val totalDosesError: String? = null,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val sideEffects:List<String> = emptyList(),
+    val cures:List<String> = emptyList(),
+    val precautions:List<String> = emptyList(),
+    val instructions:List<String> = emptyList(),
 )
 
 @HiltViewModel
-class MedicationEditViewModel @Inject constructor() : ViewModel() {
+class MedicationEditViewModel @Inject constructor(
+    private val saveMedicationUseCase: SaveMedicationUseCase
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MedicationEditUiState())
     val uiState: StateFlow<MedicationEditUiState> = _uiState.asStateFlow()
@@ -55,7 +66,11 @@ class MedicationEditViewModel @Inject constructor() : ViewModel() {
             dosageIntervalMinutes = medicationInfo.dosageIntervalMinutes,
             startDate = medicationInfo.startDate?.toLocalDate(),
             endDate = medicationInfo.endDate?.toLocalDate(),
-            totalDoses = medicationInfo.totalDoses
+            totalDoses = medicationInfo.totalDoses,
+            sideEffects = medicationInfo.sideEffects,
+            cures = medicationInfo.cures,
+            precautions = medicationInfo.precautions,
+            instructions = medicationInfo.instructions,
         )
     }
 
@@ -152,6 +167,33 @@ class MedicationEditViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onSave() {
-        // Implement save logic later
+        viewModelScope.launch(Dispatchers.IO) {
+            saveMedicationUseCase.invoke(medicationInfo = uiState.value.toMedicationInfo())
+        }
     }
 }
+
+private fun LocalDate.toEpochSecond(): Long {
+    return atStartOfDay(ZoneId.systemDefault()).toInstant().epochSecond
+}
+
+private fun MedicationEditUiState.toMedicationInfo(): MedicationInfo {
+    return MedicationInfo(
+        name = name,
+        brand = manufacturer,
+        category = category.name,
+        mfgDate = manufacturingDate?.toEpochSecond(),
+        expDate = expiryDate?.toEpochSecond(),
+        dosageIntervalMinutes = dosageIntervalMinutes,
+        startDate = startDate?.toEpochSecond(),
+        endDate = endDate?.toEpochSecond(),
+        salts = emptyString,
+        form = medicationType.name,
+        sideEffects = sideEffects,
+        cures = cures,
+        precautions = precautions,
+        instructions =instructions,
+        totalDoses = totalDoses,)
+}
+
+

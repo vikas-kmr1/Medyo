@@ -29,8 +29,8 @@ fun FullScreenDialog(
                 PaddingValues(
                     top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding(),
                     bottom = LocalDimensions.current.dimen16dp,
-                    start = LocalDimensions.current.dimen24dp,
-                    end = LocalDimensions.current.dimen24dp
+                    start = LocalDimensions.current.defaultContentPadding,
+                    end = LocalDimensions.current.defaultContentPadding
                 )
             ),
     ) {

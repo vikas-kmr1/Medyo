@@ -169,9 +169,9 @@ class ScannerViewModel @Inject constructor(
         _uiState.value = ScannerUiState.Loading
         viewModelScope.launch {
             val result = scanAndGetMedicationUseCase.invoke(images)
-            result.onSuccess { medicationId ->
+            result.onSuccess { medicationInfo ->
                 // Observe the DB flow via UseCase
-                _uiState.value = ScannerUiState.Success(medicationId)
+                _uiState.value = ScannerUiState.Success(medicationInfo)
                 showEditMedicationDialog()
             }
                 .onFailure { error ->

@@ -6,6 +6,8 @@ import kotlinx.coroutines.flow.map
 import medyo.com.core.ai_logic.GeminiAiDataSource
 import medyo.com.core.ai_logic.dto.AiMedicationResponseDto
 import medyo.com.core.data.mapper.toDomainModel
+import medyo.com.core.data.mapper.toMedicationEntity
+import medyo.com.core.data.mapper.toMedicationInfoEntity
 import medyo.com.core.database.dao.MedicationDao
 import medyo.com.core.domain.model.MedicationInfo
 import medyo.com.core.domain.repository.BioScanRepository
@@ -26,25 +28,21 @@ class BioScanRepositoryImpl @Inject constructor(
                 return Result.failure(Exception(aiResponse.errorMessage))
             }
 
-
-
             Result.success(aiResponse.toDomainModel())
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    override suspend fun SaveMedication(images: List<Bitmap>): Result<Long> {
-        /*
+    override suspend fun saveMedication(medicationInfo: MedicationInfo): Result<Long> {
 
-            // 1. Create and insert base MedicationEntity
-            val medicationEntity = aiResponse.toMedicationEntity()
-            val generatedId = medicationDao.insertMedication(medicationEntity)
+        // 1. Create and insert base MedicationEntity
+        val medicationEntity = medicationInfo.toMedicationEntity()
+        val generatedId = medicationDao.insertMedication(medicationEntity)
 
-            // 2. Create and insert detailed MedicationInfoEntity
-            val infoEntity = aiResponse.toMedicationInfoEntity(generatedId)
-            medicationDao.insertMedicationInfo(infoEntity)
-*/
+        // 2. Create and insert detailed MedicationInfoEntity
+        val infoEntity = medicationInfo.toMedicationInfoEntity(generatedId)
+        medicationDao.insertMedicationInfo(infoEntity)
         return Result.success(zeroL)
     }
 

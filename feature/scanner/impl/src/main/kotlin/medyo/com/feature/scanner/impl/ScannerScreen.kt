@@ -50,7 +50,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -98,8 +97,11 @@ import java.util.UUID
 internal fun CameraPreviewRoot(
     onBackClick: () -> Unit,
     viewModel: ScannerViewModel = hiltViewModel(),
+    medicationEditViewModel: MedicationEditViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val medicationUiState = medicationEditViewModel.uiState.collectAsStateWithLifecycle()
+
     when (val state = uiState.value) {
         ScannerUiState.Idle -> CameraPreviewScreen(
             viewModel = viewModel,
@@ -109,9 +111,9 @@ internal fun CameraPreviewRoot(
         ScannerUiState.Loading -> AiProgressLottieAnimation()
         is ScannerUiState.Error -> {}
         is ScannerUiState.Success -> {
-            val medicationEditViewModel: MedicationEditViewModel = hiltViewModel()
-            val medicationUiState = medicationEditViewModel.uiState.collectAsState()
-            medicationEditViewModel.onInit(state.medicationInfo)
+            LaunchedEffect(state.medicationInfo) {
+                medicationEditViewModel.onInit(state.medicationInfo)
+            }
             if (viewModel.showEditMedicationDialog) {
                 MedicationEditScreen(
                     uiState = medicationUiState.value,
@@ -407,7 +409,7 @@ private fun CameraBottomControls(
     capturedImages: List<Bitmap>,
     onCapture: () -> Unit,
     onRemove: (Int) -> Unit,
-    onClear: () -> Unit ,
+    onClear: () -> Unit,
     onProcess: () -> Unit,
     modifier: Modifier = Modifier
 ) {

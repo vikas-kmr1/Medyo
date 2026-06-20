@@ -32,18 +32,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import medyo.com.core.design_system.component.button.BioScanWidget
+import medyo.com.core.design_system.component.card.MedicationCardItemData
 import medyo.com.core.design_system.component.scrollbar.DraggableScrollbar
 import medyo.com.core.design_system.component.scrollbar.rememberDraggableScroller
 import medyo.com.core.design_system.component.scrollbar.scrollbarState
 import medyo.com.core.design_system.theme.MedyoTheme
 import medyo.com.core.design_system.utils.compose.CommonPreview
-import medyo.com.core.ui.MedicationCardList
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import medyo.com.core.design_system.component.card.MedicationCardItemData
-import medyo.com.core.design_system.theme.LocalDimensions
 import medyo.com.core.design_system.utils.getMedicationIcon
+import medyo.com.core.ui.MedicationCardList
 import medyo.com.core.utils.constants.MedicationType
 
 @Composable
@@ -111,19 +110,22 @@ internal fun BioScanScreen(
             // 4. SELF-EXPANDING LIST: The LazyColumn naturally fills all available remaining height
             //    (weight = 1f) and dynamically expands to full-screen height when the top widget collapses!
             LazyColumn(
-                modifier = Modifier.padding(horizontal = LocalDimensions.current.dimen24dp),
+                modifier = Modifier.fillMaxHeight(),
                 state = lazyListState,
             ) {
                 MedicationCardList(
                     MedicationItems = scannedMedications.map {
+                        val colors = getMedicationColors(
+                            index = it.medicationId.toInt() % colorOptions.size
+                        )
                         MedicationCardItemData(
                             id = it.medicationId.toInt(),
                             name = it.brand, // Note: Same name but different ID and Icon
                             dosage = "10mg",
-                            iconRes = getMedicationIcon(MedicationType.INJECTION),
-                            iconBackgroundColor = Color.White, // Using hardcoded or MaterialTheme colors
-                            cardGradientStartColor = Color.White,
-                            shadowColor = Color.Black
+                            iconRes = getMedicationIcon(if (it.form.isBlank())MedicationType.OTHER else MedicationType.valueOf(it.form)),
+                            iconBackgroundColor = colors.iconBackgroundColor, // Using hardcoded or MaterialTheme colors
+                            cardGradientStartColor = colors.cardGradientStartColor,
+                            shadowColor = colors.shadowColor,
                         )
                     },
                 )
@@ -147,25 +149,44 @@ internal fun BioScanScreen(
     }
 }
 
-//
-//private fun feedItemsSize(
-//    feedState: NewsFeedUiState,
-//    onboardingUiState: OnboardingUiState,
-//): Int {
-//    val feedSize = when (feedState) {
-//        NewsFeedUiState.Loading -> 0
-//        is NewsFeedUiState.Success -> feedState.feed.size
-//    }
-//    val onboardingSize = when (onboardingUiState) {
-//        OnboardingUiState.Loading,
-//        OnboardingUiState.LoadFailed,
-//        OnboardingUiState.NotShown,
-//            -> 0
-//
-//        is OnboardingUiState.Shown -> 1
-//    }
-//    return feedSize + onboardingSize
-//}
+private data class MedicationBgColor(
+    val iconBackgroundColor: Color = Color.White,
+    val cardGradientStartColor: Color = Color.White,
+    val shadowColor: Color = Color.Black
+)
+
+private   val colorOptions = listOf(
+    MedicationBgColor(
+        iconBackgroundColor = Color(0xFFE3F2FD), // Light Blue
+        cardGradientStartColor = Color(0xFFBBDEFB),
+        shadowColor = Color(0x402196F3)
+    ),
+    MedicationBgColor(
+        iconBackgroundColor = Color(0xFF00ACC1),
+        cardGradientStartColor = Color(0xFF4DD0E1),
+        shadowColor = Color(0xFF00ACC1)
+    ),
+    MedicationBgColor(
+        iconBackgroundColor = Color(0xFFFF9800),
+        cardGradientStartColor = Color(0xFFFFB74D),
+        shadowColor = Color(0xFFFF9800)
+    ),
+    MedicationBgColor(
+        iconBackgroundColor = Color.White,
+        cardGradientStartColor = Color.White,
+        shadowColor = Color.Black,
+    ),
+    MedicationBgColor(
+        iconBackgroundColor = Color(0xFFE57373),
+        cardGradientStartColor = Color(0xFFEF9A9A),
+        shadowColor = Color(0xFFE57373)
+    )
+)
+private fun getMedicationColors(index: Int = 0): MedicationBgColor {
+
+    return  colorOptions.getOrElse(index, defaultValue = { colorOptions.random()})
+}
+
 
 @Composable
 @CommonPreview

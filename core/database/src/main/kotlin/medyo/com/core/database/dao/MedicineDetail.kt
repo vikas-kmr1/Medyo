@@ -6,6 +6,8 @@ data class MedicationDetail(
     val dosageStrength: String,
     val brand: String?,
     val salts: String?,
+    val form: String?,
+    val category: String?,
     val sideEffects: List<String>,
     val cures: List<String>,
     val precautions: List<String>,

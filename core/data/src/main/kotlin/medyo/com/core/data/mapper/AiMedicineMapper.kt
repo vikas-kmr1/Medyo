@@ -6,21 +6,23 @@ import medyo.com.core.database.entity.MedicationEntity
 import medyo.com.core.database.entity.MedicationInfoEntity
 import medyo.com.core.domain.model.MedicationInfo
 import medyo.com.core.utils.constants.MedicationCategory
+import medyo.com.core.utils.constants.MedicationType
+import medyo.com.core.utils.kotlin.emptyString
 import medyo.com.core.utils.kotlin.zeroL
 
-fun AiMedicationResponseDto.toMedicationEntity(): MedicationEntity {
+fun MedicationInfo.toMedicationEntity(): MedicationEntity {
     return MedicationEntity(
-        name = this.brand ?: "Unknown Medication",
-        dosageStrength = "", // AI doesn't explicitly return this in current schema
-        form = "",
+        name = this.brand,
+        dosageStrength = this.totalDoses, // AI doesn't explicitly return this in current schema
+        form = this.form,
         category = MedicationCategory.FIRST_AID_STOCK,
         stockQuantity = 0,
         expiryDate = this.expDate,
-        alertDaysBeforeExpiry = null
+        alertDaysBeforeExpiry = 1
     )
 }
 
-fun AiMedicationResponseDto.toMedicationInfoEntity(medicationId: Long): MedicationInfoEntity {
+fun MedicationInfo.toMedicationInfoEntity( medicationId: Long): MedicationInfoEntity {
     return MedicationInfoEntity(
         medicationId = medicationId,
         brand = this.brand,
@@ -63,7 +65,8 @@ fun MedicationDetail.toDomainModel(): MedicationInfo {
         cures = this.cures,
         precautions = this.precautions,
         instructions = this.instructions,
-        category = "", // Not currently joined or mapped directly from DB details, left blank for UI
+        form = this.form?: MedicationType.OTHER.name,
+        category = MedicationCategory.FIRST_AID_STOCK.name, // Not currently joined or mapped directly from DB details, left blank for UI
 
     )
 }

@@ -27,7 +27,7 @@ interface MedicationDao {
     fun getMedicationDetails(medicationId: Long): Flow<MedicationDetail?>
 
     @Query("""
-        SELECT m.id AS medicationId, m.name, m.dosageStrength, m.expiryDate AS expDate,
+        SELECT m.id AS medicationId, m.name, m.dosageStrength, m.expiryDate AS expDate,m.form,m.category,
                i.brand, i.salts, i.sideEffects, i.cures, i.precautions, i.instructions, i.mfgDate
         FROM medications m
         LEFT JOIN Medication_info i ON m.id = i.medicationId

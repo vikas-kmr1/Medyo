@@ -19,9 +19,9 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import medyo.com.core.design_system.component.date_and_time_picker.DatePickerField
 import medyo.com.core.design_system.component.dialog.FullScreenDialog
@@ -49,6 +50,7 @@ import medyo.com.core.design_system.component.textfield.MedyoTextField
 import medyo.com.core.design_system.theme.LocalDimensions
 import medyo.com.core.design_system.theme.MedyoTheme
 import medyo.com.core.design_system.theme.icon.MedyoIcons
+import medyo.com.core.design_system.theme.shapes.LocalAppShapes
 import medyo.com.core.design_system.utils.compose.CommonPreview
 import medyo.com.core.design_system.utils.getMedicationIcon
 import medyo.com.core.utils.constants.MedicationCategory
@@ -371,9 +373,8 @@ private fun MedicationTypeBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
-        dragHandle = {
-      BottomSheetDefaults.DragHandle()
-        }
+        dragHandle = { },
+        shape = LocalAppShapes.current.bottomSheetShape
     ) {
         Text(
             text = "Select Medication Type",
@@ -439,9 +440,26 @@ private fun MedicineCategoryChipGroup(
     ) {
         MedicationCategory.entries.forEach { category ->
             FilterChip(
+                modifier = Modifier
+                    .weight(.1f)
+                    .padding(horizontal = 8.dp),
                 selected = selected == category,
                 onClick = { onSelected(category) },
-                label = { Text(text = category.label) }
+                border = FilterChipDefaults.filterChipBorder(
+                    enabled = true,
+                    selected = selected == category,
+                    borderColor = MaterialTheme.colorScheme.outline,
+                    selectedBorderColor = MaterialTheme.colorScheme.primary,
+
+                ),
+                label = {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp), text = category.label,
+                        textAlign = TextAlign.Center
+                    )
+                }
             )
         }
     }

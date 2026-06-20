@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import medyo.com.core.design_system.component.card.MedicationCardItem
 import medyo.com.core.design_system.component.card.MedicationCardItemData
 import medyo.com.core.design_system.theme.LocalDimensions
@@ -17,7 +18,8 @@ fun LazyListScope.MedicationCardList(
 ) { MedicationCardItem ->
     MedicationCardItem(
         modifier = Modifier.padding(
-            vertical = LocalDimensions.current.dimen8dp
+            vertical = LocalDimensions.current.dimen8dp,
+            horizontal = LocalDimensions.current.dimen24dp
         ),
         name = MedicationCardItem.name,
         dosage = MedicationCardItem.dosage,
@@ -28,5 +30,4 @@ fun LazyListScope.MedicationCardList(
         onClick = { }
     )
 }
-
 
