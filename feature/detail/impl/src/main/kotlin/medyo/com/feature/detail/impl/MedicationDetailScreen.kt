@@ -44,65 +44,105 @@ import medyo.com.core.design_system.utils.getMedicationIcon
 import medyo.com.core.utils.constants.MedicationType
 
 
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import medyo.com.core.domain.model.MedicationInfo
+import medyo.com.core.utils.helpers.formatDate
+
 @Composable
-fun MedicationDetailScreen() {
+fun MedicationDetailScreen(
+    medicationId: Long,
+    viewModel: MedicationDetailViewModel
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(medicationId) {
+        viewModel.getMedicationDetail(medicationId)
+    }
+
     Scaffold() { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
-            MedicationDetailContent()
+        Box(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            when (val state = uiState) {
+                is MedicationDetailUiState.Loading -> {
+                    CircularProgressIndicator()
+                }
+
+                is MedicationDetailUiState.Success -> {
+                    MedicationDetailContent(state.medicationInfo)
+                }
+
+                is MedicationDetailUiState.Error -> {
+                    Text(text = state.message)
+                }
+            }
         }
     }
 
 }
 
 @Composable
-private fun MedicationDetailContent() {
+private fun MedicationDetailContent(medicationInfo: MedicationInfo) {
     LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(LocalDimensions.current.defaultContentPadding),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(LocalDimensions.current.defaultContentPadding),
         verticalArrangement = Arrangement.spacedBy(LocalDimensions.current.dimen16dp)
     ) {
         item {
-            MedicationHeader()
+            MedicationHeader(medicationInfo)
         }
         item {
 
             MedicationValidaty(
-                manufacturedDate = "01 Jan 2024",
-                expiryDate = "01 Jan 2027"
+                manufacturedDate = medicationInfo.mfgDate?.formatDate() ?: "N/A",
+                expiryDate = medicationInfo.expDate?.formatDate() ?: "N/A"
             )
         }
 
-        item {
-            Text(
-                "Primary Uses",
-                style = MaterialTheme.typography.titleLarge,
-            )
-            MedicationCureInfo(cures = listOf("Dizzinesss", "Body Pain", "Headache 3"))
-        }
-        item {
-            Text(
-                "Side Effects",
-                style = MaterialTheme.typography.titleLarge,
-            )
-            MedicationSideEffects(sideEffects = listOf("Dizzinesss", "Body Pain", "Headache 3"))
-        }
-        item {
-            Text(
-                "Precautions",
-                style = MaterialTheme.typography.titleLarge,
-            )
-            MedicationPrecautions(precautions = listOf("Dizzinesss", "Body Pain", "Headache 3"))
-        }
-        item {
-            Text(
-                "Instructions",
-                style = MaterialTheme.typography.titleLarge,
-            )
-            MedicationInstructions(
-                instructions = listOf(
-                    "Take 1 tablet every 2 hours",
-                    "Take 1 tablet every 2 hours"
+        if (medicationInfo.cures.isNotEmpty()) {
+            item {
+                Text(
+                    "Primary Uses",
+                    style = MaterialTheme.typography.titleLarge,
                 )
-            )
+                MedicationCureInfo(cures = medicationInfo.cures)
+            }
+        }
+        if (medicationInfo.sideEffects.isNotEmpty()) {
+            item {
+                Text(
+                    "Side Effects",
+                    style = MaterialTheme.typography.titleLarge,
+                )
+                MedicationSideEffects(sideEffects = medicationInfo.sideEffects)
+            }
+        }
+        if (medicationInfo.precautions.isNotEmpty()) {
+            item {
+                Text(
+                    "Precautions",
+                    style = MaterialTheme.typography.titleLarge,
+                )
+                MedicationPrecautions(precautions = medicationInfo.precautions)
+            }
+        }
+        if (medicationInfo.instructions.isNotEmpty()) {
+            item {
+                Text(
+                    "Instructions",
+                    style = MaterialTheme.typography.titleLarge,
+                )
+                MedicationInstructions(
+                    instructions = medicationInfo.instructions
+                )
+            }
         }
 
     }
@@ -110,31 +150,36 @@ private fun MedicationDetailContent() {
 }
 
 @Composable
-private fun MedicationHeader() {
+private fun MedicationHeader(medicationInfo: MedicationInfo) {
+    val medicationType = try {
+        MedicationType.valueOf(medicationInfo.form.uppercase())
+    } catch (e: Exception) {
+        MedicationType.OTHER
+    }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         MedicationIcon(
-            iconRes = getMedicationIcon(MedicationType.CAPSULE),
-            name = MedicationType.CAPSULE.name.lowercase(),
+            iconRes = getMedicationIcon(medicationType),
+            name = medicationType.name.lowercase(),
             onIconClick = {}
         )
         Column(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = "Health Explorer",
+                text = medicationInfo.brand,
                 style = MaterialTheme.typography.headlineMedium
             )
             Text(
-                text = "Medicine Name",
+                text = medicationInfo.name,
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.SemiBold
                 )
             )
 
-            Text(text = "100mg", style = MaterialTheme.typography.bodyMedium)
+            Text(text = medicationInfo.salts, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
@@ -307,7 +352,14 @@ private fun PreviewMedicationComponentsr() {
         FlowColumn(
             modifier = Modifier.padding(10.dp),
         ) {
-            MedicationHeader()
+            MedicationHeader(
+                medicationInfo = MedicationInfo(
+                    name = "Medicine Name",
+                    brand = "Health Explorer",
+                    salts = "100mg",
+                    form = MedicationType.CAPSULE.name
+                )
+            )
             MedicationCureInfo(cures = listOf("Dizzinesss", "Body Pain", "Headache 3"))
             MedicationSideEffects(sideEffects = listOf("Dizzinesss", "Body Pain", "Headache 3"))
             MedicationPrecautions(precautions = listOf("Dizzinesss", "Body Pain", "Headache 3"))
@@ -330,6 +382,20 @@ private fun PreviewMedicationComponentsr() {
 @Composable
 private fun PreviewMedicationDetailScreen() {
     MedyoTheme() {
-        MedicationDetailContent()
+        MedicationDetailContent(
+            medicationInfo = MedicationInfo(
+                name = "Medicine Name",
+                brand = "Health Explorer",
+                salts = "100mg",
+                form = MedicationType.CAPSULE.name,
+                cures = listOf("Dizzinesss", "Body Pain", "Headache 3"),
+                sideEffects = listOf("Dizzinesss", "Body Pain", "Headache 3"),
+                precautions = listOf("Dizzinesss", "Body Pain", "Headache 3"),
+                instructions = listOf(
+                    "Take 1 tablet every 2 hours",
+                    "Take 1 tablet every 2 hours"
+                )
+            )
+        )
     }
 }
