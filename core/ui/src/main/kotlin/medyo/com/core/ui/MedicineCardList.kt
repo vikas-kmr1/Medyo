@@ -11,7 +11,8 @@ import medyo.com.core.design_system.theme.LocalDimensions
 
 
 fun LazyListScope.MedicationCardList(
-    MedicationItems: List<MedicationCardItemData>
+    MedicationItems: List<MedicationCardItemData>,
+    onCardClick: (Long) -> Unit = {},
 ) = items(
     items = MedicationItems,
     key = { it.id },
@@ -27,7 +28,7 @@ fun LazyListScope.MedicationCardList(
         iconBackgroundColor = MedicationCardItem.iconBackgroundColor,
         cardGradientStartColor = MedicationCardItem.cardGradientStartColor,
         shadowColor = MedicationCardItem.shadowColor,
-        onClick = { }
+        onClick = {onCardClick(MedicationCardItem.id)}
     )
 }
 

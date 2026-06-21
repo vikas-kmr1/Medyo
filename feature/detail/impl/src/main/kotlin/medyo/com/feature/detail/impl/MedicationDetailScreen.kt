@@ -1,5 +1,6 @@
 package medyo.com.feature.detail.impl
 
+
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,10 +17,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
-import androidx.compose.material3.ElevatedFilterChip
-import androidx.compose.material3.ElevatedSuggestionChip
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -28,6 +29,9 @@ import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,26 +39,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import medyo.com.core.design_system.component.bullet.CircularBullet
 import medyo.com.core.design_system.component.bullet.CircularOutlineBullet
 import medyo.com.core.design_system.theme.LocalDimensions
 import medyo.com.core.design_system.theme.MedyoTheme
 import medyo.com.core.design_system.utils.compose.CommonPreview
 import medyo.com.core.design_system.utils.getMedicationIcon
-import medyo.com.core.utils.constants.MedicationType
-
-
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import medyo.com.core.domain.model.MedicationInfo
+import medyo.com.core.utils.constants.MedicationType
 import medyo.com.core.utils.helpers.formatDate
 
 @Composable
 fun MedicationDetailScreen(
     medicationId: Long,
-    viewModel: MedicationDetailViewModel
+    viewModel: MedicationDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -99,11 +99,12 @@ private fun MedicationDetailContent(medicationInfo: MedicationInfo) {
             MedicationHeader(medicationInfo)
         }
         item {
-
             MedicationValidaty(
                 manufacturedDate = medicationInfo.mfgDate?.formatDate() ?: "N/A",
                 expiryDate = medicationInfo.expDate?.formatDate() ?: "N/A"
             )
+
+            HorizontalDivider(modifier = Modifier.padding(vertical = LocalDimensions.current.dimen16dp))
         }
 
         if (medicationInfo.cures.isNotEmpty()) {
@@ -162,18 +163,18 @@ private fun MedicationHeader(medicationInfo: MedicationInfo) {
     ) {
         MedicationIcon(
             iconRes = getMedicationIcon(medicationType),
-            name = medicationType.name.lowercase(),
+            name = medicationType.name,
             onIconClick = {}
         )
         Column(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = medicationInfo.brand,
+                text = medicationInfo.name,
                 style = MaterialTheme.typography.headlineMedium
             )
             Text(
-                text = medicationInfo.name,
+                text = medicationInfo.brand,
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.SemiBold
                 )
@@ -195,11 +196,6 @@ private fun MedicationIcon(
         modifier = modifier
             .padding(30.dp)// Slightly larger to match the premium feel
             .clip(OutlinedTextFieldDefaults.shape) // More rounded
-            .border(
-                width = OutlinedTextFieldDefaults.UnfocusedBorderThickness,
-                color = OutlinedTextFieldDefaults.colors().unfocusedIndicatorColor,
-                shape = OutlinedTextFieldDefaults.shape
-            )
             .clickable(
                 onClick = onIconClick
             ),
@@ -270,7 +266,7 @@ private fun MedicationCureInfo(
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(-8.dp)
     ) {
         cures.forEach {
          SuggestionChip(
@@ -292,7 +288,7 @@ private fun MedicationSideEffects(sideEffects: List<String>) {
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(-8.dp)
     ) {
         sideEffects.forEach {
            FilterChip(
@@ -313,15 +309,16 @@ private fun MedicationSideEffects(sideEffects: List<String>) {
 @Composable
 private fun MedicationPrecautions(precautions: List<String>) {
     val dimension = LocalDimensions.current
-    FlowColumn(
+    Column(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.SpaceAround
+        verticalArrangement = Arrangement.spacedBy(dimension.dimen4dp)
     ) {
         precautions.forEach {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                CircularBullet()
-                Spacer(Modifier.width(dimension.dimen4dp))
+            Row(verticalAlignment = Alignment.Top) {
+                Box(modifier = Modifier.padding(top = 4.dp)) {
+                    CircularBullet()
+                }
+                Spacer(Modifier.width(dimension.dimen8dp))
                 Text(text = it, style = MaterialTheme.typography.bodyMedium)
             }
         }
@@ -335,9 +332,11 @@ private fun MedicationInstructions(
     val dimension = LocalDimensions.current
     Column(verticalArrangement = Arrangement.spacedBy(dimension.dimen4dp)) {
         instructions.forEach { effect ->
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                CircularOutlineBullet()
-                Spacer(Modifier.width(dimension.dimen4dp))
+            Row(verticalAlignment = Alignment.Top) {
+                Box(modifier = Modifier.padding(top = 4.dp)) {
+                    CircularOutlineBullet()
+                }
+                Spacer(Modifier.width(dimension.dimen8dp))
                 Text(effect, style = MaterialTheme.typography.bodyMedium)
             }
         }
@@ -365,7 +364,7 @@ private fun PreviewMedicationComponentsr() {
             MedicationPrecautions(precautions = listOf("Dizzinesss", "Body Pain", "Headache 3"))
             MedicationInstructions(
                 instructions = listOf(
-                    "Take 1 tablet every 2 hours",
+                    "Take 1 tablet every 2 hours ",
                     "Take 1 tablet every 2 hours"
                 )
             )
@@ -388,11 +387,11 @@ private fun PreviewMedicationDetailScreen() {
                 brand = "Health Explorer",
                 salts = "100mg",
                 form = MedicationType.CAPSULE.name,
-                cures = listOf("Dizzinesss", "Body Pain", "Headache 3"),
-                sideEffects = listOf("Dizzinesss", "Body Pain", "Headache 3"),
+                cures = listOf("Dizzinesss", "Body Pain", "Headache 3", "Other symptoms"),
+                sideEffects = listOf("Dizzinesss", "Body Pain", "Headache 3", "others symptoms"),
                 precautions = listOf("Dizzinesss", "Body Pain", "Headache 3"),
                 instructions = listOf(
-                    "Take 1 tablet every 2 hours",
+                    "Take 1 tablet every 2 hours,Take 1 tablet every 2 hours  Take 1 tablet every 2 hours ",
                     "Take 1 tablet every 2 hours"
                 )
             )

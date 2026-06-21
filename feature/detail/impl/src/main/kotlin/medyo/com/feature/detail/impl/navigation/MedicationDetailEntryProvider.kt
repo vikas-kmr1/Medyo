@@ -20,10 +20,12 @@ import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import medyo.com.core.navigation.Navigator
 import medyo.com.feature.detail.api.MedicationDetailNavKey
+import medyo.com.feature.detail.impl.MedicationDetailScreen
 
 
 fun EntryProviderScope<NavKey>.MedicationDetailEntry(navigator: Navigator) {
-    entry<MedicationDetailNavKey> {
-
+    entry<MedicationDetailNavKey> {medication ->
+        MedicationDetailScreen(
+            medicationId = medication.medicationId)
     }
 }

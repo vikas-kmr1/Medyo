@@ -6,7 +6,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 fun Long.formatDate(pattern: String = "dd MMM yyyy"): String {
-    val instant = Instant.ofEpochMilli(this)
+    val instant = Instant.ofEpochSecond(this)
     val localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate()
     val formatter = DateTimeFormatter.ofPattern(pattern)
     return localDate.format(formatter)

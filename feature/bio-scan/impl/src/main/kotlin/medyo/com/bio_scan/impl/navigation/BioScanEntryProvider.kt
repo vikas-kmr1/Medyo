@@ -21,6 +21,7 @@ import androidx.navigation3.runtime.NavKey
 import medyo.com.core.navigation.Navigator
 import medyo.com.bio_scan.api.BioScanNavKey
 import medyo.com.bio_scan.impl.BioScanScreen
+import medyo.com.feature.detail.api.MedicationDetailNavKey
 import medyo.com.feature.scanner.api.ScannerNavKey
 
 fun EntryProviderScope<NavKey>.bioScanEntry(navigator: Navigator) {
@@ -28,7 +29,8 @@ fun EntryProviderScope<NavKey>.bioScanEntry(navigator: Navigator) {
         BioScanScreen(
             onBioScanClick = {
                 navigator.navigate(ScannerNavKey)
-            }
+            },
+            onMedicationClick = {id->navigator.navigate(MedicationDetailNavKey(id))}
         )
     }
 }

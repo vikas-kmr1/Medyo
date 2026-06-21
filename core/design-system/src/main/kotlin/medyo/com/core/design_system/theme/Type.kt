@@ -79,21 +79,21 @@ val Typography  = Typography(
         fontFamily = Inter,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
-        lineHeight = 24.sp,
+        lineHeight = 18.sp,
         ),
 
     bodyMedium = TextStyle(
         fontFamily = Inter,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
-        lineHeight = 24.sp,
+        lineHeight = 16.sp,
         ),
     // Standard Labels (Inter)
     bodySmall = TextStyle(
         fontFamily = Inter,
         fontWeight = FontWeight.Light,
         fontSize = 12.sp,
-        lineHeight = 24.sp,
+        lineHeight = 14.sp,
 
     ),
     // Technical/AI Data (JetBrains Mono)

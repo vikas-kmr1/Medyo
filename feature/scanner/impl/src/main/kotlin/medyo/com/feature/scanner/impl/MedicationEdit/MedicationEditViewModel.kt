@@ -23,28 +23,29 @@ import java.time.ZoneId
 import javax.inject.Inject
 
 data class MedicationEditUiState(
-    val name: String = "",
+    val name: String = emptyString,
     val nameError: String? = null,
-    val manufacturer: String = "",
+    val manufacturer: String = emptyString,
     val medicationType: MedicationType = MedicationType.OTHER,
     val category: MedicationCategory = MedicationCategory.FIRST_AID_STOCK,
     val manufacturingDate: LocalDate? = null,
     val manufacturingDateError: String? = null,
     val expiryDate: LocalDate? = null,
     val expiryDateError: String? = null,
-    val dosageIntervalMinutes: String = "",
+    val dosageIntervalMinutes: String = emptyString,
     val dosageIntervalError: String? = null,
     val startDate: LocalDate? = null,
     val startDateError: String? = null,
+    val salt: String = emptyString,
     val endDate: LocalDate? = null,
     val endDateError: String? = null,
-    val totalDoses: String = "",
+    val totalDoses: String = emptyString,
     val totalDosesError: String? = null,
     val isLoading: Boolean = false,
-    val sideEffects:List<String> = emptyList(),
-    val cures:List<String> = emptyList(),
-    val precautions:List<String> = emptyList(),
-    val instructions:List<String> = emptyList(),
+    val sideEffects: List<String> = emptyList(),
+    val cures: List<String> = emptyList(),
+    val precautions: List<String> = emptyList(),
+    val instructions: List<String> = emptyList(),
 )
 
 @HiltViewModel
@@ -62,10 +63,10 @@ class MedicationEditViewModel @Inject constructor(
         _uiState.value = MedicationEditUiState(
             name = medicationInfo.name,
             manufacturer = medicationInfo.brand,
-            category = try {
-                MedicationCategory.valueOf(medicationInfo.category)
-            } catch (e: Exception) {
-                MedicationCategory.FIRST_AID_STOCK
+            medicationType = try {
+                MedicationType.valueOf(medicationInfo.category)
+            } catch (_: Exception) {
+                MedicationType.OTHER
             },
             manufacturingDate = medicationInfo.mfgDate?.toLocalDate(),
             expiryDate = medicationInfo.expDate?.toLocalDate(),
@@ -75,6 +76,7 @@ class MedicationEditViewModel @Inject constructor(
             totalDoses = medicationInfo.totalDoses,
             sideEffects = medicationInfo.sideEffects,
             cures = medicationInfo.cures,
+            salt = medicationInfo.salts,
             precautions = medicationInfo.precautions,
             instructions = medicationInfo.instructions,
         )
@@ -174,8 +176,9 @@ class MedicationEditViewModel @Inject constructor(
 
     fun onSave() {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = saveMedicationUseCase.invoke(medicationInfo = uiState.value.toMedicationInfo())
-            result.onSuccess {medicationID->
+            val result =
+                saveMedicationUseCase.invoke(medicationInfo = uiState.value.toMedicationInfo())
+            result.onSuccess { medicationID ->
                 dbWriteState = medicationID >= 0
             }
         }
@@ -196,13 +199,14 @@ private fun MedicationEditUiState.toMedicationInfo(): MedicationInfo {
         dosageIntervalMinutes = dosageIntervalMinutes,
         startDate = startDate?.toEpochSecond(),
         endDate = endDate?.toEpochSecond(),
-        salts = emptyString,
+        salts = salt,
         form = medicationType.name,
         sideEffects = sideEffects,
         cures = cures,
         precautions = precautions,
-        instructions =instructions,
-        totalDoses = totalDoses,)
+        instructions = instructions,
+        totalDoses = totalDoses,
+    )
 }
 
 

@@ -48,6 +48,7 @@ import medyo.com.core.utils.constants.MedicationType
 @Composable
 internal fun BioScanScreen(
     onBioScanClick: () -> Unit,
+    onMedicationClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: BioScanViewmodel = hiltViewModel()
 ) {
@@ -119,7 +120,7 @@ internal fun BioScanScreen(
                             index = it.medicationId.toInt() % colorOptions.size
                         )
                         MedicationCardItemData(
-                            id = it.medicationId.toInt(),
+                            id = it.medicationId,
                             name = it.brand, // Note: Same name but different ID and Icon
                             dosage = "10mg",
                             iconRes = getMedicationIcon(if (it.form.isBlank())MedicationType.OTHER else MedicationType.valueOf(it.form)),
@@ -128,6 +129,7 @@ internal fun BioScanScreen(
                             shadowColor = colors.shadowColor,
                         )
                     },
+                    onCardClick = onMedicationClick
                 )
             }
 
@@ -192,6 +194,7 @@ private fun getMedicationColors(index: Int = 0): MedicationBgColor {
 @CommonPreview
 private fun BioScanScreenPreview() {
     MedyoTheme {
-        BioScanScreen(onBioScanClick = {})
+        BioScanScreen(onBioScanClick = {},
+            {})
     }
 }

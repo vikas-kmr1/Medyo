@@ -193,7 +193,7 @@ private fun MedicationCardItemPreview() {
 }
 
 data class MedicationCardItemData(
-    val id: Int, // Important for LazyColumn keys
+    val id: Long, // Important for LazyColumn keys
     val name: String,
     val dosage: String,
     val iconRes: Int,

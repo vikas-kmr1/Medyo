@@ -77,6 +77,8 @@ dependencies {
     implementation(projects.feature.bioScan.impl)
     implementation(projects.feature.settings.api)
     implementation(projects.feature.settings.impl)
+    implementation(projects.feature.detail.api)
+    implementation(projects.feature.detail.impl)
 
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)

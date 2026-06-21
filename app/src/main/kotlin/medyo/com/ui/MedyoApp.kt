@@ -41,6 +41,7 @@ import medyo.com.core.navigation.Navigator
 import medyo.com.core.navigation.toEntries
 import medyo.com.bio_scan.api.BioScanNavKey
 import medyo.com.bio_scan.impl.navigation.bioScanEntry
+import medyo.com.feature.detail.impl.navigation.MedicationDetailEntry
 import medyo.com.feature.home.api.HomeNavKey
 import medyo.com.feature.home.impl.navigation.homeEntry
 import medyo.com.feature.scanner.impl.navigation.scannerEntry
@@ -66,7 +67,7 @@ fun MedyoApp(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        contentWindowInsets = androidx.compose.foundation.layout.WindowInsets(0, 0, 0, 0),
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
             // 3. ANIMATED TRANSITION: Smoothly slide the bottom bar in/out
             AnimatedVisibility(
@@ -110,6 +111,7 @@ fun MedyoApp(
                 bioScanEntry(navigator)
                 scannerEntry(navigator)
                 settingsEntry(navigator)
+                MedicationDetailEntry(navigator)
             }
 
             NavDisplay(
