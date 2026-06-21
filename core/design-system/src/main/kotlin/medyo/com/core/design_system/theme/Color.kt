@@ -33,7 +33,7 @@ val TextPrimaryDark = Color(0xFFF8FAFC)
 val TextMuted = Color(0xFF64748B)
 
 
-
+val HighestContrast = Color(0xFF0F172A)
 val NavyDark = Color(0xFF081426)      // Primary background
 val NavyMedium = Color(0xFF1E3A5F)    // Card/Surface base
 val NeonCyan = Color(0xFF22D3EE)      // Primary interactive accent

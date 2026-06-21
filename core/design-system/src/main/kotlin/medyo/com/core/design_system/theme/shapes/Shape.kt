@@ -57,7 +57,7 @@ val MedyoShapes = Shapes(
 
 
 /**
- * A [CompositionLocal] to store the custom shapes, making them accessible throughout the Compose
+ * A [compositionLocalOf] to store the custom shapes, making them accessible throughout the Compose
  * hierarchy.
  */
 val LocalAppShapes = compositionLocalOf { appShapes }

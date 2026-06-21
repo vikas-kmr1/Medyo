@@ -52,6 +52,13 @@ val Typography  = Typography(
         fontSize = 32.sp,
         letterSpacing = (-0.5).sp,
     ),
+   headlineMedium = TextStyle(
+        fontFamily = PlusJakartaSans, // Custom font family,
+        color = HighestContrast,
+        fontWeight = FontWeight.Bold,
+        letterSpacing = (-0.5).sp,
+       fontSize = 28.sp,
+    ),
 
     titleLarge = TextStyle(
         fontFamily = PlusJakartaSans, // Custom font family
@@ -109,6 +116,7 @@ private fun YumaTypographyPreview(){
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 Text(text = "Yuma Typography Preview", style = Typography.displayLarge)
+                Text(text = "Yuma Typography Preview", style = Typography.headlineMedium)
                 Text(text = "Yuma Typography Preview", style = Typography.titleLarge)
                 Text(text = "Yuma Typography Preview", style = Typography.titleMedium)
                 Text(text = "Yuma Typography Preview", style = Typography.bodyLarge)
