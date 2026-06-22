@@ -1,6 +1,7 @@
 package medyo.com.bio_scan.impl
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
@@ -12,10 +13,13 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBars
@@ -72,7 +76,13 @@ internal fun BioScanScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .statusBarsPadding(),
+            .statusBarsPadding()
+            .animateContentSize(
+                animationSpec = spring(
+                    stiffness = Spring.StiffnessLow,
+                    dampingRatio = Spring.DampingRatioNoBouncy
+                )
+            ),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
@@ -82,12 +92,19 @@ internal fun BioScanScreen(
             enter = expandVertically(
                 animationSpec = spring(
                     stiffness = Spring.StiffnessLow,
-                    dampingRatio = Spring.DampingRatioLowBouncy
+                    dampingRatio = Spring.DampingRatioNoBouncy
                 )
-            ) + fadeIn(),
+            ) + fadeIn(
+                animationSpec = spring(stiffness = Spring.StiffnessLow)
+            ),
             exit = shrinkVertically(
-                animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
-            ) + fadeOut()
+                animationSpec = spring(
+                    stiffness = Spring.StiffnessLow,
+                    dampingRatio = Spring.DampingRatioNoBouncy
+                )
+            ) + fadeOut(
+                animationSpec = spring(stiffness = Spring.StiffnessLow)
+            )
         ) {
             BioScanWidget(
                 modifier = Modifier.padding(horizontal = 24.dp),
@@ -131,6 +148,14 @@ internal fun BioScanScreen(
                     },
                     onCardClick = onMedicationClick
                 )
+
+                if (itemsAvailable > 0) {
+                    item {
+                        // 5. BOTTOM SPACER: Ensures the list is always scrollable,
+                        // even with few items, so the top widget can collapse!
+                        Spacer(modifier = Modifier.fillParentMaxHeight(0.5f))
+                    }
+                }
             }
 
 

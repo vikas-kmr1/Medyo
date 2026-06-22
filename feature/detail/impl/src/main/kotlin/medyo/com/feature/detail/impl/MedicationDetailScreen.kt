@@ -1,6 +1,7 @@
 package medyo.com.feature.detail.impl
 
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -39,7 +40,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import medyo.com.core.design_system.component.bullet.CircularBullet
 import medyo.com.core.design_system.component.bullet.CircularOutlineBullet
@@ -97,6 +97,7 @@ private fun MedicationDetailContent(medicationInfo: MedicationInfo) {
     ) {
         item {
             MedicationHeader(medicationInfo)
+            HorizontalDivider(modifier = Modifier.padding(vertical = LocalDimensions.current.dimen16dp))
         }
         item {
             MedicationValidaty(
@@ -104,7 +105,6 @@ private fun MedicationDetailContent(medicationInfo: MedicationInfo) {
                 expiryDate = medicationInfo.expDate?.formatDate() ?: "N/A"
             )
 
-            HorizontalDivider(modifier = Modifier.padding(vertical = LocalDimensions.current.dimen16dp))
         }
 
         if (medicationInfo.cures.isNotEmpty()) {
@@ -219,10 +219,11 @@ private fun MedicationValidaty(
     manufacturedDate: String,
     expiryDate: String,
 ) {
-    Card {
+    Card{
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.onSecondary)
                 .padding(30.dp)// Slightly larger to match the premium feel
                 .clip(OutlinedTextFieldDefaults.shape) // More rounded
                 .border(
@@ -238,7 +239,8 @@ private fun MedicationValidaty(
                 Text(
                     manufacturedDate,
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
                 )
             }
             Column(horizontalAlignment = Alignment.End) {
@@ -269,15 +271,16 @@ private fun MedicationCureInfo(
         verticalArrangement = Arrangement.spacedBy(-8.dp)
     ) {
         cures.forEach {
-         SuggestionChip(
+            SuggestionChip(
                 label = {
                     Text(text = it, style = MaterialTheme.typography.labelMedium)
                 },
                 onClick = {},
                 colors = SuggestionChipDefaults.suggestionChipColors(
-                    containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f),
-                    labelColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                )
+                    disabledContainerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f),
+                    disabledLabelColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                ),
+                enabled = false,
             )
         }
     }
@@ -291,15 +294,16 @@ private fun MedicationSideEffects(sideEffects: List<String>) {
         verticalArrangement = Arrangement.spacedBy(-8.dp)
     ) {
         sideEffects.forEach {
-           FilterChip(
+            FilterChip(
                 label = {
                     Text(text = it, style = MaterialTheme.typography.labelMedium)
                 },
                 onClick = {},
                 selected = false,
+                enabled = false,
                 colors = FilterChipDefaults.filterChipColors(
-                    containerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.3f),
-                    labelColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                    disabledContainerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.3f),
+                    disabledLabelColor = MaterialTheme.colorScheme.onTertiaryContainer,
                 )
             )
         }
