@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -219,11 +220,11 @@ private fun MedicationValidaty(
     manufacturedDate: String,
     expiryDate: String,
 ) {
-    Card{
+    Card {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.onSecondary)
+                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
                 .padding(30.dp)// Slightly larger to match the premium feel
                 .clip(OutlinedTextFieldDefaults.shape) // More rounded
                 .border(
@@ -319,7 +320,10 @@ private fun MedicationPrecautions(precautions: List<String>) {
     ) {
         precautions.forEach {
             Row(verticalAlignment = Alignment.Top) {
-                Box(modifier = Modifier.padding(top = 4.dp)) {
+                Box(
+                    modifier = Modifier.height(MaterialTheme.typography.bodyMedium.lineHeight.value.dp),
+                    contentAlignment = Alignment.Center
+                ) {
                     CircularBullet()
                 }
                 Spacer(Modifier.width(dimension.dimen8dp))
@@ -337,7 +341,10 @@ private fun MedicationInstructions(
     Column(verticalArrangement = Arrangement.spacedBy(dimension.dimen4dp)) {
         instructions.forEach { effect ->
             Row(verticalAlignment = Alignment.Top) {
-                Box(modifier = Modifier.padding(top = 4.dp)) {
+                Box(
+                    modifier = Modifier.height(MaterialTheme.typography.bodyMedium.lineHeight.value.dp),
+                    contentAlignment = Alignment.Center
+                ) {
                     CircularOutlineBullet()
                 }
                 Spacer(Modifier.width(dimension.dimen8dp))
