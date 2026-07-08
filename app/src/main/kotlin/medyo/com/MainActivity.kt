@@ -42,13 +42,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         // loading mock data
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && splashScreenInstance != null) {
-            var keepSplashScreen = true
+            //var keepSplashScreen = true
             // Keep the splash screen on-screen for 3 seconds
-            splashScreenInstance.setKeepOnScreenCondition { keepSplashScreen }
-            lifecycleScope.launch {
-                delay(1000L)
-                keepSplashScreen = false
-            }
+            //splashScreenInstance.setKeepOnScreenCondition { keepSplashScreen }
+
 
             splashScreen.setOnExitAnimationListener { splashScreenView ->
                 val fadeOut = ObjectAnimator.ofFloat(splashScreenView, View.ALPHA, 1f, 0f)

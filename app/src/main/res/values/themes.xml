@@ -2,7 +2,7 @@
 <resources>
 
     <style name="Theme.Medyo.Starting" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenAnimatedIcon">@drawable/avd_medyo_splash</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/icon_medyo_splash</item>
         <item name="postSplashScreenTheme">@style/Theme.Medyo</item>
         <item name="android:fitsSystemWindows">true</item>
         <item name="android:windowFullscreen">true</item>

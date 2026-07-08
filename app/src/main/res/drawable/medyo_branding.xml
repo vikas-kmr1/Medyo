@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="180dp"
+    android:height="80dp"
+    android:viewportWidth="180"
+    android:viewportHeight="80">
+
+    <!-- "Medyo" Stylized Text Path -->
+    <path
+        android:strokeColor="#000000"
+        android:strokeWidth="6"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="
+            M 20,50 V 30 C 20,16 30,16 34,34 C 38,16 48,16 48,30 V 50
+            M 58,39 H 76 C 76,26 58,26 58,39 C 58,52 76,52 76,45
+            M 104,16 V 50 M 104,39 C 104,26 86,26 86,39 C 86,52 104,52 104,39
+            M 114,28 V 39 C 114,50 132,50 132,39 V 28 M 132,39 V 53 C 132,62 116,62 114,59
+            M 160,39 C 160,26 142,26 142,39 C 142,52 160,52 160,39 Z" />
+
+</vector>
