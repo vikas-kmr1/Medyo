@@ -20,6 +20,7 @@ internal object DatabaseModule {
                 context,
                 MedyoDatabase::class.java,
                 "medyo_database"
-            ).fallbackToDestructiveMigration(true)
+            ).addMigrations(MedyoDatabase.MIGRATION_3_4, MedyoDatabase.MIGRATION_4_5)
+            .fallbackToDestructiveMigration(true)
             .build()
 }

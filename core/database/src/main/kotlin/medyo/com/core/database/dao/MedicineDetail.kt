@@ -14,4 +14,6 @@ data class MedicationDetail(
     val instructions: List<String>,
     val mfgDate: Long?,
     val expDate: Long?,
+    val stockQuantity: Int = 0,
+    val alertDaysBeforeExpiry: Int = 7
 )

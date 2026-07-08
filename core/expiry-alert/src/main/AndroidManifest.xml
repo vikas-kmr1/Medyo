@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <!-- Receiver to handle actions from the notification (Remind Later, Removed from stock) -->
+        <receiver
+            android:name=".ExpiryActionReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="medyo.action.MARK_REMOVED" />
+                <action android:name="medyo.action.REMIND_LATER" />
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>

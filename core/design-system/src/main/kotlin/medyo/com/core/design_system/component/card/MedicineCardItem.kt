@@ -15,8 +15,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -74,9 +76,9 @@ fun MedicationCardItem(
                 .background(
                     brush = Brush.horizontalGradient(
                         // colorStops force the gradient to fully fade to transparent white by 45% of the width
-                        0.0f to cardGradientStartColor.copy(alpha = 0.5f),
+                        0.0f to colorScheme.background.copy(alpha = 0f),
                         0.45f to colorScheme.background.copy(alpha = 0f),
-                        1.0f to colorScheme.background.copy(alpha = 0f)
+                        1.0f to  cardGradientStartColor.copy(alpha = 0.5f)
                     )
                 )
         )

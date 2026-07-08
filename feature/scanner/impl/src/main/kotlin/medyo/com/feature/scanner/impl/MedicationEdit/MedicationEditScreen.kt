@@ -74,6 +74,10 @@ fun MedicationEditScreen(
     onStartDateChange: (LocalDate) -> Unit,
     onEndDateChange: (LocalDate) -> Unit,
     onTotalDosesChange: (String) -> Unit,
+    onStockQuantityChange: (String) -> Unit,
+    onAlertDaysBeforeExpiryChange: (String) -> Unit,
+    onDosageTimeAdd: (String) -> Unit,
+    onDosageTimeRemove: (String) -> Unit,
 ) {
     BackHandler() { }
     val dimen = LocalDimensions.current
@@ -145,6 +149,27 @@ fun MedicationEditScreen(
                     value = uiState.totalDoses,
                     error = uiState.totalDosesError,
                     onValueChange = onTotalDosesChange
+                )
+            }
+            item {
+                StockQuantityField(
+                    value = uiState.stockQuantity,
+                    error = uiState.stockQuantityError,
+                    onValueChange = onStockQuantityChange
+                )
+            }
+            item {
+                AlertDaysBeforeExpiryField(
+                    value = uiState.alertDaysBeforeExpiry,
+                    error = uiState.alertDaysBeforeExpiryError,
+                    onValueChange = onAlertDaysBeforeExpiryChange
+                )
+            }
+            item {
+                DosageTimesField(
+                    times = uiState.dosageTimes,
+                    onAdd = onDosageTimeAdd,
+                    onRemove = onDosageTimeRemove
                 )
             }
         }
@@ -529,7 +554,140 @@ private fun MedicationEditScreenPreview() {
             onDosageIntervalChange = {},
             onStartDateChange = {},
             onEndDateChange = {},
-            onTotalDosesChange = {}
+            onTotalDosesChange = {},
+            onStockQuantityChange = {},
+            onAlertDaysBeforeExpiryChange = {},
+            onDosageTimeAdd = {},
+            onDosageTimeRemove = {}
+        )
+    }
+}
+
+@Composable
+private fun StockQuantityField(
+    modifier: Modifier = Modifier,
+    value: String,
+    error: String?,
+    onValueChange: (String) -> Unit
+) {
+    MedyoTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = "Current Stock Quantity",
+        modifier = modifier.fillMaxWidth(),
+        isError = error != null,
+        supportingText = error?.let { { Text(it) } },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Next
+        )
+    )
+}
+
+@Composable
+private fun AlertDaysBeforeExpiryField(
+    modifier: Modifier = Modifier,
+    value: String,
+    error: String?,
+    onValueChange: (String) -> Unit
+) {
+    MedyoTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = "Alert Days Before Expiry",
+        modifier = modifier.fillMaxWidth(),
+        isError = error != null,
+        supportingText = error?.let { { Text(it) } },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Next
+        )
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TimePickerDialog(
+    onDismiss: () -> Unit,
+    onConfirm: (String) -> Unit
+) {
+    val timePickerState = androidx.compose.material3.rememberTimePickerState(
+        initialHour = 9,
+        initialMinute = 0,
+        is24Hour = false
+    )
+    androidx.compose.ui.window.Dialog(onDismissRequest = onDismiss) {
+        androidx.compose.material3.Card(
+            shape = androidx.compose.foundation.shape.RoundedCornerShape(28.dp),
+            colors = androidx.compose.material3.CardDefaults.cardColors(containerColor = Color.White)
+        ) {
+            androidx.compose.foundation.layout.Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Select Time",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                )
+                androidx.compose.material3.TimePicker(state = timePickerState)
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = onDismiss) { Text("Cancel") }
+                    TextButton(
+                        onClick = {
+                            val h = timePickerState.hour.toString().padStart(2, '0')
+                            val m = timePickerState.minute.toString().padStart(2, '0')
+                            onConfirm("$h:$m")
+                        }
+                    ) { Text("OK") }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DosageTimesField(
+    modifier: Modifier = Modifier,
+    times: List<String>,
+    onAdd: (String) -> Unit,
+    onRemove: (String) -> Unit
+) {
+    var showPicker by remember { mutableStateOf(false) }
+    androidx.compose.foundation.layout.Column(modifier = modifier.fillMaxWidth()) {
+        Text("Dosage Times", style = MaterialTheme.typography.titleSmall)
+        // using ExperimentalLayoutApi for FlowRow would be better if there are many times, but let's just use a LazyRow or wrap
+        androidx.compose.foundation.layout.ExperimentalLayoutApi::class
+        androidx.compose.foundation.layout.FlowRow(
+            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            times.forEach { time ->
+                androidx.compose.material3.InputChip(
+                    selected = false,
+                    onClick = { onRemove(time) },
+                    label = { Text(time) },
+                    trailingIcon = { Icon(MedyoIcons.Close.icon, contentDescription = "Remove") }
+                )
+            }
+            androidx.compose.material3.SuggestionChip(
+                onClick = { showPicker = true },
+                label = { Text("+ Add Time") }
+            )
+        }
+    }
+    if (showPicker) {
+        TimePickerDialog(
+            onDismiss = { showPicker = false },
+            onConfirm = { time ->
+                onAdd(time)
+                showPicker = false
+            }
         )
     }
 }

@@ -41,6 +41,8 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.notification)
+    implementation(projects.core.dosageAlert)
     implementation(projects.core.utils)
     implementation(projects.core.designSystem)
     implementation(projects.core.ui)

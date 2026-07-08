@@ -43,6 +43,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.dosageAlert)
     implementation(projects.core.domain)
     implementation(projects.feature.scanner.api)
     implementation(projects.core.designSystem)

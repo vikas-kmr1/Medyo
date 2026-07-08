@@ -48,7 +48,26 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerDefaults
+import androidx.compose.material3.TimePickerLayoutType
+import androidx.compose.material3.rememberTimePickerState
+import android.app.AlarmManager
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import android.widget.Toast
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,12 +76,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import medyo.com.core.design_system.theme.MedyoTheme
 
 @Composable
 fun SettingsScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: SettingsViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+    var showMorningPicker by remember { mutableStateOf(false) }
+    var showEveningPicker by remember { mutableStateOf(false) }
+    val context = LocalContext.current
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -120,6 +146,37 @@ fun SettingsScreen(
             ) {
                 Column {
                     SettingsRowItem(
+                        icon = Icons.Rounded.Notifications,
+                        iconTint = Color.Red,
+                        title = "Test 1-Minute Alarm",
+                        description = "Schedules a full screen alarm for testing",
+                        onClick = {
+                            var canSchedule = true
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                                if (!alarmManager.canScheduleExactAlarms()) {
+                                    canSchedule = false
+                                    context.startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                                        data = Uri.parse("package:${context.packageName}")
+                                    })
+                                }
+                            }
+                            if (!Settings.canDrawOverlays(context)) {
+                                canSchedule = false
+                                context.startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION).apply {
+                                    data = Uri.parse("package:${context.packageName}")
+                                })
+                            }
+                            if (canSchedule) {
+                                viewModel.scheduleTestAlarm()
+                                Toast.makeText(context, "Alarm scheduled in 1 minute!", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, "Please grant permissions first.", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    )
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), color = Color(0xFFF1F5F9))
+                    SettingsRowItem(
                         icon = Icons.Rounded.Person,
                         iconTint = Color(0xFF00ACC1),
                         title = "Account Details",
@@ -129,8 +186,17 @@ fun SettingsScreen(
                     SettingsRowItem(
                         icon = Icons.Rounded.Notifications,
                         iconTint = Color(0xFFFF9800),
-                        title = "Notifications",
-                        description = "Adherence reminders, sync updates"
+                        title = "Expiry Alerts: Morning",
+                        description = "Current time: ${uiState.expiryMorningTime}",
+                        onClick = { showMorningPicker = true }
+                    )
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), color = Color(0xFFF1F5F9))
+                    SettingsRowItem(
+                        icon = Icons.Rounded.Notifications,
+                        iconTint = Color(0xFFFF9800),
+                        title = "Expiry Alerts: Evening",
+                        description = "Current time: ${uiState.expiryEveningTime}",
+                        onClick = { showEveningPicker = true }
                     )
                     HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), color = Color(0xFFF1F5F9))
                     SettingsRowItem(
@@ -140,6 +206,29 @@ fun SettingsScreen(
                         description = "Biometrics lock, diagnostic data"
                     )
                 }
+            }
+        }
+        
+        item {
+            if (showMorningPicker) {
+                TimePickerDialog(
+                    initialTime = uiState.expiryMorningTime,
+                    onDismiss = { showMorningPicker = false },
+                    onConfirm = { time ->
+                        viewModel.updateMorningTime(time)
+                        showMorningPicker = false
+                    }
+                )
+            }
+            if (showEveningPicker) {
+                TimePickerDialog(
+                    initialTime = uiState.expiryEveningTime,
+                    onDismiss = { showEveningPicker = false },
+                    onConfirm = { time ->
+                        viewModel.updateEveningTime(time)
+                        showEveningPicker = false
+                    }
+                )
             }
         }
 
@@ -285,5 +374,61 @@ private fun SettingsRowItem(
             contentDescription = null,
             tint = Color(0xFF94A3B8)
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TimePickerDialog(
+    initialTime: String,
+    onDismiss: () -> Unit,
+    onConfirm: (String) -> Unit
+) {
+    val initialParts = initialTime.split(":")
+    val initialHour = initialParts.getOrNull(0)?.toIntOrNull() ?: 9
+    val initialMinute = initialParts.getOrNull(1)?.toIntOrNull() ?: 0
+    
+    val timePickerState = rememberTimePickerState(
+        initialHour = initialHour,
+        initialMinute = initialMinute,
+        is24Hour = false
+    )
+
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            shape = RoundedCornerShape(28.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White)
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Select Time",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                )
+                
+                TimePicker(state = timePickerState)
+                
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = onDismiss) {
+                        Text("Cancel")
+                    }
+                    TextButton(
+                        onClick = {
+                            val h = timePickerState.hour.toString().padStart(2, '0')
+                            val m = timePickerState.minute.toString().padStart(2, '0')
+                            onConfirm("$h:$m")
+                        }
+                    ) {
+                        Text("OK")
+                    }
+                }
+            }
+        }
     }
 }

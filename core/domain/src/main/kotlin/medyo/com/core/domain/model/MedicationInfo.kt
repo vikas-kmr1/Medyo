@@ -21,6 +21,9 @@ data class MedicationInfo(
     val startDate: Long? = null,
     val endDate: Long? = null,
     val totalDoses: String = "",
+    val stockQuantity: Int = 0,
+    val alertDaysBeforeExpiry: Int = 7,
+    val dosageTimes: List<String> = emptyList(),
     val errorMessage: String? = null,
     val statusCode: String? = null
 )

@@ -128,7 +128,11 @@ internal fun CameraPreviewRoot(
                     onDosageIntervalChange = medicationEditViewModel::onDosageIntervalChange,
                     onStartDateChange = medicationEditViewModel::onStartDateChange,
                     onEndDateChange = medicationEditViewModel::onEndDateChange,
-                    onTotalDosesChange = medicationEditViewModel::onTotalDosesChange
+                    onTotalDosesChange = medicationEditViewModel::onTotalDosesChange,
+                    onStockQuantityChange = medicationEditViewModel::onStockQuantityChange,
+                    onAlertDaysBeforeExpiryChange = medicationEditViewModel::onAlertDaysBeforeExpiryChange,
+                    onDosageTimeAdd = medicationEditViewModel::onDosageTimeAdd,
+                    onDosageTimeRemove = medicationEditViewModel::onDosageTimeRemove
                 )
             }
         }

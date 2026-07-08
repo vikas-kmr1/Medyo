@@ -79,9 +79,16 @@ dependencies {
     implementation(projects.feature.settings.impl)
     implementation(projects.feature.detail.api)
     implementation(projects.feature.detail.impl)
-
+    implementation(projects.feature.expiryDashboard.api)
+    implementation(projects.feature.expiryDashboard.impl)
+    implementation(projects.core.notification)
+    implementation(projects.core.expiryAlert)
     implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
+    
+    // Accompanist Permissions
+    implementation(libs.accompanist.permissions)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.ai)
@@ -99,6 +106,8 @@ dependencies {
     implementation(libs.jakewharton.timber)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+    implementation(libs.hilt.work)
+    ksp(libs.hilt.ext.compiler)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)

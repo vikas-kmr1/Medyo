@@ -35,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -56,6 +57,7 @@ internal fun BioScanScreen(
     modifier: Modifier = Modifier,
     viewModel: BioScanViewmodel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     // 1. STATE MANAGEMENT: Track the scrolling of the medications list
     val lazyListState = rememberLazyListState()
 

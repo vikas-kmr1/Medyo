@@ -14,11 +14,13 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import medyo.com.core.domain.model.MedicationInfo
 import medyo.com.core.domain.usecase.SaveMedicationUseCase
+import medyo.com.core.dosage_alert.scheduler.DosageAlarmScheduler
 import medyo.com.core.utils.constants.MedicationCategory
 import medyo.com.core.utils.constants.MedicationType
 import medyo.com.core.utils.kotlin.emptyString
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZoneId
 import javax.inject.Inject
 
@@ -41,6 +43,11 @@ data class MedicationEditUiState(
     val endDateError: String? = null,
     val totalDoses: String = emptyString,
     val totalDosesError: String? = null,
+    val stockQuantity: String = emptyString,
+    val stockQuantityError: String? = null,
+    val alertDaysBeforeExpiry: String = "7",
+    val alertDaysBeforeExpiryError: String? = null,
+    val dosageTimes: List<String> = emptyList(),
     val isLoading: Boolean = false,
     val sideEffects: List<String> = emptyList(),
     val cures: List<String> = emptyList(),
@@ -50,7 +57,8 @@ data class MedicationEditUiState(
 
 @HiltViewModel
 class MedicationEditViewModel @Inject constructor(
-    private val saveMedicationUseCase: SaveMedicationUseCase
+    private val saveMedicationUseCase: SaveMedicationUseCase,
+    private val dosageAlarmScheduler: DosageAlarmScheduler
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MedicationEditUiState())
@@ -74,6 +82,9 @@ class MedicationEditViewModel @Inject constructor(
             startDate = medicationInfo.startDate?.toLocalDate(),
             endDate = medicationInfo.endDate?.toLocalDate(),
             totalDoses = medicationInfo.totalDoses,
+            stockQuantity = medicationInfo.stockQuantity.takeIf { it > 0 }?.toString() ?: emptyString,
+            alertDaysBeforeExpiry = medicationInfo.alertDaysBeforeExpiry.toString(),
+            dosageTimes = medicationInfo.dosageTimes,
             sideEffects = medicationInfo.sideEffects,
             cures = medicationInfo.cures,
             salt = medicationInfo.salts,
@@ -87,6 +98,31 @@ class MedicationEditViewModel @Inject constructor(
             .atZone(ZoneId.systemDefault())
             .toLocalDate()
     }
+
+// ... unchanged until toMedicationInfo()
+
+private fun MedicationEditUiState.toMedicationInfo(): MedicationInfo {
+    return MedicationInfo(
+        name = name,
+        brand = manufacturer,
+        category = category.name,
+        mfgDate = manufacturingDate?.toEpochSecond(),
+        expDate = expiryDate?.toEpochSecond(),
+        dosageIntervalMinutes = dosageIntervalMinutes,
+        startDate = startDate?.toEpochSecond(),
+        endDate = endDate?.toEpochSecond(),
+        salts = salt,
+        form = medicationType.name,
+        sideEffects = sideEffects,
+        cures = cures,
+        precautions = precautions,
+        instructions = instructions,
+        totalDoses = totalDoses,
+        stockQuantity = stockQuantity.toIntOrNull() ?: 0,
+        alertDaysBeforeExpiry = alertDaysBeforeExpiry.toIntOrNull() ?: 7,
+        dosageTimes = dosageTimes
+    )
+}
 
     fun onNameChange(name: String) {
         _uiState.update {
@@ -174,12 +210,39 @@ class MedicationEditViewModel @Inject constructor(
         _uiState.update { it.copy(totalDoses = totalDoses, totalDosesError = error) }
     }
 
+    fun onStockQuantityChange(quantity: String) {
+        val error = if (quantity.isNotBlank() && quantity.toIntOrNull() == null) "Must be a valid number" else null
+        _uiState.update { it.copy(stockQuantity = quantity, stockQuantityError = error) }
+    }
+
+    fun onAlertDaysBeforeExpiryChange(days: String) {
+        val error = if (days.isNotBlank() && days.toIntOrNull() == null) "Must be a valid number" else null
+        _uiState.update { it.copy(alertDaysBeforeExpiry = days, alertDaysBeforeExpiryError = error) }
+    }
+    
+    fun onDosageTimeAdd(time: String) {
+        _uiState.update { 
+            if (!it.dosageTimes.contains(time)) {
+                it.copy(dosageTimes = (it.dosageTimes + time).sorted())
+            } else it
+        }
+    }
+    
+    fun onDosageTimeRemove(time: String) {
+        _uiState.update { it.copy(dosageTimes = it.dosageTimes - time) }
+    }
+
     fun onSave() {
         viewModelScope.launch(Dispatchers.IO) {
             val result =
                 saveMedicationUseCase.invoke(medicationInfo = uiState.value.toMedicationInfo())
             result.onSuccess { medicationID ->
                 dbWriteState = medicationID >= 0
+                dosageAlarmScheduler.scheduleDosageAlarm(
+                    scheduleId = medicationID,
+                    medicationId = medicationID,
+                    scheduledTimestamp = System.currentTimeMillis() + 60 * 1000
+                )
             }
         }
     }
@@ -187,26 +250,6 @@ class MedicationEditViewModel @Inject constructor(
 
 private fun LocalDate.toEpochSecond(): Long {
     return atStartOfDay(ZoneId.systemDefault()).toInstant().epochSecond
-}
-
-private fun MedicationEditUiState.toMedicationInfo(): MedicationInfo {
-    return MedicationInfo(
-        name = name,
-        brand = manufacturer,
-        category = category.name,
-        mfgDate = manufacturingDate?.toEpochSecond(),
-        expDate = expiryDate?.toEpochSecond(),
-        dosageIntervalMinutes = dosageIntervalMinutes,
-        startDate = startDate?.toEpochSecond(),
-        endDate = endDate?.toEpochSecond(),
-        salts = salt,
-        form = medicationType.name,
-        sideEffects = sideEffects,
-        cures = cures,
-        precautions = precautions,
-        instructions = instructions,
-        totalDoses = totalDoses,
-    )
 }
 
 

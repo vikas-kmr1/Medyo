@@ -18,7 +18,7 @@ interface MedicationDao {
 
     // Fetches the combined data using a standard SQL JOIN
     @Query("""
-        SELECT m.id AS medicationId, m.name, m.dosageStrength, m.expiryDate AS expDate,
+        SELECT m.id AS medicationId, m.name, m.dosageStrength, m.expiryDate AS expDate, m.stockQuantity, m.alertDaysBeforeExpiry,
                i.brand, i.salts, i.sideEffects, i.cures, i.precautions, i.instructions, i.mfgDate
         FROM medications m
         LEFT JOIN Medication_info i ON m.id = i.medicationId
@@ -27,10 +27,31 @@ interface MedicationDao {
     fun getMedicationDetails(medicationId: Long): Flow<MedicationDetail?>
 
     @Query("""
-        SELECT m.id AS medicationId, m.name, m.dosageStrength, m.expiryDate AS expDate,m.form,m.category,
+        SELECT m.id AS medicationId, m.name, m.dosageStrength, m.expiryDate AS expDate,m.form,m.category, m.stockQuantity, m.alertDaysBeforeExpiry,
                i.brand, i.salts, i.sideEffects, i.cures, i.precautions, i.instructions, i.mfgDate
         FROM medications m
         LEFT JOIN Medication_info i ON m.id = i.medicationId
     """)
     fun getAllMedicationDetails(): Flow<List<MedicationDetail>>
+
+    // --- Expiry Alert System Queries ---
+
+    @Query("""
+        SELECT * FROM medications 
+        WHERE expiryDate IS NOT NULL 
+          AND stockRemoved = 0 
+          AND expiryDate > :now
+          AND (expiryDate - (COALESCE(alertDaysBeforeExpiry, 7) * 86400000)) <= :now
+    """)
+    suspend fun getExpiringMedications(now: Long): List<MedicationEntity>
+
+    @Query("UPDATE medications SET stockRemoved = 1 WHERE id = :medicationId")
+    suspend fun markAsRemovedFromStock(medicationId: Long)
+
+    @Query("""
+        SELECT * FROM medications 
+        WHERE expiryDate IS NOT NULL AND stockRemoved = 0
+        ORDER BY expiryDate ASC
+    """)
+    fun getAllMedicationsWithExpiry(): Flow<List<MedicationEntity>>
 }

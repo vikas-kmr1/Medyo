@@ -18,5 +18,6 @@ data class MedicationEntity(
     val category: MedicationCategory,
     val stockQuantity: Int, // Decrements when a dose is logged
     val expiryDate: Long?, // Epoch timestamp
-    val alertDaysBeforeExpiry: Int? // e.g., Notify 30 days before
+    val alertDaysBeforeExpiry: Int?, // e.g., Notify 30 days before
+    val stockRemoved: Boolean = false // Expiry Alert flag: true if user removed from stock
 )

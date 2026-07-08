@@ -47,12 +47,32 @@ import medyo.com.feature.home.impl.navigation.homeEntry
 import medyo.com.feature.scanner.impl.navigation.scannerEntry
 import medyo.com.settings.api.SettingsNavKey
 import medyo.com.settings.impl.navigation.settingsEntry
+import medyo.com.expiry_dashboard.impl.navigation.expiryDashboardEntry
 
+import android.Manifest
+import android.os.Build
+import androidx.compose.runtime.LaunchedEffect
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MedyoApp(
     appState: MedyoAppState = rememberMedyoAppState(),
     modifier: Modifier = Modifier
 ) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        val notificationsPermissionState = rememberPermissionState(
+            permission = Manifest.permission.POST_NOTIFICATIONS
+        )
+        LaunchedEffect(Unit) {
+            if (!notificationsPermissionState.status.isGranted) {
+                notificationsPermissionState.launchPermissionRequest()
+            }
+        }
+    }
+
     val navigator = remember(appState.navigationState) { Navigator(appState.navigationState) }
 
     // 1. RESOLVE SELECTED TAB: Home = 0, Settings = 1, BioScan = -1
@@ -112,6 +132,7 @@ fun MedyoApp(
                 scannerEntry(navigator)
                 settingsEntry(navigator)
                 MedicationDetailEntry(navigator)
+                expiryDashboardEntry(navigator)
             }
 
             NavDisplay(

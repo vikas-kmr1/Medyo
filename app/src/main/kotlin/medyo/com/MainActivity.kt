@@ -23,12 +23,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import medyo.com.core.ai_logic.GeminiAiDataSource
 import medyo.com.core.design_system.theme.MedyoTheme
+import medyo.com.core.notification.api.Notifier
 import medyo.com.ui.MedyoApp
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreenInstance = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {

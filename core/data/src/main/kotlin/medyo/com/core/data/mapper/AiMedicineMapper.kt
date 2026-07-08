@@ -16,9 +16,9 @@ fun MedicationInfo.toMedicationEntity(): MedicationEntity {
         dosageStrength = this.totalDoses, // AI doesn't explicitly return this in current schema
         form = this.form,
         category = MedicationCategory.FIRST_AID_STOCK,
-        stockQuantity = 0,
+        stockQuantity = this.stockQuantity,
         expiryDate = this.expDate,
-        alertDaysBeforeExpiry = 1
+        alertDaysBeforeExpiry = this.alertDaysBeforeExpiry
     )
 }
 
