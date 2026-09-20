@@ -86,7 +86,7 @@ internal fun BioScanScreen(
                 )
             ),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
     ) {
         // 3. COLLAPSIBLE TOP WIDGET: Fade out and shrink vertically when scrolled
         AnimatedVisibility(
@@ -114,67 +114,72 @@ internal fun BioScanScreen(
             )
         }
 
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp),
-            text = "Today's Medications",
-            style = MaterialTheme.typography.titleLarge
-        )
+        if (scannedMedications.isNotEmpty()) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                text = "Today's Medications",
+                style = MaterialTheme.typography.titleLarge
+            )
 
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .background(Color.Transparent),
-        ) {
-            // 4. SELF-EXPANDING LIST: The LazyColumn naturally fills all available remaining height
-            //    (weight = 1f) and dynamically expands to full-screen height when the top widget collapses!
-            LazyColumn(
-                modifier = Modifier.fillMaxHeight(),
-                state = lazyListState,
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .background(Color.Transparent),
             ) {
-                MedicationCardList(
-                    MedicationItems = scannedMedications.map {
-                        val colors = getMedicationColors(
-                            index = it.medicationId.toInt() % colorOptions.size
-                        )
-                        MedicationCardItemData(
-                            id = it.medicationId,
-                            name = it.brand, // Note: Same name but different ID and Icon
-                            dosage = "10mg",
-                            iconRes = getMedicationIcon(if (it.form.isBlank())MedicationType.OTHER else MedicationType.valueOf(it.form)),
-                            iconBackgroundColor = colors.iconBackgroundColor, // Using hardcoded or MaterialTheme colors
-                            cardGradientStartColor = colors.cardGradientStartColor,
-                            shadowColor = colors.shadowColor,
-                        )
-                    },
-                    onCardClick = onMedicationClick
-                )
+                // 4. SELF-EXPANDING LIST: The LazyColumn naturally fills all available remaining height
+                //    (weight = 1f) and dynamically expands to full-screen height when the top widget collapses!
+                LazyColumn(
+                    modifier = Modifier.fillMaxHeight(),
+                    state = lazyListState,
+                ) {
+                    MedicationCardList(
+                        MedicationItems = scannedMedications.map {
+                            val colors = getMedicationColors(
+                                index = it.medicationId.toInt() % colorOptions.size
+                            )
+                            MedicationCardItemData(
+                                id = it.medicationId,
+                                name = it.brand, // Note: Same name but different ID and Icon
+                                dosage = "10mg",
+                                iconRes = getMedicationIcon(
+                                    if (it.form.isBlank()) MedicationType.OTHER else MedicationType.valueOf(
+                                        it.form
+                                    )
+                                ),
+                                iconBackgroundColor = colors.iconBackgroundColor, // Using hardcoded or MaterialTheme colors
+                                cardGradientStartColor = colors.cardGradientStartColor,
+                                shadowColor = colors.shadowColor,
+                            )
+                        },
+                        onCardClick = onMedicationClick
+                    )
 
-                if (itemsAvailable > 0) {
-                    item {
-                        // 5. BOTTOM SPACER: Ensures the list is always scrollable,
-                        // even with few items, so the top widget can collapse!
-                        Spacer(modifier = Modifier.fillParentMaxHeight(0.5f))
+                    if (itemsAvailable > 0) {
+                        item {
+                            // 5. BOTTOM SPACER: Ensures the list is always scrollable,
+                            // even with few items, so the top widget can collapse!
+                            Spacer(modifier = Modifier.fillParentMaxHeight(0.5f))
+                        }
                     }
                 }
+
+
+                lazyListState.DraggableScrollbar(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .windowInsetsPadding(WindowInsets.systemBars)
+                        .padding(horizontal = 2.dp)
+                        .align(Alignment.CenterEnd),
+                    state = scrollbarState,
+                    orientation = Orientation.Vertical,
+                    onThumbMoved = lazyListState.rememberDraggableScroller(
+                        itemsAvailable = itemsAvailable,
+                    ),
+                )
             }
-
-
-            lazyListState.DraggableScrollbar(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .windowInsetsPadding(WindowInsets.systemBars)
-                    .padding(horizontal = 2.dp)
-                    .align(Alignment.CenterEnd),
-                state = scrollbarState,
-                orientation = Orientation.Vertical,
-                onThumbMoved = lazyListState.rememberDraggableScroller(
-                    itemsAvailable = itemsAvailable,
-                ),
-            )
         }
-
     }
 }
 

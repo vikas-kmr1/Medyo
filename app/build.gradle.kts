@@ -26,7 +26,7 @@ android {
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "GEMINI_API_KEY", getGeminiKeys())
+        //buildConfigField("String", "GEMINI_API_KEY", getGeminiKeys())
     }
 
     buildTypes {
@@ -92,6 +92,8 @@ dependencies {
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.ai)
+    implementation(libs.firebase.appcheck.playintegrity)
+    debugImplementation(libs.firebase.appcheck.debug)
 
     implementation(libs.androidx.core.ktx)
     androidTestImplementation(platform(libs.androidx.compose.bom))

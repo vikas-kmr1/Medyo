@@ -18,7 +18,7 @@ import javax.inject.Singleton
 @Module
 internal object AiLogicModule {
 
-    const val MODEL_NAME = "gemini-3.1-flash-lite"
+    const val MODEL_NAME = "gemini-3.5-flash-lite"
     const val LOCATION = "global"
 
     private val config = generationConfig {
@@ -53,11 +53,11 @@ internal object AiLogicModule {
     @Provides
     @Singleton
     fun provideFirebaseAiBackend(): GenerativeModel = Firebase.ai(
-        backend = GenerativeBackend.vertexAI(location = LOCATION)
+        backend = GenerativeBackend.googleAI() // PAID API  GenerativeBackend.vertexAI(location = LOCATION) //
     ).generativeModel(
         modelName = MODEL_NAME, generationConfig = config,
         systemInstruction = com.google.firebase.ai.type.content {
-            text("ONLY GENERATE RESPONSES FOR MedicationS ONLY, don't entertain any other item.")
+            text("ONLY GENERATE RESPONSES FOR MEDICATIONS ONLY, don't entertain any other item.")
         })
 
 }
