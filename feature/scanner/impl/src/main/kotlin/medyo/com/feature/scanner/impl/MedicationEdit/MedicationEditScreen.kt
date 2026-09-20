@@ -79,13 +79,14 @@ fun MedicationEditScreen(
     onDosageTimeAdd: (String) -> Unit,
     onDosageTimeRemove: (String) -> Unit,
 ) {
-    BackHandler() { }
+    BackHandler{}
     val dimen = LocalDimensions.current
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
 
     FullScreenDialog {
         LazyColumn(
+            modifier = Modifier.navigationBarsPadding(),
             verticalArrangement = Arrangement.spacedBy(dimen.dimen16dp, Alignment.Top),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
