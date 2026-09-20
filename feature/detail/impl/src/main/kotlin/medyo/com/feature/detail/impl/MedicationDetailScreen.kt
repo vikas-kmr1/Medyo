@@ -105,7 +105,16 @@ private fun MedicationDetailContent(medicationInfo: MedicationInfo) {
                 manufacturedDate = medicationInfo.mfgDate?.formatDate() ?: "N/A",
                 expiryDate = medicationInfo.expDate?.formatDate() ?: "N/A"
             )
+        }
 
+        if (medicationInfo.dosageTimes.isNotEmpty()) {
+            item {
+                Text(
+                    "Scheduled Alarms",
+                    style = MaterialTheme.typography.titleLarge,
+                )
+                MedicationScheduledAlarms(dosageTimes = medicationInfo.dosageTimes)
+            }
         }
 
         if (medicationInfo.cures.isNotEmpty()) {
@@ -354,8 +363,28 @@ private fun MedicationInstructions(
     }
 }
 
-
-@CommonPreview
+@Composable
+private fun MedicationScheduledAlarms(dosageTimes: List<String>) {
+    FlowRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(-8.dp)
+    ) {
+        dosageTimes.forEach { time ->
+            SuggestionChip(
+                label = {
+                    Text(text = time, style = MaterialTheme.typography.labelMedium)
+                },
+                onClick = {},
+                colors = SuggestionChipDefaults.suggestionChipColors(
+                    disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                    disabledLabelColor = MaterialTheme.colorScheme.onSurface,
+                ),
+                enabled = false,
+            )
+        }
+    }
+}
 @Composable
 private fun PreviewMedicationComponentsr() {
     MedyoTheme() {

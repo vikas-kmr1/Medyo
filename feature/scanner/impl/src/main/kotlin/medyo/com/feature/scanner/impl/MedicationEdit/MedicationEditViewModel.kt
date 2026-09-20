@@ -14,13 +14,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import medyo.com.core.domain.model.MedicationInfo
 import medyo.com.core.domain.usecase.SaveMedicationUseCase
-import medyo.com.core.dosage_alert.scheduler.DosageAlarmScheduler
+import medyo.com.core.dosage_alert.usecase.ScheduleDosageAlarmsUseCase
 import medyo.com.core.utils.constants.MedicationCategory
 import medyo.com.core.utils.constants.MedicationType
 import medyo.com.core.utils.kotlin.emptyString
 import java.time.Instant
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.ZoneId
 import javax.inject.Inject
 
@@ -58,7 +57,7 @@ data class MedicationEditUiState(
 @HiltViewModel
 class MedicationEditViewModel @Inject constructor(
     private val saveMedicationUseCase: SaveMedicationUseCase,
-    private val dosageAlarmScheduler: DosageAlarmScheduler
+    private val scheduleDosageAlarmsUseCase: ScheduleDosageAlarmsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MedicationEditUiState())
@@ -234,15 +233,24 @@ private fun MedicationEditUiState.toMedicationInfo(): MedicationInfo {
 
     fun onSave() {
         viewModelScope.launch(Dispatchers.IO) {
+            val currentState = uiState.value
             val result =
-                saveMedicationUseCase.invoke(medicationInfo = uiState.value.toMedicationInfo())
-            result.onSuccess { medicationID ->
-                dbWriteState = medicationID >= 0
-                dosageAlarmScheduler.scheduleDosageAlarm(
-                    scheduleId = medicationID,
-                    medicationId = medicationID,
-                    scheduledTimestamp = System.currentTimeMillis() + 60 * 1000
-                )
+                saveMedicationUseCase.invoke(medicationInfo = currentState.toMedicationInfo())
+            result.onSuccess { medicationId ->
+                dbWriteState = medicationId >= 0
+
+                // Schedule dosage alarms if times and start date are provided
+                val dosageTimes = currentState.dosageTimes
+                val startDate = currentState.startDate?.toEpochSecond()
+                if (dosageTimes.isNotEmpty() && startDate != null) {
+                    scheduleDosageAlarmsUseCase(
+                        medicationId = medicationId,
+                        dosageTimes = dosageTimes,
+                        startDate = startDate,
+                        endDate = currentState.endDate?.toEpochSecond(),
+                        frequency = "DAILY"
+                    )
+                }
             }
         }
     }

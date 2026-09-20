@@ -24,10 +24,6 @@ class DosageFullScreenActivity : ComponentActivity() {
 
         turnScreenOnAndKeyguardOff()
 
-        val scheduleId = intent.getLongExtra(DosageAlarmSchedulerImpl.EXTRA_SCHEDULE_ID, -1L)
-        val medicationId = intent.getLongExtra(DosageAlarmSchedulerImpl.EXTRA_MEDICATION_ID, -1L)
-        val scheduledTimestamp = intent.getLongExtra(DosageAlarmSchedulerImpl.EXTRA_SCHEDULED_TIMESTAMP, -1L)
-
         setContent {
             MedyoTheme {
                 Surface(
@@ -35,9 +31,6 @@ class DosageFullScreenActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     DosageAlarmScreen(
-                        scheduleId = scheduleId,
-                        medicationId = medicationId,
-                        scheduledTimestamp = scheduledTimestamp,
                         onDismiss = { finish() }
                     )
                 }

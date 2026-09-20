@@ -6,13 +6,33 @@ import android.content.Intent
 import android.provider.Settings
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import medyo.com.core.database.dao.DosageAlertDao
+import medyo.com.core.database.entity.DosageHistoryEntity
+import medyo.com.core.database.entity.DosageStatus
 import medyo.com.core.dosage_alert.scheduler.DosageAlarmScheduler
 import medyo.com.core.dosage_alert.scheduler.DosageAlarmSchedulerImpl
+import medyo.com.core.dosage_alert.util.NextAlarmCalculator
 import medyo.com.core.dosage_alert.ui.DosageFullScreenActivity
+import medyo.com.core.dosage_alert.worker.AutoSkipWorker
+import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class DosageAlarmReceiver : BroadcastReceiver() {
+
+    @Inject
+    lateinit var dosageAlertDao: DosageAlertDao
+
+    @Inject
+    lateinit var dosageAlarmScheduler: DosageAlarmScheduler
+
     override fun onReceive(context: Context, intent: Intent) {
         val scheduleId = intent.getLongExtra(DosageAlarmSchedulerImpl.EXTRA_SCHEDULE_ID, -1L)
         val medicationId = intent.getLongExtra(DosageAlarmSchedulerImpl.EXTRA_MEDICATION_ID, -1L)
@@ -39,7 +59,6 @@ class DosageAlarmReceiver : BroadcastReceiver() {
                     Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
         }
 
-        // Send a High Priority Notification with the full-screen intent
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
 
@@ -64,13 +83,62 @@ class DosageAlarmReceiver : BroadcastReceiver() {
 
         notificationManager.notify(scheduleId.hashCode(), notificationBuilder.build())
 
-        // As a fallback, we also directly start the activity
         try {
             if (Settings.canDrawOverlays(context)) {
                 context.startActivity(fullScreenIntent)
             }
         } catch (e: Exception) {
             Log.e("DosageAlarmReceiver", "Failed to start full screen activity directly", e)
+        }
+
+        val pendingResult = goAsync()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                // Create PENDING DosageHistoryEntity
+                val historyId = dosageAlertDao.insertDosageHistory(
+                    DosageHistoryEntity(
+                        medicationId = medicationId,
+                        scheduleId = scheduleId,
+                        scheduledTimestamp = scheduledTimestamp,
+                        actualTakenTimestamp = null,
+                        status = DosageStatus.PENDING
+                    )
+                )
+
+                // Compute and schedule the next day's alarm
+                val schedule = dosageAlertDao.getScheduleById(scheduleId)
+                if (schedule != null) {
+                    val nextAlarm = NextAlarmCalculator.computeNextAlarmMillis(
+                        schedule.timeOfDay,
+                        schedule.startDate,
+                        schedule.endDate,
+                        schedule.frequency
+                    )
+                    if (nextAlarm != null) {
+                        dosageAlarmScheduler.scheduleDosageAlarm(scheduleId, medicationId, nextAlarm)
+                    }
+                }
+
+                // Enqueue AutoSkipWorker with 30 minutes delay
+                val inputData = Data.Builder()
+                    .putLong(DosageAlarmSchedulerImpl.EXTRA_SCHEDULE_ID, scheduleId)
+                    .putLong(DosageAlarmSchedulerImpl.EXTRA_MEDICATION_ID, medicationId)
+                    .putLong("EXTRA_HISTORY_ID", historyId)
+                    .build()
+
+                val workRequest = OneTimeWorkRequestBuilder<AutoSkipWorker>()
+                    .setInitialDelay(30, TimeUnit.MINUTES)
+                    .setInputData(inputData)
+                    .build()
+
+                WorkManager.getInstance(context).enqueue(workRequest)
+
+            } catch (e: Exception) {
+                Log.e("DosageAlarmReceiver", "Failed to process alarm receiver logic", e)
+            } finally {
+                pendingResult.finish()
+            }
         }
     }
 }

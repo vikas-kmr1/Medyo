@@ -28,7 +28,7 @@ interface DosageAlertDao {
     suspend fun insertDosageHistory(history: DosageHistoryEntity): Long
 
     @Query("UPDATE dosage_history SET status = :status, actualTakenTimestamp = :timestamp WHERE id = :historyId")
-    suspend fun updateDosageHistoryStatus(historyId: Long, status: DosageStatus, timestamp: Long)
+    suspend fun updateDosageHistoryStatus(historyId: Long, status: DosageStatus, timestamp: Long?)
 
     @Query("SELECT * FROM dosage_history WHERE medicationId = :medicationId ORDER BY scheduledTimestamp DESC")
     fun getDosageHistoryForMedication(medicationId: Long): Flow<List<DosageHistoryEntity>>
@@ -38,4 +38,13 @@ interface DosageAlertDao {
     
     @Query("SELECT * FROM dosage_history WHERE status = :status AND scheduledTimestamp < :now")
     suspend fun getOverdueDosages(status: DosageStatus, now: Long): List<DosageHistoryEntity>
+
+    @Query("SELECT * FROM schedules WHERE endDate IS NULL OR endDate >= :now")
+    suspend fun getAllActiveSchedules(now: Long): List<ScheduleEntity>
+
+    @Query("SELECT * FROM schedules WHERE id = :scheduleId")
+    suspend fun getScheduleById(scheduleId: Long): ScheduleEntity?
+
+    @Query("SELECT * FROM dosage_history WHERE id = :historyId")
+    suspend fun getDosageHistoryById(historyId: Long): DosageHistoryEntity?
 }

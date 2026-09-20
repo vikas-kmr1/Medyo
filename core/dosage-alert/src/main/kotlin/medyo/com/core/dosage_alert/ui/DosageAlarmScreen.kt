@@ -15,6 +15,8 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -28,20 +30,13 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun DosageAlarmScreen(
-    scheduleId: Long,
-    medicationId: Long,
-    scheduledTimestamp: Long,
+    viewModel: DosageAlarmViewModel = androidx.hilt.navigation.compose.hiltViewModel(),
     onDismiss: () -> Unit
 ) {
-    // In a real implementation, we would fetch the medication details using medicationId
-    // For now, we will display generic info and format the timestamp.
+    val uiState by viewModel.uiState.collectAsState()
     
-    val formatter = DateTimeFormatter.ofPattern("hh:mm a").withZone(ZoneId.systemDefault())
-    val timeString = if (scheduledTimestamp > 0) {
-        formatter.format(Instant.ofEpochMilli(scheduledTimestamp))
-    } else {
-        "Now"
-    }
+    val timeString = uiState.scheduledTimeFormatted.ifEmpty { "Now" }
+    val medName = uiState.medicationName.ifEmpty { "Your medication" }
 
     Column(
         modifier = Modifier
@@ -60,7 +55,7 @@ fun DosageAlarmScreen(
         Spacer(modifier = Modifier.height(32.dp))
         
         Text(
-            text = "Time to take your medication",
+            text = "Time to take $medName",
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center
         )
@@ -77,8 +72,7 @@ fun DosageAlarmScreen(
         
         Button(
             onClick = {
-                // Log the medication as taken
-                // Trigger auto-skip cancellation or update DosageHistory
+                viewModel.onTake()
                 onDismiss()
             },
             modifier = Modifier
@@ -92,8 +86,7 @@ fun DosageAlarmScreen(
         
         OutlinedButton(
             onClick = {
-                // Snooze for 15 minutes
-                // Reschedule alarm
+                viewModel.onSnooze()
                 onDismiss()
             },
             modifier = Modifier
@@ -107,7 +100,7 @@ fun DosageAlarmScreen(
         
         TextButton(
             onClick = {
-                // Skip the medication
+                viewModel.onSkip()
                 onDismiss()
             },
             modifier = Modifier
@@ -124,9 +117,6 @@ fun DosageAlarmScreen(
 private fun DosageAlarmScreenPreview() {
     MedyoTheme {
         DosageAlarmScreen(
-            scheduleId = 1L,
-            medicationId = 1L,
-            scheduledTimestamp = Instant.now().toEpochMilli(),
             onDismiss = {}
         )
     }
